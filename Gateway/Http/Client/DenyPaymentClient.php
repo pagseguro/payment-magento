@@ -58,12 +58,14 @@ class DenyPaymentClient implements ClientInterface
 
         $data = $this->api->sendPostRequest($transferObject, $path, $request);
 
-        $response = array_merge(
-            [
-                self::RESULT_CODE  => (isset($data['id'])) ? 1 : 0,
-            ],
-            $data
-        );
+        if (is_array($data)) {
+            $response = array_merge(
+                [
+                    self::RESULT_CODE  => (isset($data['id'])) ? 1 : 0,
+                ],
+                $data
+            );
+        }
 
         return $response;
     }

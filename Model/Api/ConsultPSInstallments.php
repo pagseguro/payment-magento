@@ -12,10 +12,11 @@ declare(strict_types=1);
 
 namespace PagBank\PaymentMagento\Model\Api;
 
+use Laminas\Http\ClientFactory;
+use Laminas\Http\Request;
 use Magento\Framework\Exception\InvalidArgumentException;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\HTTP\ZendClient;
-use Magento\Framework\HTTP\ZendClientFactory;
+use Magento\Framework\HTTP\LaminasClient;
 use Magento\Framework\Serialize\Serializer\Json;
 use PagBank\PaymentMagento\Gateway\Config\Config as ConfigBase;
 use PagBank\PaymentMagento\Gateway\Config\ConfigCc;
@@ -41,7 +42,7 @@ class ConsultPSInstallments
     protected $configCc;
 
     /**
-     * @var ZendClientFactory
+     * @var ClientFactory
      */
     protected $httpClientFactory;
 
@@ -53,15 +54,15 @@ class ConsultPSInstallments
     /**
      * InterestManagement constructor.
      *
-     * @param ConfigBase        $configBase
-     * @param ConfigCc          $configCc
-     * @param ZendClientFactory $httpClientFactory
-     * @param Json              $json
+     * @param ConfigBase    $configBase
+     * @param ConfigCc      $configCc
+     * @param ClientFactory $httpClientFactory
+     * @param Json          $json
      */
     public function __construct(
         ConfigBase $configBase,
         Configcc $configCc,
-        ZendClientFactory $httpClientFactory,
+        ClientFactory $httpClientFactory,
         Json $json
     ) {
         $this->configBase = $configBase;
@@ -81,7 +82,7 @@ class ConsultPSInstallments
      */
     public function getPagBankInstallments($storeId, $creditCardBin, $amount)
     {
-        /** @var ZendClient $client */
+        /** @var LaminasClient $client */
         $client = $this->httpClientFactory->create();
         $url = $this->configBase->getApiUrl($storeId);
         $apiConfigs = $this->configBase->getApiConfigs();
@@ -100,12 +101,12 @@ class ConsultPSInstallments
 
         try {
             $client->setUri($uri);
-            $client->setConfig($apiConfigs);
             $client->setHeaders($headers);
+            $client->setMethod(Request::METHOD_GET);
+            $client->setOptions($apiConfigs);
             $client->setParameterGet($data);
-            $client->setMethod(ZendClient::GET);
+            $responseBody = $client->send()->getBody();
 
-            $responseBody = $client->request()->getBody();
             $dataResponse = $this->json->unserialize($responseBody);
 
             if (!empty($dataResponse['payment_methods'])) {
@@ -118,7 +119,7 @@ class ConsultPSInstallments
                 $response = $list['installment_plans'];
             }
 
-            if (!$client->request()->isSuccessful()) {
+            if (!$client->send()->getStatusCode()) {
                 $response[0] = [
                     'installments'      => 1,
                     'installment_value' => $amount,

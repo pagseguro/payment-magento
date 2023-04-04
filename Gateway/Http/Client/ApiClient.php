@@ -10,10 +10,11 @@
 
 namespace PagBank\PaymentMagento\Gateway\Http\Client;
 
+use Laminas\Http\ClientFactory;
+use Laminas\Http\Request;
 use Magento\Framework\Exception\InvalidArgumentException;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\HTTP\ZendClient;
-use Magento\Framework\HTTP\ZendClientFactory;
+use Magento\Framework\HTTP\LaminasClient;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Payment\Gateway\Http\TransferInterface;
 use Magento\Payment\Model\Method\Logger;
@@ -29,7 +30,7 @@ class ApiClient
     protected $logger;
 
     /**
-     * @var ZendClientFactory
+     * @var ClientFactory
      */
     protected $httpClientFactory;
 
@@ -39,13 +40,13 @@ class ApiClient
     protected $json;
 
     /**
-     * @param Logger            $logger
-     * @param ZendClientFactory $httpClientFactory
-     * @param Json              $json
+     * @param Logger        $logger
+     * @param ClientFactory $httpClientFactory
+     * @param Json          $json
      */
     public function __construct(
         Logger $logger,
-        ZendClientFactory $httpClientFactory,
+        ClientFactory $httpClientFactory,
         Json $json
     ) {
         $this->httpClientFactory = $httpClientFactory;
@@ -70,22 +71,22 @@ class ApiClient
         $headers = $transferObject->getHeaders();
         $uri .= $path;
         $payload = $this->json->serialize($request);
-        /** @var ZendClient $client */
+        /** @var LaminasClient $client */
         $client = $this->httpClientFactory->create();
 
         try {
             $client->setUri($uri);
-            $client->setConfig($clientConfig);
+            $client->setOptions($clientConfig);
             $client->setHeaders($headers);
-            $client->setRawData($payload, 'application/json');
-            $client->setMethod(ZendClient::POST);
-            $responseBody = $client->request()->getBody();
+            $client->setRawBody($payload);
+            $client->setMethod(Request::METHOD_POST);
+            $responseBody = $client->send()->getBody();
             $data = $this->json->unserialize($responseBody);
             $this->collectLogger(
                 $uri,
                 $headers,
                 $responseBody,
-                $request,
+                $request
             );
         } catch (InvalidArgumentException $exc) {
             $this->collectLogger(
@@ -117,27 +118,27 @@ class ApiClient
         $clientConfig = $transferObject->getClientConfig();
         $headers = $transferObject->getHeaders();
         $uri .= $path;
-        /** @var ZendClient $client */
+        /** @var LaminasClient $client */
         $client = $this->httpClientFactory->create();
 
         try {
             $client->setUri($uri);
-            $client->setConfig($clientConfig);
+            $client->setOptions($clientConfig);
             $client->setHeaders($headers);
-            $client->setMethod(ZendClient::GET);
-            $responseBody = $client->request()->getBody();
+            $client->setMethod(Request::METHOD_GET);
+            $responseBody = $client->send()->getBody();
             $data = $this->json->unserialize($responseBody);
             $this->collectLogger(
                 $uri,
                 $headers,
-                $responseBody,
-                [],
+                $client->send()->getBody(),
+                []
             );
         } catch (InvalidArgumentException $exc) {
             $this->collectLogger(
                 $uri,
                 $headers,
-                $client->request()->getBody(),
+                $client->send()->getBody(),
                 [],
                 $exc->getMessage()
             );

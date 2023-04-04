@@ -1,0 +1,7 @@
+parameters:
+    level: 1
+    excludePaths:
+        analyse:
+            - vendor
+        analyseAndScan:
+            - vendor

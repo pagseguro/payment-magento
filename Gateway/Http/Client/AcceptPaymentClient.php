@@ -81,7 +81,9 @@ class AcceptPaymentClient implements ClientInterface
             $status = 1;
         }
 
-        $response = array_merge([self::RESULT_CODE => $status], $data);
+        if (is_array($data)) {
+            $response = array_merge([self::RESULT_CODE => $status], $data);
+        }
 
         return $response;
     }

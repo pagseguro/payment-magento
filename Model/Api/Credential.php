@@ -12,11 +12,12 @@ declare(strict_types=1);
 
 namespace PagBank\PaymentMagento\Model\Api;
 
+use Laminas\Http\ClientFactory;
+use Laminas\Http\Request;
 use Magento\Config\Model\ResourceModel\Config;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
-use Magento\Framework\HTTP\ZendClient;
-use Magento\Framework\HTTP\ZendClientFactory;
+use Magento\Framework\HTTP\LaminasClient;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -48,7 +49,7 @@ class Credential
     protected $configBase;
 
     /**
-     * @var ZendClientFactory
+     * @var ClientFactory
      */
     protected $httpClientFactory;
 
@@ -64,7 +65,7 @@ class Credential
      * @param EncryptorInterface    $encryptor
      * @param StoreManagerInterface $storeManager
      * @param ConfigBase            $configBase
-     * @param ZendClientFactory     $httpClientFactory
+     * @param ClientFactory         $httpClientFactory
      * @param Json                  $json
      */
     public function __construct(
@@ -72,7 +73,7 @@ class Credential
         EncryptorInterface $encryptor,
         StoreManagerInterface $storeManager,
         ConfigBase $configBase,
-        ZendClientFactory $httpClientFactory,
+        ClientFactory $httpClientFactory,
         Json $json
     ) {
         $this->resourceConfig = $resourceConfig;
@@ -135,7 +136,7 @@ class Credential
     public function getAuthorize($storeId, $code, $codeVerifier)
     {
         $url = $this->configBase->getApiUrl($storeId);
-        $header = $this->configBase->getPubHeader($storeId);
+        $headers = $this->configBase->getPubHeader($storeId);
         $apiConfigs = $this->configBase->getApiConfigs();
         $uri = $url.'oauth2/token';
 
@@ -155,17 +156,17 @@ class Credential
             'code_verifier' => $codeVerifier,
         ];
 
-        $payload = $this->json->serialize($data);
-
-        /** @var ZendClient $client */
+        /** @var LaminasClient $client */
         $client = $this->httpClientFactory->create();
         $client->setUri($uri);
-        $client->setHeaders($header);
-        $client->setMethod(ZendClient::POST);
-        $client->setConfig($apiConfigs);
-        $client->setRawData($payload, 'application/json');
+        $client->setHeaders($headers);
+        $client->setMethod(Request::METHOD_POST);
+        $client->setOptions($apiConfigs);
+        $client->setRawBody($this->json->serialize($data));
 
-        return $client->request()->getBody();
+        $send = $client->send();
+
+        return $send->getBody();
     }
 
     /**
@@ -189,17 +190,17 @@ class Credential
 
         $data = ['type' => 'card'];
 
-        $payload = $this->json->serialize($data);
-
-        /** @var ZendClient $client */
+        /** @var LaminasClient $client */
         $client = $this->httpClientFactory->create();
         $client->setUri($uri);
         $client->setHeaders($headers);
-        $client->setMethod(ZendClient::POST);
-        $client->setConfig($apiConfigs);
-        $client->setRawData($payload, 'application/json');
+        $client->setMethod(Request::METHOD_POST);
+        $client->setOptions($apiConfigs);
+        $client->setRawBody($this->json->serialize($data));
 
-        return $client->request()->getBody();
+        $send = $client->send();
+
+        return $send->getBody();
     }
 
     /**
@@ -224,14 +225,16 @@ class Credential
 
         $payload = $this->json->serialize($data);
 
-        /** @var ZendClient $client */
+        /** @var LaminasClient $client */
         $client = $this->httpClientFactory->create();
+
         $client->setUri($uri);
         $client->setHeaders($header);
-        $client->setMethod(ZendClient::POST);
-        $client->setConfig($apiConfigs);
-        $client->setRawData($this->json->serialize($payload), 'application/json');
+        $client->setMethod(Request::METHOD_POST);
+        $client->setOptions($apiConfigs);
+        $client->setRawBody($payload);
+        $send = $client->send();
 
-        return $client->request()->getBody();
+        return $send->getBody();
     }
 }

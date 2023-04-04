@@ -75,12 +75,14 @@ class CreateOrderClient implements ClientInterface
 
         $blockByState = ($status === self::STATUS_DECLINED) ? 1 : 0;
 
-        $response = array_merge(
-            [
-                self::RESULT_CODE  => ($status && !$blockByState) ? 1 : 0,
-            ],
-            $data
-        );
+        if (is_array($data)) {
+            $response = array_merge(
+                [
+                    self::RESULT_CODE  => ($status && !$blockByState) ? 1 : 0,
+                ],
+                $data
+            );
+        }
 
         return $response;
     }

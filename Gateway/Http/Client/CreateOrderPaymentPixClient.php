@@ -68,12 +68,14 @@ class CreateOrderPaymentPixClient implements ClientInterface
 
         $status = isset($data[self::EXT_ORD_ID]) ?: 0;
 
-        $response = array_merge(
-            [
-                self::RESULT_CODE  => ($status) ? 1 : 0,
-            ],
-            $data
-        );
+        if (is_array($data)) {
+            $response = array_merge(
+                [
+                    self::RESULT_CODE  => ($status) ? 1 : 0,
+                ],
+                $data
+            );
+        }
 
         return $response;
     }

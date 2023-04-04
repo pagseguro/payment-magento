@@ -145,7 +145,7 @@ class FetchPaymentHandler implements HandlerInterface
             $payment->setParentTransactionId($paymentParentId);
             $payment->registerAuthorizationNotification($amount);
             $payment->registerCaptureNotification($amount);
-           
+
             $payment->setShouldCloseParentTransaction(true);
             $payment->setAmountAuthorized($amount);
         }
