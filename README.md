@@ -56,8 +56,8 @@ Principais Recursos:
 
 ## Instalação e Configuração
 
-Visite nossa [Wiki](wiki) e veja como é fácil instalar e configurar o módulo.
+Visite nossa [Wiki](../../wiki) e veja como é fácil instalar e configurar o módulo.
 
 ## License
 
-[Open Source License](LICENSE)
+[Open Source License](../../LICENSE)
