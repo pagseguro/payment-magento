@@ -1,0 +1,19 @@
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<tr class="totals pagbank_interest excl">
+    <th class="mark" scope="row">
+        <span class="label" data-bind="text: customTitle()"></span>
+        <span class="value" data-bind="text: getValue()"></span>
+    </th>
+    <td class="amount">
+        <span class="price" data-bind="text: getValue(), attr: {'data-th': title}"></span>
+    </td>
+</tr>

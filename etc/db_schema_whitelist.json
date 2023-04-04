@@ -1,0 +1,41 @@
+{
+    "sales_order": {
+        "column": {
+            "ext_order_id": true,
+            "pagbank_interest_amount": true,
+            "base_pagbank_interest_amount": true,
+            "pagbank_interest_amount_invoiced": true,
+            "base_pagbank_interest_amount_invoiced": true,
+            "pagbank_interest_amount_refunded": true,
+            "base_pagbank_interest_amount_refunded": true
+        }
+    },
+    "quote": {
+        "column": {
+            "pagbank_interest_amount": true,
+            "base_pagbank_interest_amount": true
+        }
+    },
+    "quote_address": {
+        "column": {
+            "discount_coupon_amount": true,
+            "base_discount_coupon_amount": true
+        }
+    },
+    "sales_invoice": {
+        "column": {
+            "pagbank_interest_amount": true,
+            "base_pagbank_interest_amount": true,
+            "pagbank_interest_amount_invoiced": true,
+            "base_pagbank_interest_amount_invoiced": true
+        }
+    },
+    "sales_creditmemo": {
+        "column": {
+            "pagbank_interest_amount": true,
+            "base_pagbank_interest_amount": true,
+            "pagbank_interest_amount_refund": true,
+            "base_pagbank_interest_amount_refund": true
+        }
+    }
+}

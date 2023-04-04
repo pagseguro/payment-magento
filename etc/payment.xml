@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<payment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Payment:etc/payment.xsd">
+    <groups>
+        <group id="pagbank_group">
+            <label>PagBank</label>
+        </group>
+    </groups>
+    <methods>
+        <method name="pagbank_paymentmagento_cc">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="pagbank_paymentmagento_boleto">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+        <method name="pagbank_paymentmagento_pix">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+    </methods>
+</payment>

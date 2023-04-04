@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_model_service_quote_submit_before">
+        <observer name="pagbank_interest" instance="PagBank\PaymentMagento\Observer\CovertInterestToOrderObserver" />
+    </event>
+    <event name="payment_method_assign_data_pagbank_paymentmagento_cc">
+        <observer name="pagbank_paymentmagento_cc_data_assign" instance="PagBank\PaymentMagento\Observer\DataAssignCcObserver" />
+    </event>
+    <event name="payment_method_assign_data_getnet_paymentmagento_cc_vault">
+        <observer name="pagbank_paymentmagento_cc_data_assign" instance="PagBank\PaymentMagento\Observer\DataAssignCcObserver" />
+    </event>
+    <event name="payment_method_assign_data_pagbank_paymentmagento_boleto">
+        <observer name="pagbank_paymentmagento_boleto_data_assign" instance="PagBank\PaymentMagento\Observer\DataAssignPayerDataObserver" />
+    </event>
+    <event name="payment_method_assign_data_pagbank_paymentmagento_pix">
+        <observer name="pagbank_paymentmagento_pix_data_assign" instance="PagBank\PaymentMagento\Observer\DataAssignPayerDataObserver" />
+    </event>
+</config>

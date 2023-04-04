@@ -1,0 +1,51 @@
+<?php
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+
+/**
+ * @var \PagBank\PaymentMagento\Block\Adminhtml\System\Config\Oauth $block
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<script>
+require([
+    'jquery',
+    'prototype'
+], function($) {
+    var pagbankOauthSpan = jQuery('#pagbank-oauth_span');
+    
+    $('#payment_other_pagbank_base_settings_environment').change(
+        () => {
+        $('#pagbank_elements_for_pagbank-oauth').html(
+            'After changing the environment,' + 
+            ' it is necessary to save the configuration' +
+            'before using the authentication function.'
+        );}
+    );
+
+    $('#payment_us_pagbank_base_settings_environment').change(
+        () => {
+        $('#pagbank_elements_for_pagbank-oauth').html(
+            'Após mudar o ambiente é necessário salvar' +
+            ' a configuração antes de usar a função de autenticação.'
+        );}
+    );
+
+    $('#pagbank-oauth').click(function () {
+        <?php if ($block->getTypeJs() === "getautorization"): ?>
+            window.location.href = "<?=  /* @noEscape */ $block->getUrlToConnect() ?>";
+        <?php else: ?>
+            window.location.href = '<?=  /* @noEscape */ $block->escapeUrl($block->getAjaxUrl()) ?>'
+        <?php endif; ?>
+    });
+});
+</script>
+<div id="pagbank_elements_for_pagbank-oauth">
+    <?= /* @noEscape */ $block->getButtonHtml() ?>
+</div>

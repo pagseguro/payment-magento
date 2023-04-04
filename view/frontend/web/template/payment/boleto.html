@@ -1,0 +1,59 @@
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<div class="payment-method form-pagbank" css="_active: isActive()" data-bind="attr: {id: 'payment_form_' + getCode()}">
+    <div class="payment-method-title field choice">
+        <input type="radio"
+               name="payment[method]"
+               class="radio"
+               attr="id: getCode()"
+               ko-value="getCode()"
+               ko-checked="isChecked"
+               click="selectPaymentMethod"
+               visible="isRadioButtonVisible()">
+        </input>
+        <label attr="for: getCode()" class="label">
+            <img data-bind="attr: {
+                'src': baseDataForPaymentForm.getLogo().url,
+                'width': baseDataForPaymentForm.getLogo().width,
+                'height': baseDataForPaymentForm.getLogo().height,
+                'alt': baseDataForPaymentForm.getLogo().title,
+                'class': 'payment-icon'
+                }">
+            </img>
+            <span class="payment-method-label-description" data-bind="text: baseDataForPaymentForm.getTitle()"></span>
+        </label>
+    </div>
+    <div class="payment-method-content">
+        <each args="getRegion('messages')" render=""></each>
+        <form class="form" id="co-payment-form" method="post" afterRender="initFormElement">
+            <render args="boletoForm"></render>
+        </form>
+        <div class="payment-method-billing-address">
+            <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+        <div class="checkout-agreements-block">
+            <each args="$parent.getRegion('before-place-order')" render=""></each>
+        </div>
+        <div class="actions-toolbar">
+            <div class="primary">
+                <button class="action primary checkout"
+                        type="submit"
+                        click="beforePlaceOrder"
+                        css="disabled: !isPlaceOrderActionAllowed()"
+                        attr="title: $t('Place Order')">
+                    <span translate="'Place Order'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

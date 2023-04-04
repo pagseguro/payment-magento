@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Checkout\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="pagbank_paymentmagento_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\ConfigProviderBase</item>
+                <item name="pagbank_paymentmagento_cc_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\ConfigProviderCc</item>
+                <item name="pagbank_paymentmagento_cc_vault_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\Vault\ConfigProvider</item>
+                <item name="pagbank_paymentmagento_boleto_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\ConfigProviderBoleto</item>
+                <item name="pagbank_paymentmagento_pix_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\ConfigProviderPix</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="PagBank\PaymentMagento\Block\Sales\Info\Cc">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="PagBank\PaymentMagento\Block\Sales\Info\Boleto">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="PagBank\PaymentMagento\Block\Sales\Info\Pix">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Payment\Model\CcGenericConfigProvider">
+        <arguments>
+            <argument name="methodCodes" xsi:type="array">
+                <item name="pagbank_paymentmagento_cc" xsi:type="const">PagBank\PaymentMagento\Gateway\Config\ConfigCc::METHOD</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Vault\Model\Ui\TokensConfigProvider">
+        <arguments>
+            <argument name="tokenUiComponentProviders" xsi:type="array">
+                <item name="pagbank_paymentmagento_cc" xsi:type="object">PagBank\PaymentMagento\Model\Ui\TokenUiComponentProvider</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

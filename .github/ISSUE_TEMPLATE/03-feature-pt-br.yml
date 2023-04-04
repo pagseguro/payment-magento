@@ -1,0 +1,27 @@
+name: 🚀 Quero um novo recurso
+description: Diga-nos o que quer ver por aqui.
+title: "[Feature]: "
+labels: ["enhancement"]
+assignees:
+  - elisei
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por reservar um tempo para preencher este relatório de solicitação de novos recurso!
+  - type: input
+    id: contact
+    attributes:
+      label: Dados de Contato
+      description: Como podemos contatá-lo se precisarmos de mais informações?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Qual o novo recurso que quer ver?
+      description: Conta pra gente também o que você esperava que acontecesse e qual vai ser o resultado!
+      placeholder: Conta pra gente qual é o novo recurso que deseja!
+    validations:
+      required: true

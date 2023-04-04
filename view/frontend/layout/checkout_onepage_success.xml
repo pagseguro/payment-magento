@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<body>
+    <referenceContainer name="order.success.additional.info">
+        <block class="PagBank\PaymentMagento\Block\Sales\Order\Success"
+            name="order.success.additional.info.pagbank"
+            after="-" />
+    </referenceContainer>
+</body>

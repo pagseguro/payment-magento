@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="attribute_relationship" translate="label comment" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+        <label>Attribute Relationship Definition</label>
+        <comment>Relate store attributes with our API.</comment>
+        <field id="get_tax_id_from" translate="label select" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>The Tax ID (CPF/CNPJ) will be an attribute obtained from the</label>
+            <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\TaxId</source_model>
+            <config_path>payment/pagbank_paymentmagento/get_tax_id_from</config_path>
+            <validate>required-entry validate-select</validate>
+        </field>
+        <field id="street" translate="label select" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>The Street attribute is</label>
+            <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\Street</source_model>
+            <config_path>payment/pagbank_paymentmagento/street</config_path>
+            <validate>required-entry validate-select</validate>
+        </field> 
+        <field id="number" translate="label select" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>The address number is</label>
+            <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\Street</source_model>
+            <config_path>payment/pagbank_paymentmagento/number</config_path>
+            <validate>required-entry validate-select</validate>
+        </field>
+        <field id="locality" translate="label select" type="select" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>The address locality is</label>
+            <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\Street</source_model>
+            <config_path>payment/pagbank_paymentmagento/locality</config_path>
+            <validate>required-entry validate-select</validate>
+        </field>
+        <field id="complement" translate="label select" type="select" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>The address complement is</label>
+            <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\Street</source_model>
+            <config_path>payment/pagbank_paymentmagento/complement</config_path>
+            <validate>required-entry validate-select</validate>
+        </field>
+    </group>
+</include>

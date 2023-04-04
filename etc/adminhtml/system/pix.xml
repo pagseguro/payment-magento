@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="pagbank_paymentmagento_pix" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+        <label>Pix</label>
+        <comment>Pix is with P for PagBank: just like PagBank, it is 100% digital and faster than traditional TEDs or DOCs.</comment>
+        <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Enabled</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <config_path>payment/pagbank_paymentmagento_pix/active</config_path>
+        </field>
+        <field id="title" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Title</label>
+            <config_path>payment/pagbank_paymentmagento_pix/title</config_path>
+        </field>
+        <field id="expiration" translate="label select" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Deadline for payment</label>
+            <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\PixExpiration</source_model>
+            <config_path>payment/pagbank_paymentmagento_pix/expiration</config_path>
+            <validate>required-entry validate-select</validate>
+        </field>
+        <field id="instruction_checkout" translate="label" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Instruction during checkout</label>
+            <comment>Information displayed at checkout.</comment>
+            <config_path>payment/pagbank_paymentmagento_pix/instruction_checkout</config_path>
+        </field>
+        <field id="payment_action" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Payment Action</label>
+            <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\PaymentActionBoleto</source_model>
+            <config_path>payment/pagbank_paymentmagento_pix/payment_action</config_path>
+        </field>
+        <group id="basic_configuration" translate="label comment" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Basic configuration</label>
+            <comment>Basic configuration of payment methods.</comment>
+            <field id="min_order_total" translate="label" type="text" sortOrder="1010" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Minimum Order Total</label>
+                <validate>validate-number validate-zero-or-greater</validate>
+                <config_path>payment/pagbank_paymentmagento_pix/min_order_total</config_path>
+            </field>
+            <field id="max_order_total" translate="label" type="text" sortOrder="1020" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Maximum Order Total</label>
+                <validate>validate-number validate-zero-or-greater</validate>
+                <config_path>payment/pagbank_paymentmagento_pix/max_order_total</config_path>
+            </field>
+            <field id="allowspecific" translate="label" type="allowspecific" sortOrder="1030" showInDefault="9" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Payment From Applicable Countries</label>
+                <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                <config_path>payment/pagbank_paymentmagento_pix/allowspecific</config_path>
+            </field>
+            <field id="specificcountry" translate="label" type="multiselect" sortOrder="1040" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Payment From Specific Countries</label>
+                <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                <config_path>payment/pagbank_paymentmagento_pix/specificcountry</config_path>
+            </field>
+            <field id="sort_order" translate="label" type="text" sortOrder="1050" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Sort Order</label>
+                <frontend_class>validate-number</frontend_class>
+                <config_path>payment/pagbank_paymentmagento_pix/sort_order</config_path>
+            </field>
+        </group>
+        <group id="payer_data" translate="label comment" type="text" sortOrder="2000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Payer Data Capture</label>
+            <comment>Define the payment form data capture.</comment>
+            <field id="get_name" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Capture name in the payment form?</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>payment/pagbank_paymentmagento_pix/get_name</config_path>
+            </field>
+            <field id="get_tax_id" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Capture tax ID (CPF or CNPJ) in the payment form?</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>payment/pagbank_paymentmagento_pix/get_tax_id</config_path>
+            </field>
+            <field id="get_phone" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Capture phone in the payment form?</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>payment/pagbank_paymentmagento_pix/get_phone</config_path>
+            </field>
+        </group>
+    </group>
+</include>

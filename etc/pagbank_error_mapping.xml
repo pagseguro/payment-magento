@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Payment:etc/error_mapping.xsd">
+    <message_list>
+        <!-- API Erros https://dev.pagseguro.uol.com.br/reference/order-error -->
+        <message code="UNAUTHORIZED" translate="true">[UNAUTHORIZED] Estamos com um erro em nossa integração com o meio de pagamento, por favor entre em contato conosco.</message>
+        <message code="40001" translate="true">[40001] Estamos com um erro em nossa integração com o meio de pagamento, por favor entre em contato conosco.</message>
+        <message code="40002" translate="true">[40002] Estamos com um erro em nossa integração com o meio de pagamento, por favor entre em contato conosco.</message>
+        <message code="40003" translate="true">[40003] Estamos com um erro em nossa integração com o meio de pagamento, por favor entre em contato conosco.</message>
+        <message code="40004" translate="true">[40004] Estamos com um erro em nossa integração com o meio de pagamento, por favor entre em contato conosco.</message>
+        <message code="40005" translate="true">[40005] Estamos com um erro em nossa integração com o meio de pagamento, por favor entre em contato conosco.</message>
+        <message code="40006" translate="true">[40006] A captura desse pagamento já foi realizada ou expirou.</message>
+        <message code="40007" translate="true">[40007] Reembolso já realizado ou o valor solicitado acima do permitido.</message>
+
+        <!-- Denied https://dev.pagseguro.uol.com.br/reference/order-denied-codes -->
+        <message code="20001" translate="true">[20001] Por favor, entre em contato com a central do seu cartão. O número está no versão do cartão.</message>
+        <message code="20003" translate="true">[20003] Transação não autorizada, por favor utilize outro forma de pagamento.</message>
+        <message code="20007" translate="true">[20007] Por favor, verifique os dados do cartão.</message>
+        <message code="20008" translate="true">[20008] Desculpe mas essa transação permite parcelamento, por favor utilize outro forma de pagamento.</message>
+        <message code="20012" translate="true">[20012] O valor dessa transação não é permitido, por favor utilize outro forma de pagamento.</message>
+        <message code="20016" translate="true">[20016] Senha inválida, por favor utilize outro forma de pagamento.</message>
+        <message code="20017" translate="true">[20017] Transação não permitida, por favor utilize outro forma de pagamento.</message>
+        <message code="20018" translate="true">[20018] Por favor, entre em contato com a central do seu cartão. O número está no versão do cartão.</message>
+        <message code="20019" translate="true">[20019] Falha de comunicação, por favor tente novamente.</message>
+        <message code="20039" translate="true">[20039] Transação não permitida, por favor utilize outro forma de pagamento.</message>
+        <message code="20101" translate="true">[20101] Senha inválida, por favor utilize outro forma de pagamento.</message>
+        <message code="20102" translate="true">[20102] Senha inválida, por favor utilize a sua nova senha ou use outra forma de pagamento.</message>
+        <message code="20103" translate="true">[20103] Ocorreu um excesso de tentativas, por favor contate sua central do cartão ou use outra forma de pagamento.</message>
+        <message code="20104" translate="true">[20104] Valor excedido, por favor contate a sua central do cartão ou use outra forma de pagamento.</message>
+        <message code="20105" translate="true">[20105] Quantidade de saques excedidas.</message>
+        <message code="20110" translate="true">[20110] Ocorreu um erro de integração por favor utilize outra forma de pagamento.</message>
+        <message code="20111" translate="true">[20111] Ocorreu um erro de integração por favor utilize outra forma de pagamento.</message>
+        <message code="20112" translate="true">[20112] O valor de captura está diferente do valor pré autorizado.</message>
+        <message code="20113" translate="true">[20113] Por favor, utilize a função de crédito do cartão.</message>
+        <message code="20114" translate="true">[20114] Por favor, utilize a função de débito do cartão.</message>
+        <message code="20115" translate="true">[20115] Saque não disponível.</message>
+        <message code="20116" translate="true">[20116] Dados do cartão estão inválidos, por favor verifique todos os dados e tente novamente.</message>
+        <message code="20117" translate="true">[20117] Há um erro no cartão, por favor utilize outro ou outra forma de pagamento.</message>
+        <message code="20118" translate="true">[20118] O pagamento recorrente está suspenso.</message>
+        <message code="20119" translate="true">[20119] Refazer a transação.</message>
+        <message code="20158" translate="true">[20158] Não autorizada, por favor tente novamente mais tarde.</message>
+        <message code="20159" translate="true">[20159] Não autorizada, por favor tente novamente mais tarde usando a autenticação.</message>
+        <message code="20169" translate="true">[20169] O cartão não permite transação internacional, por favor use outro cartão ou outra forma de pagamento.</message>
+        <message code="20301" translate="true">[20301] Seu cartão está bloqueado, por favor entre em contato com a sua central de atendimento (o número está no verso) ou use outra forma de pagamento.</message>
+        <message code="20999" translate="true">[20999] O lojista deverá entrar em contato com o PagBank antes de você realizar uma nova tentativa.</message>
+        <message code="10000" translate="true">[10000] Transação não autorizada, por favor utilize outro forma de pagamento.</message>
+        <message code="10001" translate="true">[10001] Quantidade de tentativas excedidas, por favor use outra forma de pagamento.</message>
+        <message code="10002" translate="true">[10002] Transação não autorizada, por favor utilize outro forma de pagamento.</message>
+        <message code="10003" translate="true">[10003] Transação inválida, por favor utilize outra forma de pagamento.</message>
+        <message code="10004" translate="true">[10004] Transação não permitida, por favor utilize outro forma de pagamento.</message>
+    </message_list>
+</mapping>

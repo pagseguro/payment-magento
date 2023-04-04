@@ -1,0 +1,97 @@
+<?php
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+
+/**
+ * @var \PagBank\PaymentMagento\Block\Sales\Form\Pix $block
+ * @see \PagBank\PaymentMagento\Block\Sales\Form\Pix
+ */
+$specificInfo = $block->getSpecificInformation();
+$title = $block->escapeHtml($block->getMethod()->getTitle());
+$qrCode = isset($specificInfo['qr_code']) ? $specificInfo['qr_code']: null;
+$qrCodeImage = isset($specificInfo['qr_code_image']) ? $specificInfo['qr_code_image'] : null;
+$expirationDate = isset($specificInfo['expiration_date']) ? $specificInfo['expiration_date'] : null;
+$payerName = isset($specificInfo['payer_name']) ? $specificInfo['payer_name'] : null;
+$payerPhone = isset($specificInfo['payer_phone']) ? $specificInfo['payer_phone'] : null;
+$payerTaxId = isset($specificInfo['payer_tax_id']) ? $specificInfo['payer_tax_id'] : null;
+?>
+
+<?php if ($specificInfo): ?>
+    <table class="admin__table-secondary order-information-table">
+        <caption class="table-caption"><?= /* @noEscape */ $title ?></caption>
+        <tbody>
+            <?php if ($expirationDate): ?>
+                <tr>
+                    <th scope="row"><?= $block->escapeHtml(__('Expiration')); ?></th>
+                    <td>
+                        <?= /* @noEscape */ $block->formatDate(
+                            $expirationDate,
+                            \IntlDateFormatter::LONG,
+                            true
+                        ) ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if ($qrCodeImage): ?>
+                <tr>
+                    <th scope="row">
+                        <?= $block->escapeHtml(__('Pix Qr Code')); ?>
+                    </th>
+                    <td>
+                        <img
+                            src="<?=  $block->escapeHtml($qrCodeImage) ?>" 
+                            alt="<?= /* @noEscape */ $title ?>"
+                            width="250">
+                        </img>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if ($qrCode): ?>
+                <tr>
+                    <th scope="row">
+                        <?= $block->escapeHtml(__('Pix Copy and Paste')); ?>
+                    </th>
+                    <td>
+                        <textarea readonly="true"><?= $block->escapeHtml($qrCode) ?></textarea>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if ($payerName): ?>
+                <tr>
+                    <th scope="row">
+                        <?= $block->escapeHtml(__('Payer Name')); ?>
+                    </th>
+                    <td>
+                        <?= $block->escapeHtml($payerName) ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if ($payerPhone): ?>
+                <tr>
+                    <th scope="row">
+                        <?= $block->escapeHtml(__('Payer Phone')); ?>
+                    </th>
+                    <td>
+                        <?= $block->escapeHtml($payerPhone) ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if ($payerTaxId): ?>
+                <tr>
+                    <th scope="row">
+                        <?= $block->escapeHtml(__('Payer Tax Id')); ?>
+                    </th>
+                    <td>
+                        <?= $block->escapeHtml($payerTaxId) ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+<?php endif;?>

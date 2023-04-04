@@ -1,0 +1,58 @@
+
+<?php
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+
+/**
+ * @var PagBank\PaymentMagento\Block\Sales\Order\Success $block
+ * @see PagBank\PaymentMagento\Block\Order\Success
+ */
+$qrCode = $block->getInfo('qr_code');
+$qrCodeImage = $block->getInfo('qr_code_image');
+?>
+<div class="pagbank-payment-success-details">
+    <div class="pagbank-payment-pix-image">
+        <p><?= $block->escapeHtml(__('To pay, read the Qr Code')) ?></p>
+        <div class="qrcode-image">
+            <img src="<?= $block->escapeUrl($block->getMediaUrl($qrCodeImage)); ?>"
+                class="pix-qrcode"
+                alt="<?= $block->escapeHtml(__('Pix Qr Code')) ?>">
+            </img>
+        </div>
+    </div>
+    <div class="pagbank-payment-pix-copy">
+        <p><?= $block->escapeHtml(__('Or if you prefer, copy and paste the code')) ?></p>
+        <div class="field pagbank-input-group">
+            <div class="control _with-tooltip">
+                <input type="text"
+                    id="line-code-value"
+                    value="<?= $block->escapeHtml($qrCode); ?>"
+                    class="input-text"/> 
+                <div class="field-tooltip toggle">
+                    <button class="btn" id="copy-code" 
+                        data-clipboard-action="copy" 
+                        data-clipboard-target="#line-code-value">
+                        <?= $block->escapeHtml(__('Copy')); ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/x-magento-init">
+    {
+        "#copy-code": {
+            "widgetClipboard": {
+                "enabled": true,
+                "copiedtext": "<?= /* @noEscape */ __('Copied'); ?>",
+                "textBtn": "<?= /* @noEscape */ __('Copy'); ?>"
+            }
+        }
+    }
+</script>

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Magento_Payment::payment_services" title="Payment Services" translate="title">
+                                <resource id="PagBank_PaymentMagento::preference" title="Permission for set preference account PagBank" translate="title" />
+                                <resource id="PagBank_PaymentMagento::oauth" title="Permission for config PagBank" translate="title" />
+                                <resource id="PagBank_PaymentMagento::logout" title="Permission for clear config PagBank" translate="title" />
+                            </resource>
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

@@ -1,0 +1,57 @@
+
+<?php
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+
+/**
+ * @var PagBank\PaymentMagento\Block\Sales\Order\Success $block
+ * @see PagBank\PaymentMagento\Block\Order\Success
+ */
+
+$lineCode = $block->getInfo('boleto_line_code');
+$link = $block->getInfo('boleto_pdf_href');
+?>
+<div class="pagbank-payment-success-details">
+    <div class="pagbank-payment-boleto-copy">
+        <?= $block->escapeHtml(__('The Boleto barcode is')) ?> 
+        <div class="field pagbank-input-group">
+            <div class="control _with-tooltip">
+                <input type="text"
+                    id="line-code-value"
+                    value="<?= $block->escapeHtml($lineCode); ?>"
+                    class="input-text"/> 
+                <div class="field-tooltip toggle">
+                    <button class="btn" id="copy-code" 
+                        data-clipboard-action="copy" 
+                        data-clipboard-target="#line-code-value">
+                        <?= $block->escapeHtml(__('Copy')); ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="pagbank-payment-boleto-link">
+        <a href="<?= $block->escapeUrl($block->getMediaUrl($link)); ?>"
+            target="_blank"
+            class="action primary continue">
+            <?= $block->escapeHtml(__('Download the Boleto')) ?> 
+        </a>
+    </div>
+</div>
+<script type="text/x-magento-init">
+    {
+        "#copy-code": {
+            "widgetClipboard": {
+                "enabled": true,
+                "copiedtext": "<?= $block->escapeHtml(__('Copied')); ?>",
+                "textBtn": "<?= $block->escapeHtml(__('Copy')); ?>"
+            }
+        }
+    }
+</script>

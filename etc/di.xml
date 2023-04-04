@@ -1,0 +1,777 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Plugin - Vault not duplicated -->
+    <type name="Magento\Vault\Api\PaymentTokenManagementInterface">
+        <plugin name="pagbank_vault"
+                type="PagBank\PaymentMagento\Plugin\PaymentToken"
+                sortOrder="1"/>
+    </type>
+
+    <!-- Plugin - Add Tax Vat -->
+    <type name="Magento\Customer\CustomerData\Customer">
+        <plugin name="pagbank_additional_section_data" 
+                type="PagBank\PaymentMagento\Plugin\AddtionalCustomerData" 
+                sortOrder="100"/>
+    </type>
+
+    <!-- Plugin - Add Buttons -->
+    <type name="Magento\Sales\Block\Adminhtml\Order\View">
+        <plugin name="addtional_buttons" type="PagBank\PaymentMagento\Plugin\SalesOrderViewButtonPlugin" sortOrder="100"/>
+    </type>
+
+    <!-- Console -->
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="refresh_token" xsi:type="object">PagBank\PaymentMagento\Console\Command\Basic\RefreshToken</item>
+                <item name="get_order_update" xsi:type="object">PagBank\PaymentMagento\Console\Command\Orders\GetUpdate</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- API - List Installments -->
+    <preference for="PagBank\PaymentMagento\Api\Data\CreditCardBinInterface" type="PagBank\PaymentMagento\Model\Api\Data\CreditCardBin" />
+    <preference for="PagBank\PaymentMagento\Api\ListInstallmentsManagementInterface" type="PagBank\PaymentMagento\Model\Api\ListInstallmentsManagement" />
+    <preference for="PagBank\PaymentMagento\Api\GuestListInstallmentsManagementInterface" type="PagBank\PaymentMagento\Model\Api\GuestListInstallmentsManagement" />
+
+    <!-- API - PagBank Interest -->
+    <preference for="PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface" type="PagBank\PaymentMagento\Model\Api\Data\InstallmentSelected" />
+    <preference for="PagBank\PaymentMagento\Api\InterestManagementInterface" type="PagBank\PaymentMagento\Model\Api\InterestManagement" />
+    <preference for="PagBank\PaymentMagento\Api\GuestInterestManagementInterface" type="PagBank\PaymentMagento\Model\Api\GuestInterestManagement" />
+
+    <!-- Define use Url Frontend -->
+    <type name="PagBank\PaymentMagento\Gateway\Request\NotificationUrlDataRequest">
+        <arguments>
+            <argument name="frontendUrlBuilder" xsi:type="object">Magento\Framework\Url</argument>
+        </arguments>
+    </type>
+
+    <!-- All - Adapter Interface -->
+    <preference for="Magento\Payment\Gateway\Data\Order\AddressAdapter" type="PagBank\PaymentMagento\Gateway\Data\Order\AddressAdapter"/>
+    <preference for="Magento\Payment\Gateway\Data\Order\OrderAdapter" type="PagBank\PaymentMagento\Gateway\Data\Order\OrderAdapter"/>
+
+    <!-- Payment Method Facade Configuration -->
+    <virtualType name="PagBankBaseFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">PagBank\PaymentMagento\Model\Ui\ConfigProviderBase::CODE</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PagBankValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">PagBankCcCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankCcFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">PagBank\PaymentMagento\Model\Ui\ConfigProviderCc::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">PagBank\PaymentMagento\Block\Sales\Form\CreditCard</argument>
+            <argument name="infoBlockType" xsi:type="string">PagBank\PaymentMagento\Block\Sales\Info\CreditCard</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PagBankCcValueHandlerPool</argument>
+            <argument name="validatorPool" xsi:type="object">PagBankCcValidatorPool</argument>
+            <argument name="commandPool" xsi:type="object">PagBankCcCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankCcVaultFacade" type="PagBank\PaymentMagento\Plugin\VaultAddtionalCommand">
+        <arguments>
+            <argument name="code" xsi:type="const">PagBank\PaymentMagento\Model\Ui\ConfigProviderCc::VAULT_CODE</argument>
+            <argument name="config" xsi:type="object">PagBankVaultPaymentConfig</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PagBankVaultPaymentValueHandlerPool</argument>
+            <argument name="validatorPool" xsi:type="object">PagBankCcValidatorPool</argument>
+            <argument name="vaultProvider" xsi:type="object">PagBankCcFacade</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankBoletoFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">PagBank\PaymentMagento\Model\Ui\ConfigProviderBoleto::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">PagBank\PaymentMagento\Block\Sales\Form\Boleto</argument>
+            <argument name="infoBlockType" xsi:type="string">PagBank\PaymentMagento\Block\Sales\Info\Boleto</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PagBankBoletoValueHandlerPool</argument>
+            <argument name="validatorPool" xsi:type="object">PagBankBoletoValidatorPool</argument>
+            <argument name="commandPool" xsi:type="object">PagBankBoletoCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankPixFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">PagBank\PaymentMagento\Model\Ui\ConfigProviderPix::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">PagBank\PaymentMagento\Block\Sales\Form\Pix</argument>
+            <argument name="infoBlockType" xsi:type="string">PagBank\PaymentMagento\Block\Sales\Info\Pix</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PagBankPixValueHandlerPool</argument>
+            <argument name="validatorPool" xsi:type="object">PagBankPixValidatorPool</argument>
+            <argument name="commandPool" xsi:type="object">PagBankPixCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- All - Executors -->
+    <type name="Magento\Payment\Gateway\Command\CommandManagerPool">
+        <arguments>
+            <argument name="executors" xsi:type="array">
+                <item name="pagbank_paymentmagento_cc" xsi:type="string">PagBankCcCommandManager</item>
+                <item name="pagbank_paymentmagento_cc_vault" xsi:type="string">PagBankCcCommandManager</item>
+                <item name="pagbank_paymentmagento_boleto" xsi:type="string">PagBankBoletoCommandManager</item>
+                <item name="pagbank_paymentmagento_pix" xsi:type="string">PagBankPixCommandManager</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- All - Configuration reader -->
+    <virtualType name="PagBankBaseConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\PagBank\PaymentMagento\Model\Ui\ConfigProviderBase::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankCcConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\PagBank\PaymentMagento\Model\Ui\ConfigProviderCc::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankVaultPaymentConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PagBank\PaymentMagento\Gateway\Config\ConfigCcVault</argument>
+            <argument name="methodCode" xsi:type="const">\PagBank\PaymentMagento\Model\Ui\ConfigProviderCc::VAULT_CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankBoletoConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\PagBank\PaymentMagento\Model\Ui\ConfigProviderBoleto::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankPixConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\PagBank\PaymentMagento\Model\Ui\ConfigProviderPix::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- All - Block Info -->
+    <type name="PagBank\PaymentMagento\Block\Sales\Info\CreditCard">
+        <arguments>
+            <argument name="config" xsi:type="object">PagBankCcConfig</argument>
+        </arguments>
+    </type>
+
+    <type name="PagBank\PaymentMagento\Block\Sales\Info\Boleto">
+        <arguments>
+            <argument name="config" xsi:type="object">PagBankBoletoConfig</argument>
+        </arguments>
+    </type>
+
+    <type name="PagBank\PaymentMagento\Block\Sales\Info\Pix">
+        <arguments>
+            <argument name="config" xsi:type="object">PagBankPixConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Boleto - Commands infrastructure -->
+    <virtualType name="PagBankBoletoCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="initialize" xsi:type="string">PagBankBoletoOrderCommand</item>
+                <item name="refund" xsi:type="string">PagBankRefundCommand</item>
+                <item name="fetch_transaction_information" xsi:type="string">PagBankBaseFetchCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Boleto - Order Commands -->
+    <virtualType name="PagBankBoletoOrderCommand" type="PagBank\PaymentMagento\Gateway\Command\PaymentCommand">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PagBankBoletoCommandPool</argument>
+            <argument name="requestBuilder" xsi:type="object">PagBankBoletoOrderRequest</argument>
+            <argument name="handler" xsi:type="object">PagBankBoletoOrderResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\CreateOrderClient</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Boleto - Order Request -->
+    <virtualType name="PagBankBoletoOrderRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="storeId" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\MetadataRequest</item>
+                <item name="referenceId"  xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ReferenceIdRequest</item>
+                <item name="description" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\DescriptionDataRequest</item>
+                <item name="amount" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\AmountDataRequest</item>
+                <item name="customer" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\CustomerDataRequest</item>
+                <item name="items"  xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ItemsDataRequest</item>
+                <item name="billingAddress" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\BillingAddressDataRequest</item>
+                <item name="shippingAddress" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ShippingsDataRequest</item>
+                <item name="notificationUrl" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\NotificationUrlDataRequest</item>
+                <!-- Specific to the obj charges. -->
+                <item name="charges" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ChargesDataRequest</item>
+                <item name="chargesAmount" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\Common\AmountDataRequest</item>
+                <!-- Specific to the payment method. -->
+                <item name="paymentMethodBoleto" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\Boleto\PaymentBoletoDataRequest</item>
+                <item name="chargesPaymentBoleto" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\Boleto\PaymentMethodDataRequest</item>
+                <item name="chargesHolder" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\Boleto\HolderDataRequest</item>
+                <item name="chargesHolderAddress" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\Boleto\HolderBillingAddressDataRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Boleto - Order Payment Response handlers -->
+    <virtualType name="PagBankBoletoOrderResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="extOrdId" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\ExtOrdIdHandler</item>
+                <item name="transaction" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\TxnOrderedHandler</item>
+                <item name="txnDataBoleto" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\TxnDataBoletoHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+
+    <!-- Boleto - Validators -->
+    <virtualType name="PagBankBoletoValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PagBankBoletoCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Boleto - Country Validator -->
+    <virtualType name="PagBankBoletoCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PagBank\PaymentMagento\Gateway\Config\ConfigBoleto</argument>
+        </arguments>
+    </virtualType>
+    
+
+    <!-- Pix - Commands infrastructure -->
+    <virtualType name="PagBankPixCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="initialize" xsi:type="string">PagBankPixOrderCommand</item>
+                <item name="refund" xsi:type="string">PagBankRefundCommand</item>
+                <item name="fetch_transaction_information" xsi:type="string">PagBankBaseFetchCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Pix - Order Commands -->
+    <virtualType name="PagBankPixOrderCommand" type="PagBank\PaymentMagento\Gateway\Command\PaymentCommand">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PagBankPixCommandPool</argument>
+            <argument name="requestBuilder" xsi:type="object">PagBankPixOrderRequest</argument>
+            <argument name="handler" xsi:type="object">PagBankPixOrderResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\CreateOrderPaymentPixClient</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Pix - Order Request -->
+    <virtualType name="PagBankPixOrderRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="storeId" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\MetadataRequest</item>
+                <item name="referenceId"  xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ReferenceIdRequest</item>
+                <item name="description" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\DescriptionDataRequest</item>
+                <item name="amount" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\AmountDataRequest</item>
+                <item name="customer" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\CustomerDataRequest</item>
+                <item name="items"  xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ItemsDataRequest</item>
+                <item name="shippingAddress" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ShippingsDataRequest</item>
+                <item name="billingAddress" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\BillingAddressDataRequest</item>
+                <item name="notificationUrl" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\NotificationUrlDataRequest</item>
+                <!-- Specific to the payment method. -->
+                <item name="qrCodeData"  xsi:type="string">PagBank\PaymentMagento\Gateway\Request\QrCodeDataRequest</item>
+                <item name="qrCodePixExpirationData"  xsi:type="string">PagBank\PaymentMagento\Gateway\Request\QrCodeExpirationDateDataRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Pix - Order Payment Response handlers -->
+    <virtualType name="PagBankPixOrderResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="extOrdId" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\ExtOrdIdHandler</item>
+                <item name="transaction" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\TxnOrderedHandler</item>
+                <item name="txnDataPix" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\TxnDataPixHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Pix - Validators -->
+    <virtualType name="PagBankPixValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PagBankPixCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Pix - Country Validator -->
+    <virtualType name="PagBankPixCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PagBank\PaymentMagento\Gateway\Config\ConfigPix</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Cc - Commands infrastructure -->
+    <virtualType name="PagBankCcCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="initialize" xsi:type="string">PagBankOrderedCcCommand</item>
+                <item name="authorize" xsi:type="string">PagBankOrderedCcCommand</item>
+                <item name="capture" xsi:type="string">PagBankOrderedCcCommand</item>
+                <item name="refund" xsi:type="string">PagBankRefundCommand</item>
+                <item name="cancel" xsi:type="string">PagBankDenyPaymentCommand</item>
+                <item name="void" xsi:type="string">PagBankDenyPaymentCommand</item>
+                <item name="accept_payment" xsi:type="string">PagBankAcceptPaymentCommand</item>
+                <item name="fetch_transaction_information" xsi:type="string">PagBankBaseFetchCommand</item>
+                <item name="deny_payment" xsi:type="string">PagBankDenyPaymentCommand</item>
+                <item name="vault_initialize" xsi:type="string">PagBankCcVaultAuthorizeCommand</item>
+                <item name="vault_fetch_transaction_information" xsi:type="string">PagBankBaseFetchCommand</item>
+                <item name="vault_authorize" xsi:type="string">PagBankCcVaultAuthorizeCommand</item>
+                <item name="vault_sale" xsi:type="string">PagBankCcVaultCaptureCommand</item>
+                <item name="vault_capture" xsi:type="string">PagBankCcVaultCaptureCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Cc - Request -->
+    <virtualType name="PagBankCcAuthorizationRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="storeId" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\MetadataRequest</item>
+                <item name="referenceId"  xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ReferenceIdRequest</item>
+                <item name="description" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\DescriptionDataRequest</item>
+                <item name="amount" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\AmountDataRequest</item>
+                <item name="customer" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\CustomerDataRequest</item>
+                <item name="items"  xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ItemsDataRequest</item>
+                <item name="shippingAddress" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ShippingsDataRequest</item>
+                <item name="billingAddress" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\BillingAddressDataRequest</item>
+                <item name="notificationUrl" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\NotificationUrlDataRequest</item>
+                <!-- Specific to the obj charges. -->
+                <item name="charges" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ChargesDataRequest</item>
+                <item name="chargesAmount" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\Common\AmountDataRequest</item>
+                <!-- Specific to the payment method. -->
+                <item name="paymentMethod" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\CreditCard\PaymentCcDataRequest</item>
+                <item name="vaultBuilder" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\CreditCard\VaultDataBuilder</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Cc - Commands Authorize -->
+    <virtualType name="PagBankAuthorizeCcCommand" type="PagBank\PaymentMagento\Gateway\Command\PaymentCommand">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PagBankCcCommandPool</argument>
+            <argument name="requestBuilder" xsi:type="object">PagBankCcAuthorizationRequest</argument>
+            <argument name="handler" xsi:type="object">CcTransactionOrderedHandler</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\CreateOrderClient</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Cc - Ordered Commands -->
+    <virtualType name="PagBankOrderedCcCommand" type="PagBank\PaymentMagento\Gateway\Command\PaymentCommand">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PagBankCcCommandPool</argument>
+            <argument name="requestBuilder" xsi:type="object">PagBankCcAuthorizationRequest</argument>
+            <argument name="handler" xsi:type="object">CcTransactionOrderedHandler</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\CreateOrderClient</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+    
+    <!-- Cc - Ordered Payment Response handlers -->
+    <virtualType name="CcTransactionOrderedHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="extOrdId" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\ExtOrdIdHandler</item>
+                <item name="transaction" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\TxnOrderedHandler</item>
+                <item name="txnDataCc" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\TxnDataCcHandler</item>
+                <item name="vaultBuilder" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\VaultDetailsHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+
+    <!-- Cc - Validators -->
+    <virtualType name="PagBankCcValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PagBankCcCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Cc - Country Validator -->
+    <virtualType name="PagBankCcCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PagBank\PaymentMagento\Gateway\Config\ConfigCc</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Vault - Capture Command-->
+    <virtualType name="PagBankCcVaultCaptureCommand" type="PagBank\PaymentMagento\Gateway\Command\PaymentCommand">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PagBankCcCommandPool</argument>
+            <argument name="requestBuilder" xsi:type="object">PagBankCcVaultRequest</argument>
+            <argument name="handler" xsi:type="object">CcTransactionOrderedHandler</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\CreateOrderClient</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Vault - Authorize Command-->
+    <virtualType name="PagBankCcVaultAuthorizeCommand" type="PagBank\PaymentMagento\Gateway\Command\PaymentCommand">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PagBankCcCommandPool</argument>
+            <argument name="requestBuilder" xsi:type="object">PagBankCcVaultRequest</argument>
+            <argument name="handler" xsi:type="object">CcTransactionOrderedHandler</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\CreateOrderClient</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Vault - Request -->
+    <virtualType name="PagBankCcVaultRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="storeId" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\MetadataRequest</item>
+                <item name="referenceId"  xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ReferenceIdRequest</item>
+                <item name="description" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\DescriptionDataRequest</item>
+                <item name="amount" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\AmountDataRequest</item>
+                <item name="customer" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\CustomerDataRequest</item>
+                <item name="items"  xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ItemsDataRequest</item>
+                <item name="shippingAddress" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ShippingsDataRequest</item>
+                <item name="billingAddress" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\BillingAddressDataRequest</item>
+                <item name="notificationUrl" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\NotificationUrlDataRequest</item>
+                <!-- Specific to the obj charges. -->
+                <item name="charges" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ChargesDataRequest</item>
+                <item name="chargesAmount" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\Common\AmountDataRequest</item>
+                <!-- Specific to the payment method. -->
+                <item name="paymentMethod" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\CreditCard\VaultPaymentDataRequest</item>
+                <item name="vaultBuilder" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\CreditCard\VaultDataBuilder</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Base - Fetch - Command -->
+    <virtualType name="PagBankBaseFetchCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PagBankBaseFetchRequest</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\FetchPaymentClient</argument>
+            <argument name="handler" xsi:type="object">PagBankBaseFetchResponseHandlerComposite</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Base - Fetch - Info Request -->
+    <virtualType name="PagBankBaseFetchRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="storeId" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\MetadataRequest</item>
+                <item name="transaction" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\OrderedTransactionIdRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    
+    <!-- Base - Fetch - Response handlers -->
+    <virtualType name="PagBankBaseFetchResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="fetch" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\FetchPaymentHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Base - Refund - Command -->
+    <virtualType name="PagBankRefundCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PagBankRefundRequest</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\RefundClient</argument>
+            <argument name="handler" xsi:type="object">PagBankRefundResponseHandlerComposite</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Base - Refund - Transaction Info Request -->
+    <virtualType name="PagBankRefundRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="storeId" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\MetadataRequest</item>
+                <item name="transaction" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\CaptureTransactionIdRequest</item>
+                <item name="amountTotal" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\AmountRefundDataRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    
+    <!-- Base - Refund - Info handlers -->
+    <virtualType name="PagBankRefundResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="refund" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\RefundHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Base - Accept Payment Command -->
+    <virtualType name="PagBankAcceptPaymentCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PagBankAcceptPaymentRequest</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\AcceptPaymentClient</argument>
+            <argument name="handler" xsi:type="object">PagBankAccpetPaymentResponseHandlerComposite</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Base - Accept Payment Request -->
+    <virtualType name="PagBankAcceptPaymentRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="storeId" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\MetadataRequest</item>
+                <item name="transaction" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\AuthTransactionIdRequest</item>
+                <item name="amountTotal" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\AmountDataRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    
+    <!-- Base - Accept Payment handlers -->
+    <virtualType name="PagBankAccpetPaymentResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="accept" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\AcceptPaymentHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Base - Deny Payment Command -->
+    <virtualType name="PagBankDenyPaymentCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PagBankDenyPaymentRequest</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\DenyPaymentClient</argument>
+            <argument name="handler" xsi:type="object">PagBankDenyPaymentResponseHandlerComposite</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Base - Deny Payment Request -->
+    <virtualType name="PagBankDenyPaymentRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="storeId" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\MetadataRequest</item>
+                <item name="transaction" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\AuthTransactionIdRequest</item>
+                <item name="amountDenyTotal" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\AmountDataRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    
+    <!-- Base - Deny Payment handlers -->
+    <virtualType name="PagBankDenyPaymentResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="deny" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\DenyPaymentHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+   
+    <!-- Base - Error Mapping -->
+    <virtualType name="PagBankErrorMappingConfigReader" type="Magento\Payment\Gateway\ErrorMapper\VirtualConfigReader">
+        <arguments>
+            <argument name="fileName" xsi:type="string">pagbank_error_mapping.xml</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PagBankErrorMappingData" type="Magento\Payment\Gateway\ErrorMapper\MappingData">
+        <arguments>
+            <argument name="reader" xsi:type="object">PagBankErrorMappingConfigReader</argument>
+            <argument name="cacheId" xsi:type="string">pagbank_error_mapper</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PagBankVirtualErrorMessageMapper" type="Magento\Payment\Gateway\ErrorMapper\ErrorMessageMapper">
+        <arguments>
+            <argument name="messageMapping" xsi:type="object">PagBankErrorMappingData</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Base - Validator -->
+    <virtualType name="PagBankTransactionValidator" type="Magento\Payment\Gateway\Validator\ValidatorComposite">
+        <arguments>
+            <argument name="chainBreakingValidators" xsi:type="array">
+                <item name="general" xsi:type="boolean">true</item>
+            </argument>
+            <argument name="validators" xsi:type="array">
+                <item name="general" xsi:type="string">PagBank\PaymentMagento\Gateway\Validator\GeneralResponseValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- All - Implements Config Value Handler -->
+    <virtualType name="PagBankValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PagBankBaseConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankBaseConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PagBankBaseConfig</argument>
+        </arguments>
+    </virtualType>
+    
+    <virtualType name="PagBankCcValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PagBankCcConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankCcConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PagBankCcConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankCcCommandManager" type="Magento\Payment\Gateway\Command\CommandManager">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PagBankCcCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankVaultPaymentValueHandlerPool" type="VaultPaymentValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PagBankVaultPaymentValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    
+    <virtualType name="PagBankVaultPaymentValueHandler" type="VaultPaymentDefaultValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PagBankVaultPaymentConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankBoletoCommandManager" type="Magento\Payment\Gateway\Command\CommandManager">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PagBankBoletoCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankBoletoValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PagBankBoletoConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankBoletoConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PagBankBoletoConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankPixCommandManager" type="Magento\Payment\Gateway\Command\CommandManager">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PagBankPixCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankPixValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PagBankPixConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankPixConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PagBankPixConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- All - Implements Config -->
+    <virtualType name="PagBankLogger" type="Magento\Payment\Model\Method\Logger">
+        <arguments>
+            <argument name="config" xsi:type="object">PagBankBaseConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="PagBank\PaymentMagento\Model\Api\ConsultPSInstallments">
+        <arguments>
+            <argument name="config" xsi:type="object">PagBankBaseConfig</argument>
+        </arguments>
+    </type>
+
+    <type name="PagBank\PaymentMagento\Model\Api\Credential">
+        <arguments>
+            <argument name="config" xsi:type="object">PagBankBaseConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- All - Implements Logger -->
+    <type name="PagBank\PaymentMagento\Gateway\Validator\GeneralResponseValidator">
+        <arguments>
+            <argument name="logger" xsi:type="object">PagBankLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="PagBank\PaymentMagento\Gateway\Http\Client\ApiClient">
+        <arguments>
+            <argument name="logger" xsi:type="object">PagBankLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="PagBank\PaymentMagento\Controller\Notification\All">
+        <arguments>
+            <argument name="logger" xsi:type="object">PagBankLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="PagBank\PaymentMagento\Cron\RefreshToken">
+        <arguments>
+            <argument name="logger" xsi:type="object">PagBankLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="PagBank\PaymentMagento\Model\Console\Command\Basic\Refresh">
+        <arguments>
+            <argument name="logger" xsi:type="object">PagBankLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="PagBank\PaymentMagento\Model\Console\Command\Orders\Update">
+        <arguments>
+            <argument name="logger" xsi:type="object">PagBankLogger</argument>
+        </arguments>
+    </type>
+</config>

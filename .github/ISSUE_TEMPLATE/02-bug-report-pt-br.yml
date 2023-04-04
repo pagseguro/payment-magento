@@ -1,0 +1,78 @@
+name: 🐞 Reportar um Problema
+description: Informe um problema técnico ou de configuração.
+title: "[Bug]: "
+labels: ["bug"]
+assignees:
+  - elisei
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por reservar um tempo para preencher este relatório de bug!
+  - type: input
+    id: contact
+    attributes:
+      label: Dados de Contato
+      description: Como podemos contatá-lo se precisarmos de mais informações?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: O que aconteceu?
+      description: Conta pra gente também o que você esperava que acontecesse e qual foi o resultado!
+      placeholder: Conta pra gente qual foi o resultado!
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Versão da Magento/Adobe
+      description: Qual a versão da sua loja?
+      options:
+        - 2.3.x (Magento/Adobe >= 2.3.0 e < 2.4.0)
+        - 2.4.0 até 2.4.5 (Magento/Adobe >= 2.4.0 e < 2.4.5)
+        - 2.4.6+ (Magento/Adobe >= 2.4.6)
+    validations:
+      required: true
+  - type: dropdown
+    id: php
+    attributes:
+      label: Qual a versão do PHP?
+      options:
+        - PHP 7.2
+        - PHP 7.3
+        - PHP 7.4
+        - PHP 8.1
+        - PHP 8.2
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Existem logs relevantes sobre o problema?
+      description: Copie e cole qualquer saída de log relevante. Isso será formatado automaticamente em código.
+      placeholder: Se estiver ativo, nosso log está em var/log/payment.log, considere também enviar o var/log/exception.log
+      render: bash
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Meu log não contém informações confidenciais
+      description: Ao relatar este problema, entendo que não há violação de privacidade nos dados enviados no log fornecido acima.
+      options:
+        - label: Não estou enviando dados que violem a privacidade do cliente ou da loja.
+          required: true
+  - type: dropdown
+    id: Severity
+    attributes:
+      label: Qual a gravidade do problema?
+      multiple: true
+      options:
+        - A loja estava offline
+        - Nenhum cliente pode fazer um pagamento
+        - Um dos métodos de pagamento não está funcionando
+        - Não consegui configurar o modulo
+        - Não consegui instalar o modulo
+    validations:
+      required: true

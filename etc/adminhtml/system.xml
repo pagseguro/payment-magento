@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="pagbank_base" translate="label comment" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label><![CDATA[<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> uma empresa grupo do UOL.</p><p>O PagBank é o <b>pioneiro e líder</b> no mercado brasileiro de meios de pagamentos online, possui um portfolio completo para o seu negócio.</p></div>]]></label>
+                <fieldset_css>complex pagbank-payment-section</fieldset_css>
+                <frontend_model>PagBank\PaymentMagento\Model\Adminhtml\Source\PaymentGroup</frontend_model>
+                <comment><![CDATA[Technical support available <a href="https://github.com/pagbank/payment-magento/issues/new/choose">here</a>.]]></comment>
+                <include path="PagBank_PaymentMagento::system/base_settings.xml"/>
+                <include path="PagBank_PaymentMagento::system/credit_card.xml"/>
+                <include path="PagBank_PaymentMagento::system/pix.xml"/>
+                <include path="PagBank_PaymentMagento::system/boleto.xml"/>
+                <include path="PagBank_PaymentMagento::system/developers.xml"/>
+            </group>
+        </section>
+    </system>
+</config>

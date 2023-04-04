@@ -1,0 +1,14 @@
+name: Run ESLint
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Run ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm install -g eslint
+      - run: eslint

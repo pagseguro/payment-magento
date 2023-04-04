@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route url="/V1/guest-carts/:cartId/pagbank-list-installments" method="POST">
+        <service class="PagBank\PaymentMagento\Api\GuestListInstallmentsManagementInterface" method="generateListInstallments"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+    <route url="/V1/carts/mine/pagbank-list-installments" method="POST">
+        <service class="PagBank\PaymentMagento\Api\ListInstallmentsManagementInterface" method="generateListInstallments"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+
+    <route url="/V1/guest-carts/:cartId/pagbank-interest" method="POST">
+        <service class="PagBank\PaymentMagento\Api\GuestInterestManagementInterface" method="generatePagBankInterest"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+    <route url="/V1/carts/mine/pagbank-interest" method="POST">
+        <service class="PagBank\PaymentMagento\Api\InterestManagementInterface" method="generatePagBankInterest"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+
+</routes>

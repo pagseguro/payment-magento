@@ -1,0 +1,46 @@
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+.complex.pagbank-payment-section .heading strong {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-weight: normal;
+}
+
+.complex.pagbank-payment-section .pagbank-payment-logo {
+  min-width: 156px;
+  height: 70px;
+  background: url('../images/logo.gif') no-repeat center center;
+  -webkit-background-size: contain;
+  -moz-background-size: contain;
+  -o-background-size: contain;
+  background-size: contain;
+}
+
+.complex.pagbank-payment-section .pagbank-payment-byline {
+  flex-basis: auto;
+  padding-left: 2%;
+}
+
+.complex.pagbank-payment-section .button-container { float: right; }
+
+fieldset#payment_other_pagbank_base,
+fieldset#payment_us_pagbank_base {
+  margin-left: 2%;
+}
+
+.pagbank-featured-session {
+  background-color:#f8f8f8;
+  border:1px solid #e3e3e3;
+  padding:10px;
+}
+
+.pagbank-sub-title {
+  padding-top: 15px;
+}

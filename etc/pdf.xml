@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Sales:etc/pdf_file.xsd">
+    <totals>
+        <total name="pagbank_interest">
+            <title translate="true">PagBank Interest</title>
+            <source_field>pagbank_interest</source_field>
+            <font_size>7</font_size>
+            <display_zero>false</display_zero>
+            <sort_order>500</sort_order>
+        </total>
+    </totals>
+</config>

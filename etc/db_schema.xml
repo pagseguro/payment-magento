@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="sales_order" resource="default">
+        <column xsi:type="varchar" name="ext_order_id" nullable="true" length="255" comment="Ext Order ID"/>
+        <column xsi:type="decimal" name="pagbank_interest_amount" scale="4" precision="12" unsigned="false" nullable="true" comment="Pagbank Interest Amount"/>
+        <column xsi:type="decimal" name="base_pagbank_interest_amount" scale="4" precision="12" unsigned="false" nullable="true" comment="Base Pagbank Interest Amount"/>
+        <column xsi:type="decimal" name="pagbank_interest_amount_invoiced" scale="4" precision="12" unsigned="false" nullable="true" comment="Pagbank Interest Amount Invoiced"/>
+        <column xsi:type="decimal" name="base_pagbank_interest_amount_invoiced" scale="4" precision="12" unsigned="false" nullable="true" comment="Base Pagbank Interest Amount Invoiced"/>
+        <column xsi:type="decimal" name="pagbank_interest_amount_refunded" scale="4" precision="12" unsigned="false" nullable="true" comment="Pagbank Interest Amount Refunded"/>
+        <column xsi:type="decimal" name="base_pagbank_interest_amount_refunded" scale="4" precision="12" unsigned="false" nullable="true" comment="Base Pagbank Interest Amount Refunded"/>
+    </table>
+    <table name="quote" resource="default">
+        <column xsi:type="decimal" name="pagbank_interest_amount" scale="4" precision="12" unsigned="false" nullable="true" comment="Pagbank Interest Amount"/>
+        <column xsi:type="decimal" name="base_pagbank_interest_amount" scale="4" precision="12" unsigned="false" nullable="true" comment="Base Pagbank Interest Amount"/>
+    </table>
+    <table name="quote_address" resource="default">
+        <column xsi:type="decimal" name="discount_coupon_amount" scale="4" precision="12" unsigned="false" nullable="true" comment="Discount coupon Amount"/>
+        <column xsi:type="decimal" name="base_discount_coupon_amount" scale="4" precision="12" unsigned="false" nullable="true" comment="Base Discount coupon Amount"/>
+    </table>
+    <table name="sales_invoice" resource="default">
+        <column xsi:type="decimal" name="pagbank_interest_amount" scale="4" precision="12" unsigned="false" nullable="true" comment="Pagbank Interest Amount"/>
+        <column xsi:type="decimal" name="base_pagbank_interest_amount" scale="4" precision="12" unsigned="false" nullable="true" comment="Base Pagbank Interest Amount"/>
+        <column xsi:type="decimal" name="pagbank_interest_amount_invoiced" scale="4" precision="12" unsigned="false" nullable="true" comment="Pagbank Interest Amount Invoiced"/>
+        <column xsi:type="decimal" name="base_pagbank_interest_amount_invoiced" scale="4" precision="12" unsigned="false" nullable="true" comment="Base Pagbank Interest Amount Invoiced"/>
+    </table>
+    <table name="sales_creditmemo" resource="default">
+        <column xsi:type="decimal" name="pagbank_interest_amount" scale="4" precision="12" unsigned="false" nullable="true" comment="Pagbank Interest Amount"/>
+        <column xsi:type="decimal" name="base_pagbank_interest_amount" scale="4" precision="12" unsigned="false" nullable="true" comment="Base Pagbank Interest Amount"/>
+        <column xsi:type="decimal" name="pagbank_interest_amount_refund" scale="4" precision="12" unsigned="false" nullable="true" comment="Pagbank Interest Amount Refunded"/>
+        <column xsi:type="decimal" name="base_pagbank_interest_amount_refund" scale="4" precision="12" unsigned="false" nullable="true" comment="Base Pagbank Interest Amount Refunded"/>
+    </table>
+</schema>

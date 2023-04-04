@@ -1,0 +1,77 @@
+name: 🐞 Report a bug
+description: Technical issue with the module or integration
+title: "[Bug]: "
+labels: ["bug"]
+assignees:
+  - elisei
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: input
+    id: contact
+    attributes:
+      label: Contact details
+      description: How can we contact you if we need more information?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us what you expected to happen and what the result was!
+      placeholder: Tell us what the result was!
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Magento version
+      description: And what is your magento version?
+      options:
+        - 2.3.x (Magento >= 2.3.0 e < 2.4.0)
+        - 2.4.x (Magento >= 2.4.0)
+    validations:
+      required: true
+  - type: dropdown
+    id: php
+    attributes:
+      label: What version of php?
+      options:
+        - PHP 7.2
+        - PHP 7.3
+        - PHP 7.4
+        - PHP 8.1
+        - PHP 8.2
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Are there relevant logs about the problem?
+      description: Copy and paste any relevant log output. This will be automatically formatted in code, so no need for backticks.
+      placeholder: If it is active, our log is in var/log/payment.log, also consider sending the var/log/exception.log
+      render: bash
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: My log does not contain confidential information
+      description: By reporting this issue, I understand that there is no privacy violation in the data submitted in the log provided above.
+      options:
+        - label: I am not sending data that violates the privacy of the customer or the store.
+          required: true
+  - type: dropdown
+    id: Severity
+    attributes:
+      label: What is the severity of the problem?
+      multiple: true
+      options:
+        - The store was offline
+        - No customer can make a payment
+        - One of the payment methods is not working
+        - I could not configure the module
+        - I couldn't install the module
+    validations:
+      required: true

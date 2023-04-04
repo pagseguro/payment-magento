@@ -1,0 +1,68 @@
+{
+    "name": "pagbank/payment-magento",
+    "description": "PagBank - Payment for Magento 2",
+    "require": {
+        "php": "~7.2.0||~7.3.0||~7.4.0||~8.1.0",
+        "magento/framework": "102.0.*",
+        "magento/module-customer": ">=102.0.0",
+        "magento/module-config": "101.1.*",
+        "magento/module-eav": ">=101.0.3",
+        "magento/module-sales": "102.0.*",
+        "magento/module-directory": "100.3.*",
+        "magento/module-checkout": "100.3.*",
+        "magento/module-backend": "101.0.*",
+        "magento/module-theme": "101.0.*",
+        "magento/module-ui": ">=101.0.4",
+        "magento/module-payment": "^100.3",
+        "magento/module-vault": "101.*",
+        "magento/zendframework1": "~1.14.2",
+        "ext-json": "*"
+    },
+    "type": "magento2-module",
+    "authors": [
+        {
+            "name": "Bruno Elisei",
+            "email": "brunoelisei@o2ti.com"
+        }
+    ],
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "PagBank\\PaymentMagento\\": ""
+        }
+    },
+    "require-dev": {
+        "magento/magento-coding-standard": "*",
+        "phpmd/phpmd": "^2.13",
+        "phpstan/extension-installer": "^1.2",
+        "phpstan/phpstan": "^1.6.8"
+    },
+    "scripts": {
+        "post-install-cmd": "vendor/bin/phpcs --config-set installed_paths ../../..,../../phpcompatibility/php-compatibility/PHPCompatibility",
+        "post-update-cmd": "vendor/bin/phpcs --config-set installed_paths ../../..,../../phpcompatibility/php-compatibility/PHPCompatibility"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://repo.magento.com/"
+        },
+        {
+            "type": "composer",
+            "url": "https://repo-magento-mirror.fooman.co.nz/"
+        }
+    ],
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "config": {
+        "allow-plugins": {
+            "magento/composer-dependency-version-audit-plugin": false,
+            "phpstan/extension-installer": true
+        }
+    }
+}

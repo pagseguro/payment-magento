@@ -1,0 +1,12 @@
+name: Magento Coding Quality
+on: [push, pull_request]
+
+jobs:
+  phpcs:
+    name: PHP Coding Quality
+    runs-on: ubuntu-latest
+    steps:
+    - name: PHP Coding Standard Magento2
+      run: docker run --rm -v $PWD:/code:ro domw/phpcs phpcs --colors --standard=Magento2 --severity=1 ./
+    - name: PhpCompatibility
+      run: docker run --rm -v $PWD:/code:ro domw/phpcompatibility phpcs --standard=PHPCompatibility --runtime-set testVersion 7.3-7.4-8.1 --colors ./

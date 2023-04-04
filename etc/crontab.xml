@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="pagbank_paymentmagento_base">
+        <job name="pagbank_refresh_token" instance="PagBank\PaymentMagento\Cron\RefreshToken" method="execute">
+            <schedule>0 0 1 */6 *</schedule>
+        </job>
+        <job name="pagbank_update_cc" instance="PagBank\PaymentMagento\Cron\GetStatusUpdate" method="findCc">
+            <schedule>0 */8 * * *</schedule>
+        </job>
+        <job name="pagbank_update_pix" instance="PagBank\PaymentMagento\Cron\GetStatusUpdate" method="findPix">
+            <schedule>*/30 * * * *</schedule>
+        </job>
+        <job name="pagbank_update_boleto" instance="PagBank\PaymentMagento\Cron\GetStatusUpdate" method="findBoleto">
+            <schedule>0 7 * * 1-5</schedule>
+        </job>
+    </group>
+</config>

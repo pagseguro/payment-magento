@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:DataObject/etc/fieldset.xsd">
+	<scope id="global">
+		<fieldset id="sales_convert_quote">
+			<field name="pagbank_interest_amount">
+				<aspect name="to_order" />
+			</field>
+			<field name="base_pagbank_interest_amount">
+				<aspect name="to_order" />
+			</field>
+		</fieldset>
+		<fieldset id="sales_convert_order">
+            <field name="pagbank_interest_amount">
+                <aspect name="to_quote" />
+                <aspect name="to_invoice" />
+                <aspect name="to_shipment" />
+                <aspect name="to_cm" />
+            </field>
+			<field name="base_pagbank_interest_amount">
+                <aspect name="to_quote" />
+                <aspect name="to_invoice" />
+                <aspect name="to_shipment" />
+                <aspect name="to_cm" />
+            </field>
+        </fieldset>  
+	</scope>
+</config>

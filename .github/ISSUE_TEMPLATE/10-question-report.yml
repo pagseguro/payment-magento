@@ -1,0 +1,38 @@
+name: ❓ I'm in doubt
+description: Tell us a question you have, whether it's configuration or even technical.
+title: "[Question]: "
+labels: ["question", "documentation","Needs Triage"]
+assignees:
+  - elisei
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to complete this inquiry report!
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we contact you if we need more information?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What's your doubt?
+      description: Tell us also what you expected to happen and what the result was!
+      placeholder: Tell us what your doubt is!
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Magento/Adobe version
+      description: And what is your magento version?
+      options:
+        - 2.3.x (Magento/Adobe >= 2.3.0 e < 2.4.0)
+        - 2.4.0 até 2.4.5 (Magento/Adobe >= 2.4.0 e < 2.4.5)
+        - 2.4.6+ (Magento/Adobe >= 2.4.6)
+    validations:
+      required: true

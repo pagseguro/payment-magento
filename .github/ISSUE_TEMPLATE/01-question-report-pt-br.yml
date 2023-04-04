@@ -1,0 +1,38 @@
+name: ❓ Estou com Dúvidas
+description: Informe uma dúvida que tenha, seja de configuração ou mesmo técnica.
+title: "[Question]: "
+labels: ["question", "documentation","Needs Triage"]
+assignees:
+  - elisei
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por reservar um tempo para preencher este relatório de dúvidas!
+  - type: input
+    id: contact
+    attributes:
+      label: Dados de Contato
+      description: Como podemos contatá-lo se precisarmos de mais informações?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Qual a sua dúvida?
+      description: Conta pra gente também o que você esperava que acontecesse e qual foi o resultado!
+      placeholder: Conta pra gente qual é a sua dúvida!
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Versão da Magento/Adobe
+      description: Qual a versão da sua loja?
+      options:
+        - 2.3.x (Magento/Adobe >= 2.3.0 e < 2.4.0)
+        - 2.4.0 até 2.4.5 (Magento/Adobe >= 2.4.0 e < 2.4.5)
+        - 2.4.6+ (Magento/Adobe >= 2.4.6)
+    validations:
+      required: true

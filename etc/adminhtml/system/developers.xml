@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="developers" translate="label comment" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+        <label>Developers</label>
+        <comment><![CDATA[Meet our <a href='https://github.com/pagbank/payment-magento/wiki'>Wiki</a>.]]></comment>
+        <field id="debug" translate="label comment" type="select" sortOrder="110" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+            <label>Debug</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <config_path>payment/pagbank_paymentmagento/debug</config_path>
+            <comment>Attention, you cannot use debug in production mode.</comment>
+        </field>
+        <field id="custom_notification_url" translate="label comment" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Custom notification URL</label>
+            <config_path>payment/pagbank_paymentmagento/sandbox_custom_notification_url</config_path>
+            <comment><![CDATA[You can use services like <a href='https://pipedream.com/'>Pipedream</a> to intercept outgoing notifications.]]></comment>
+            <depends>
+                <field id="*/*/*/credentials/environment">sandbox</field>
+            </depends>
+        </field>
+        <include path="PagBank_PaymentMagento::system/relationship.xml"/>
+    </group>
+</include>

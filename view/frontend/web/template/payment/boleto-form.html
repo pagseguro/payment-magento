@@ -1,0 +1,39 @@
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<render args="payerForm"></render>
+<fieldset data-bind="attr: {class: 'fieldset payment items', id: 'payment_form_payer_' + getCode()}">
+    <!-- ko if: (baseDataForPaymentForm.isShowLegend())-->
+    <legend class="legend">
+        <span class="legend-title"><!-- ko i18n: 'Boleto Information'--><!-- /ko --></span>
+    </legend>
+    <!-- /ko -->
+    <div class="field-to-pay"  data-bind="css: { _hidden:isPlaceOrderActionAllowed() }">
+        <p class="form-waiting"><!-- ko i18n: 'Waiting...'--><!-- /ko --></p>
+    </div>
+    <div class="field-to-pay"  data-bind="css: { _hidden:!isPlaceOrderActionAllowed() }">
+        <!-- ko if: baseDataForPaymentForm.getInstructionCheckout() || baseDataForPaymentForm.getExpiration() -->
+        <dl class="items check payable">
+            <!-- ko if: baseDataForPaymentForm.getExpiration() -->
+            <dt class="title"><!-- ko i18n: 'Due' --><!-- /ko --></dt>
+            <dd class="content">
+                <address class="pagbankboleto due address" data-bind="html: baseDataForPaymentForm.getExpiration()"></address>
+            </dd>
+            <!-- /ko -->
+            <!-- ko if: baseDataForPaymentForm.getInstructionCheckout() -->
+            <dt class="title"><!-- ko i18n: 'Instruction' --><!-- /ko --></dt>
+            <dd class="content">
+                <address class="pagbankboleto instruction address" data-bind="html: baseDataForPaymentForm.getInstructionCheckout()"></address>
+            </dd>
+            <!-- /ko -->
+        </dl>
+        <!-- /ko -->
+    </div>
+</fieldset>

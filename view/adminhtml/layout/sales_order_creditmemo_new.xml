@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="creditmemo_totals">
+            <block class="PagBank\PaymentMagento\Block\Adminhtml\Sales\Order\Creditmemo\Totals\PagbankInterest" name="pagbank_interest" as="pagbank_interest"/>
+        </referenceBlock>
+    </body>
+</page>

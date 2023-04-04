@@ -1,0 +1,90 @@
+<?php
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+
+/**
+ * @var \PagBank\PaymentMagento\Block\Sales\Form\Pix $block
+ * @see \PagBank\PaymentMagento\Block\Sales\Form\Pix
+ */
+$specificInfo = $block->getSpecificInformation();
+$title = $block->escapeHtml($block->getMethod()->getTitle());
+$boletoLineCode = isset($specificInfo['boleto_line_code']) ? $specificInfo['boleto_line_code']: null;
+$boletoPdfHref = isset($specificInfo['boleto_pdf_href']) ? $specificInfo['boleto_pdf_href'] : null;
+$expirationDate = isset($specificInfo['expiration_date']) ? $specificInfo['expiration_date'] : null;
+$payerName = isset($specificInfo['payer_name']) ? $specificInfo['payer_name'] : null;
+$payerTaxId = isset($specificInfo['payer_tax_id']) ? $specificInfo['payer_tax_id'] : null;
+?>
+<?php if ($specificInfo): ?>
+    <dl class="payment-method">
+        <dt class="title"><?= /* @noEscape */ $title ?></dt>
+        <dd class="content">
+            <table class="data table">
+                <caption class="table-caption"><?= /* @noEscape */ $title ?></caption>
+                <tbody>
+                    <?php if ($expirationDate): ?>
+                        <tr>
+                            <th scope="row"><?= $block->escapeHtml(__('Expiration')); ?></th>
+                            <td>
+                                <?= /* @noEscape */ $block->formatDate(
+                                    $expirationDate,
+                                    \IntlDateFormatter::MEDIUM,
+                                    false
+                                ) ?>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                    <?php if ($boletoPdfHref): ?>
+                        <tr>
+                            <th scope="row">
+                                <?= $block->escapeHtml(__('Link')); ?>
+                            </th>
+                            <td>
+                                <a target="_blank"
+                                    href="<?=  $block->escapeHtml($boletoPdfHref) ?>" 
+                                    alt="<?= /* @noEscape */ $title ?>">
+                                    <?= $block->escapeHtml(__('Download the Boleto')); ?>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                    <?php if ($boletoLineCode): ?>
+                        <tr>
+                            <th scope="row">
+                                <?= $block->escapeHtml(__('Line Code')); ?>
+                            </th>
+                            <td>
+                                <?= $block->escapeHtml($boletoLineCode) ?>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                    <?php if ($payerName): ?>
+                        <tr>
+                            <th scope="row">
+                                <?= $block->escapeHtml(__('Payer Name')); ?>
+                            </th>
+                            <td>
+                                <?= $block->escapeHtml($payerName) ?>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                    <?php if ($payerTaxId): ?>
+                        <tr>
+                            <th scope="row">
+                                <?= $block->escapeHtml(__('Payer Tax Id')); ?>
+                            </th>
+                            <td>
+                                <?= $block->escapeHtml($payerTaxId) ?>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </dd>
+    </dl>
+<?php endif;?>

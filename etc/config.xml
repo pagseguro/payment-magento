@@ -1,0 +1,185 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <pagbank_paymentmagento>
+                <debug>0</debug>
+                <active>1</active>
+                <environment>production</environment>
+                <statement_descriptor>Store Name</statement_descriptor>
+                <access_token_sandbox backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <access_token_production backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <refresh_token_production backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <refresh_token_sandbox backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <public_key_production backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <public_key_sandbox backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <model>PagBankBaseFacade</model>
+                <order_status>payment_review</order_status>
+                <payment_action>authorize</payment_action>
+                <title>PagBank</title>
+                <currency>BRL</currency>
+                <is_gateway>1</is_gateway>
+                <can_use_internal>0</can_use_internal>
+                <can_use_checkout>1</can_use_checkout>
+                <min_order_total>5</min_order_total>
+                <max_order_total>1000000</max_order_total>
+                <allowspecific>1</allowspecific>
+                <specificcountry>BR</specificcountry>
+                <group>pagbank_group</group>
+                <get_tax_id_from>address</get_tax_id_from>
+                <street>0</street>
+                <number>1</number>
+                <locality>2</locality>
+                <complement>3</complement>
+                <min_order_total>5</min_order_total>
+                <max_order_total>200000</max_order_total>
+                <allowspecific>1</allowspecific>
+                <debugReplaceKeys>header</debugReplaceKeys>
+                <cipher_text_production>TDTmdLh3LyGKMrRqdg6CLF4FxWhSBDRMYFqG7o4EwUIS6vESXJCmtjjzdX8NY+ggxLci6dcZrNfnYYezdY/wSi/sdNNzijSDgjVX5nRSdExr8DXPdlgTlEAKg8iZFeoFvtxJZPqgxeEJVjZ3bwRm2nYGU/YPXTH5wk+w2LOKeaSEfewgMfiElFZW8F9ay+Exwivmxosa8nqQzlmLyJhBnvYLjHJuaXy+lAjFyFSQh75gHnr3bGcKGZx2roDnozFLQlMf+ix4RywVaMg0+5Y3Z8BaYwIjtyX0gddgi4hRm2nFVFVaAHf2uFWvUlLGMNZiLhCpixe9tjFJ25Qlcuf+sA==</cipher_text_production>
+                <cipher_text_sandbox>JIPYFxLrvP0wFDYTdUSzvvDCetb/GQxDRGEqfKsh4vSEKZvQKaQtvy8+/dyYclbkZhQPxiTdN2mg6Z6GVSrRJg2JPp62EzGGZt+9cI6xTQDlqCByolVPP2rJLF1IcRnnUjdHNjipXpL6B8Q7FANzoCgIGMux6frge3VdhXCb1zIkWhGeAGCunmBDjNetrUyt91Tw+xJ04grQNhrUvIHZfJ8qmapoGja4jrhA9hZFoBTGIg5UJKBJdLze/cmNnhDTt5WFBQEbq2I2kwsxuStSVT9rnS3Jet2lYCLEk0WAqmZmMg1ux0JTMU7Bk2S3MUn/w/hIfjccG7q4Lh7MX5zb3A==</cipher_text_sandbox>
+            </pagbank_paymentmagento>
+            <pagbank_paymentmagento_cc>
+                <group>pagbank_group</group>
+                <model>PagBankCcFacade</model>
+                <order_status>pending</order_status>
+                <payment_action>authorize_capture</payment_action>
+                <currency>BRL</currency>
+                <is_gateway>1</is_gateway>
+                <can_initialize>1</can_initialize>
+                <can_use_internal>0</can_use_internal>
+                <can_use_checkout>1</can_use_checkout>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <can_refund>1</can_refund>
+                <can_authorize_vault>1</can_authorize_vault>
+                <can_capture_vault>1</can_capture_vault>
+                <can_authorize>1</can_authorize>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_review_payment>1</can_review_payment>
+                <can_deny_payment>1</can_deny_payment>
+                <can_accept_payment>1</can_accept_payment>
+                <can_fetch_transaction_info>1</can_fetch_transaction_info>
+                <can_fetch_transaction_information>1</can_fetch_transaction_information>
+                <paymentInfoKeys>cc_installments,cc_type,cc_number,cc_exp_month,cc_exp_year,cc_cardholder_name,payer_tax_id,payer_phone</paymentInfoKeys>
+                <privateInfoKeys></privateInfoKeys>
+                <cctypes_mapper><![CDATA[{"AMEX":"AE","ELO":"ELO","MASTERCARD":"MC","VISA":"VI","HIPERCARD":"HC","AURA":"AU","DINNERS":"DN"}]]></cctypes_mapper>
+                <active>1</active>
+                <title>Cartão de Crédito</title>
+                <cvv_enabled>1</cvv_enabled>
+                <cctypes>HC,ELO,AE,VI,MC,DN,AU</cctypes>
+                <max_installment>18</max_installment>
+                <interest_free>1</interest_free>
+                <get_tax_id>0</get_tax_id>
+                <get_phone>0</get_phone>
+                <min_order_total>1</min_order_total>
+                <max_order_total>200000</max_order_total>
+                <allowspecific>1</allowspecific>
+                <specificcountry>BR</specificcountry>
+                <sort_order>10</sort_order>
+            </pagbank_paymentmagento_cc>
+            <pagbank_paymentmagento_cc_vault>
+                <group>pagbank_group</group>
+                <model>PagBankCcVaultFacade</model>
+                <can_use_internal>0</can_use_internal>
+                <can_fetch_transaction_info>1</can_fetch_transaction_info>
+                <can_fetch_transaction_information>1</can_fetch_transaction_information>
+                <paymentInfoKeys>cc_installments,cc_type,cc_number,cc_exp_month,cc_exp_year,cc_cardholder_name,payer_tax_id,payer_phone</paymentInfoKeys>
+                <privateInfoKeys></privateInfoKeys>
+                <active>1</active>
+                <title>Stored Cards (PagBank)</title>
+            </pagbank_paymentmagento_cc_vault>
+            <pagbank_paymentmagento_pix>
+                <group>pagbank_group</group>
+                <model>PagBankPixFacade</model>
+                <payment_action>order</payment_action>
+                <order_status>pending</order_status>
+                <currency>BRL</currency>
+                <is_gateway>1</is_gateway>
+                <can_initialize>1</can_initialize>
+                <can_use_internal>1</can_use_internal>
+                <can_use_checkout>1</can_use_checkout>
+                <can_capture>0</can_capture>
+                <can_capture_partial>0</can_capture_partial>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <can_refund>1</can_refund>
+                <can_void>0</can_void>
+                <can_cancel>0</can_cancel>
+                <can_review_payment>1</can_review_payment>
+                <can_deny_payment>0</can_deny_payment>
+                <can_accept_payment>0</can_accept_payment>
+                <can_fetch_transaction_info>1</can_fetch_transaction_info>
+                <can_fetch_transaction_information>1</can_fetch_transaction_information>
+                <paymentInfoKeys>qr_code_image,qr_code,expiration_date,payer_name,payer_phone,payer_tax_id</paymentInfoKeys>
+                <active>1</active>
+                <title>Pix</title>
+                <expiration>30</expiration>
+                <instruction_checkout><![CDATA[O prazo de pagamento é de até <b>%1</b>.
+O Qr Code para pagamento será exibido ao finalizar o pedido.
+A confirmação do seu pagamento é automática, em até 5 minutos.]]></instruction_checkout>
+                <get_tax_id>0</get_tax_id>
+                <get_phone>0</get_phone>
+                <get_name>0</get_name>
+                <min_order_total>1</min_order_total>
+                <max_order_total>200000</max_order_total>
+                <allowspecific>1</allowspecific>
+                <specificcountry>BR</specificcountry>
+                <sort_order>11</sort_order>
+            </pagbank_paymentmagento_pix>
+            <pagbank_paymentmagento_boleto>
+                <group>pagbank_group</group>
+                <model>PagBankBoletoFacade</model>
+                <payment_action>order</payment_action>
+                <order_status>pending</order_status>
+                <currency>BRL</currency>
+                <is_gateway>1</is_gateway>
+                <can_initialize>1</can_initialize>
+                <can_use_internal>1</can_use_internal>
+                <can_use_checkout>1</can_use_checkout>
+                <can_capture>0</can_capture>
+                <can_capture_partial>0</can_capture_partial>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <can_refund>1</can_refund>
+                <can_void>0</can_void>
+                <can_cancel>0</can_cancel>
+                <can_review_payment>1</can_review_payment>
+                <can_deny_payment>0</can_deny_payment>
+                <can_accept_payment>0</can_accept_payment>
+                <can_fetch_transaction_info>1</can_fetch_transaction_info>
+                <can_fetch_transaction_information>1</can_fetch_transaction_information>
+                <paymentInfoKeys>boleto_line_code,boleto_pdf_href,expiration_date,payer_name,payer_phone,payer_tax_id</paymentInfoKeys>
+                <active>1</active>
+                <title>Boleto Bancário</title>
+                <expiration>1</expiration>
+                <instruction_line>Não receber após vencimento.</instruction_line>
+                <instruction_checkout><![CDATA[Você poderá pagar o boleto em qualquer casa lotérica ou internet bank.
+<b>A confirmação do seu pagamento é automática, em até 1 dia útil.</b>]]></instruction_checkout>
+                <get_name>0</get_name>
+                <get_tax_id>0</get_tax_id>
+                <min_order_total>1</min_order_total>
+                <max_order_total>200000</max_order_total>
+                <allowspecific>1</allowspecific>
+                <specificcountry>BR</specificcountry>
+                <sort_order>12</sort_order>
+            </pagbank_paymentmagento_boleto>
+        </payment>
+        <dev>
+            <js>
+                <minify_exclude>
+                    <PagBankJs>https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js?source=Magento</PagBankJs>
+                </minify_exclude>
+            </js>
+        </dev>
+    </default>
+</config>

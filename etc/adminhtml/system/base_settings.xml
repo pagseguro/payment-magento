@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="settings" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+        <label>Credentials</label>
+        <comment>Define the relationship between your store and our application.</comment>
+        <field id="soft_descriptor" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="0">
+            <label>Statement Descriptor</label>
+            <config_path>payment/pagbank_paymentmagento/soft_descriptor</config_path>
+            <validate>required-entry validate-length minimum-length-1 maximum-length-17</validate>
+        </field>
+        <field id="environment" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="0">
+            <label>Environment</label>
+            <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\Environment</source_model>
+            <config_path>payment/pagbank_paymentmagento/environment</config_path>
+            <validate>required-entry validate-select</validate>
+        </field>
+        <field id="oauth" translate="label comment" type="button" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="0">
+            <frontend_model>PagBank\PaymentMagento\Block\Adminhtml\System\Config\Oauth</frontend_model>
+            <label>Module Authorization</label>
+        </field>
+    </group>
+</include>

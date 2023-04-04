@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Sales:etc/sales.xsd">
+    <section name="quote">
+        <group name="totals">
+            <item name="pagbank_interest_amount" instance="PagBank\PaymentMagento\Model\Quote\Address\Total\PagbankInterest" sort_order="100"/>
+        </group>
+    </section>
+    <section name="order_invoice">
+        <group name="totals">
+            <item name="pagbank_interest_amount" instance="PagBank\PaymentMagento\Model\Order\Total\Invoice\PagbankInterest" sort_order="100"/>
+        </group>
+    </section>
+    <section name="order_creditmemo">
+        <group name="totals">
+            <item name="pagbank_interest_amount" instance="PagBank\PaymentMagento\Model\Order\Total\Creditmemo\PagbankInterest" sort_order="100"/>
+        </group>
+    </section>
+</config>

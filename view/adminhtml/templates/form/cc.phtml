@@ -1,0 +1,21 @@
+<?php
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+
+/**
+ * @var \PagBank\PaymentMagento\Block\Sales\Form\Cc $block
+ * @see \PagBank\PaymentMagento\Block\Sales\Form\Cc
+ */
+
+ $code = $block->escapeHtml($block->getMethodCode());
+ ?>
+ <fieldset class="admin__fieldset payment-method" id="payment_form_<?= $block->escapeHtml($code) ?>"
+    style="display: none">
+     <?= $block->escapeHtml(__('Not available.')) ?>
+ </fieldset>
