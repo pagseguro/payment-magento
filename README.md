@@ -1,4 +1,4 @@
-# PagBank para Magento e Adobe <img src="view/adminhtml/web/images/logo.gif" align="right" width="180"/>
+# PagSeguro para Magento e Adobe <img src="view/adminhtml/web/images/logo.gif" align="right" width="180"/>
 
 Módulo para pagamento em Magento e Adobe Commerce.
 

@@ -1,19 +1,17 @@
 <?php
 /**
- * Copyright © PagBank. All rights reserved.
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
  *
  * @author    Bruno Elisei <brunoelisei@o2ti.com>
- * See LICENSE for license details.
+ * @license   See LICENSE for license details.
  */
 
 namespace PagBank\PaymentMagento\Model\Adminhtml\Source;
 
-use Magento\Backend\Block\Context;
-use Magento\Backend\Model\Auth\Session;
 use Magento\Config\Block\System\Config\Form\Fieldset;
-use Magento\Config\Model\Config;
-use Magento\Framework\Data\Form\Element\AbstractElement;
-use Magento\Framework\View\Helper\Js;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
 
 /**
  * Class PaymentGroup - Fieldset renderer for PagBank.
@@ -24,51 +22,84 @@ use Magento\Framework\View\Helper\Js;
 class PaymentGroup extends Fieldset
 {
     /**
-     * @var Config
+     * @var \Magento\Config\Model\Config
      */
-    private $config;
+    protected $backendConfig;
 
     /**
-     * @param Context $context
-     * @param Session $authSession
-     * @param Js      $jsHelper
-     * @param Config  $config
-     * @param array   $data
+     * @var SecureHtmlRenderer
+     */
+    protected $secureRenderer;
+
+    /**
+     * @param \Magento\Backend\Block\Context      $context
+     * @param \Magento\Backend\Model\Auth\Session $authSession
+     * @param \Magento\Framework\View\Helper\Js   $jsHelper
+     * @param \Magento\Config\Model\Config        $backendConfig
+     * @param SecureHtmlRenderer                  $secureRenderer
+     * @param array                               $data
      */
     public function __construct(
-        Context $context,
-        Session $authSession,
-        Js $jsHelper,
-        Config $config,
+        \Magento\Backend\Block\Context $context,
+        \Magento\Backend\Model\Auth\Session $authSession,
+        \Magento\Framework\View\Helper\Js $jsHelper,
+        \Magento\Config\Model\Config $backendConfig,
+        SecureHtmlRenderer $secureRenderer,
         array $data = []
     ) {
-        parent::__construct(
-            $context,
-            $authSession,
-            $jsHelper,
-            $data
-        );
-        $this->config = $config;
+        $this->backendConfig = $backendConfig;
+        parent::__construct($context, $authSession, $jsHelper, $data, $secureRenderer);
+        $this->secureRenderer = $secureRenderer;
     }
 
     /**
      * Add custom css class.
      *
-     * @param AbstractElement $element
+     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      *
      * @return string
      */
     protected function _getFrontendClass($element)
     {
-        return parent::_getFrontendClass($element).' with-button';
+        $enabledString = $this->_isPaymentEnabled($element) ? ' enabled' : '';
+
+        return parent::_getFrontendClass($element).' with-button'.$enabledString;
+    }
+
+    /**
+     * Check whether current payment method is enabled.
+     *
+     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
+     *
+     * @return bool
+     */
+    protected function _isPaymentEnabled($element)
+    {
+        $groupConfig = $element->getGroup();
+        $activityPaths = isset($groupConfig['activity_path']) ? $groupConfig['activity_path'] : [];
+
+        if (!is_array($activityPaths)) {
+            $activityPaths = [$activityPaths];
+        }
+
+        $isPaymentEnabled = false;
+        foreach ($activityPaths as $activityPath) {
+            $isPaymentEnabled = $isPaymentEnabled
+                || (bool) (string) $this->backendConfig->getConfigDataValue($activityPath);
+        }
+
+        return $isPaymentEnabled;
     }
 
     /**
      * Return header title part of html for payment solution.
      *
-     * @param AbstractElement $element
+     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      *
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function _getHeaderTitleHtml($element)
     {
@@ -76,19 +107,19 @@ class PaymentGroup extends Fieldset
         $htmlId = $element->getHtmlId();
         $html .= '<div class="button-container"><button type="button"'.
             ' class="button action-configure'.
-            '" id="'.
-            $htmlId.
-            '-head" onclick="psToggleSolution.call(this, \''.
-            $htmlId.
-            "', '".
-            $this->getUrl(
-                'adminhtml/*/state'
-            ).'\'); return false;"><span class="state-closed">'.__(
+            '" id="'.$htmlId.'-head" >'.
+            '<span class="state-closed">'.__(
                 'Configure'
             ).'</span><span class="state-opened">'.__(
                 'Close'
             ).'</span></button>';
 
+        $html .= /* @noEscape */ $this->secureRenderer->renderEventListenerAsTag(
+            'onclick',
+            "pagbankToggleSolution.call(this, '".$htmlId."', '".$this->getUrl('adminhtml/*/state').
+            "');event.preventDefault();",
+            'button#'.$htmlId.'-head'
+        );
         $html .= '</div>';
         $html .= '<div class="heading"><strong>'.$element->getLegend().'</strong>';
 
@@ -104,7 +135,7 @@ class PaymentGroup extends Fieldset
     /**
      * Return header comment part of html for payment solution.
      *
-     * @param AbstractElement $element
+     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      *
      * @return string
      *
@@ -118,7 +149,7 @@ class PaymentGroup extends Fieldset
     /**
      * Get collapsed state on-load.
      *
-     * @param AbstractElement $element
+     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      *
      * @return false
      *
@@ -132,7 +163,7 @@ class PaymentGroup extends Fieldset
     /**
      * Return extra Js.
      *
-     * @param AbstractElement $element
+     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      *
      * @return string
      *
@@ -141,7 +172,7 @@ class PaymentGroup extends Fieldset
     protected function _getExtraJs($element)
     {
         $script = "require(['jquery', 'prototype'], function(jQuery){
-            window.psToggleSolution = function (id, url) {
+            window.pagbankToggleSolution = function (id, url) {
                 var doScroll = false;
                 Fieldset.toggleCollapse(id, url);
                 if ($(this).hasClassName(\"open\")) {

@@ -76,7 +76,7 @@ class All extends AbstractNotification implements CsrfAwareActionInterface
         $psPaymentId = $psData['id'];
 
         $this->logger->debug([
-            'payload' => $psPaymentId,
+            'payload' => $psData['id'],
         ]);
 
         return $this->initProcess($psPaymentId);

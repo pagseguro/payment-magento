@@ -9,13 +9,15 @@
  */
 
 /**
- * @var \PagBank\PaymentMagento\Block\Sales\Form\Cc $block
- * @see \PagBank\PaymentMagento\Block\Sales\Form\Cc
+ * @var \Magento\Payment\Block\Adminhtml\Transparent\Form $block
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
  */
-
- $code = $block->escapeHtml($block->getMethodCode());
- ?>
- <fieldset class="admin__fieldset payment-method" id="payment_form_<?= $block->escapeHtml($code) ?>"
-    style="display: none">
-     <?= $block->escapeHtml(__('Not available.')) ?>
- </fieldset>
+$code = $block->escapeHtml($block->getMethodCode());
+?>
+<fieldset class="admin__fieldset payment-method" id="payment_form_<?= $block->escapeHtml($code) ?>" >
+    <?= $block->escapeHtml(__('Not available.')) ?>
+</fieldset>
+<?= /* @noEscape */ $secureRenderer->renderStyleAsTag(
+    "display:none",
+    'fieldset#payment_form_' . $block->escapeJs($block->getMethodCode())
+) ?>
