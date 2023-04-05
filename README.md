@@ -13,7 +13,7 @@ Módulo para pagamento em Magento e Adobe Commerce.
 
 Desenvolvida no padrão Gateway, nosso módulo irá oferecer uma perfeita integração com a sua loja.
 
-Receba e gerencie pagamentos a pioneira e lider de mercado no Brasil!
+Receba e gerencie pagamentos com a pioneira e lider de mercado no Brasil!
 
 
 ### Cartão de Crédito e Cofre (Vault) <img src="view/base/web/images/cc/ae.svg" align="right" width="35"/> <img src="view/base/web/images/cc/au.svg" align="right" width="35"/> <img src="view/base/web/images/cc/dn.svg" align="right" width="35"/> <img src="view/base/web/images/cc/elo.svg" align="right" width="35"/> <img src="view/base/web/images/cc/hc.svg" align="right" width="35"/> <img src="view/base/web/images/cc/mc.svg" align="right" width="35"/> <img src="view/base/web/images/cc/vi.svg" align="right" width="35"/>

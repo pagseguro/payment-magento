@@ -13,6 +13,7 @@ namespace PagBank\PaymentMagento\Gateway\Response;
 use InvalidArgumentException;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 
 /**
  * Fetch Payment Handler - Payment query response flow.
@@ -63,6 +64,20 @@ class FetchPaymentHandler implements HandlerInterface
      * Response Pay Authorized - Block name.
      */
     public const RESPONSE_AUTHORIZED = 'AUTHORIZED';
+
+    /**
+     * @var InvoiceSender
+     */
+    protected $invoiceSender;
+
+    /**
+     * @param InvoiceSender $invoiceSender
+     */
+    public function __construct(
+        InvoiceSender $invoiceSender
+    ) {
+        $this->invoiceSender = $invoiceSender;
+    }
 
     /**
      * Handles.
@@ -145,9 +160,12 @@ class FetchPaymentHandler implements HandlerInterface
             $payment->setParentTransactionId($paymentParentId);
             $payment->registerAuthorizationNotification($amount);
             $payment->registerCaptureNotification($amount);
-
             $payment->setShouldCloseParentTransaction(true);
             $payment->setAmountAuthorized($amount);
+            $invoice = $payment->getCreatedInvoice();
+            if ($invoice && !$invoice->getEmailSent()) {
+                $this->invoiceSender->send($invoice, false);
+            }
         }
     }
 
