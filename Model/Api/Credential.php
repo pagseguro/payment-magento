@@ -97,7 +97,7 @@ class Credential
         $configs,
         bool $storeIdIsDefault,
         int $webSiteId = 0,
-        int $storeId = 0,
+        int $storeId = 0
     ) {
         $scope = ScopeInterface::SCOPE_WEBSITES;
 
