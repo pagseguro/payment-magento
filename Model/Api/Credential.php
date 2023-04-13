@@ -98,7 +98,7 @@ class Credential
         $configs,
         bool $storeIdIsDefault,
         int $webSiteId = 0,
-        int $storeId = 0,
+        int $storeId = 0
     ) {
         $scope = ScopeInterface::SCOPE_WEBSITES;
 
@@ -147,7 +147,8 @@ class Credential
             'code_verifier' => $codeVerifier,
         ]);
 
-        $redirectUrl = str_replace($storeCode, '/', $redirectUrl);
+        $search = '/'.preg_quote($storeCode, '/').'/';
+        $redirectUrl = preg_replace($search, '/', $redirectUrl, 0);
 
         $data = [
             'grant_type'    => 'authorization_code',
