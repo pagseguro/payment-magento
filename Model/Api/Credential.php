@@ -146,7 +146,8 @@ class Credential
             'code_verifier' => $codeVerifier,
         ]);
 
-        $redirectUrl = str_replace($storeCode, '/', $redirectUrl);
+        $search = '/'.preg_quote($storeCode, '/').'/';
+        $redirectUrl = preg_replace($search, '/', $redirectUrl, 0);
 
         $data = [
             'grant_type'    => 'authorization_code',
