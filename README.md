@@ -1,3 +1,7 @@
+# Esse módulo foi DEPRECIADO!!!!!
+
+Recomendamos usar o novo módulo Magento 2 PagSeguro na url: https://github.com/pagseguro/payment-magento
+
 # PagSeguro para Magento e Adobe <img src="view/adminhtml/web/images/logo.gif" align="right" width="180"/>
 
 Módulo para pagamento em Magento e Adobe Commerce.
