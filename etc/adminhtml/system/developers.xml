@@ -19,12 +19,28 @@
             <config_path>payment/pagbank_paymentmagento/debug</config_path>
             <comment>Attention, you cannot use debug in production mode.</comment>
         </field>
-        <field id="custom_notification_url" translate="label comment" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+        <field id="account_id_sandbox" translate="label comment" type="label" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="0">
+            <label>Account Id</label>
+            <config_path>payment/pagbank_paymentmagento/account_id_sandbox</config_path>
+            <comment>Your PagBank Account ID. Automatically captured after APP authorization.</comment>
+            <depends>
+                 <field id="*/*/settings/environment">sandbox</field>
+            </depends>
+        </field>
+        <field id="account_id_production" translate="label comment" type="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="0">
+            <label>Account Id</label>
+            <config_path>payment/pagbank_paymentmagento/account_id_production</config_path>
+            <comment>Your PagBank Account ID. Automatically captured after APP authorization.</comment>
+            <depends>
+                <field id="*/*/settings/environment">production</field>
+            </depends>
+        </field>
+        <field id="custom_notification_url" translate="label comment" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
             <label>Custom notification URL</label>
             <config_path>payment/pagbank_paymentmagento/sandbox_custom_notification_url</config_path>
             <comment><![CDATA[You can use services like <a href='https://pipedream.com/'>Pipedream</a> to intercept outgoing notifications.]]></comment>
             <depends>
-                <field id="*/*/*/credentials/environment">sandbox</field>
+                <field id="*/*/settings/environment">sandbox</field>
             </depends>
         </field>
         <include path="PagBank_PaymentMagento::system/relationship.xml"/>

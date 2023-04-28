@@ -132,6 +132,7 @@ class Oauth extends \Magento\Backend\App\Action
                     $configs = [
                         'access_token'  => $oAuth,
                         'refresh_token' => $oAuthResponse['refresh_token'],
+                        'account_id'    => $oAuthResponse['account_id'],
                     ];
 
                     $this->credential->setNewConfigs($configs, $configDefault, $webSiteId);
