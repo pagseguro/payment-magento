@@ -65,7 +65,7 @@ Finished,Finished
 "token update returns errors code: %1","token update returns errors code: %1"
 "Querying the status of the order at the gateway.","Querying the status of the order at the gateway."
 "Order cancelled, payment deadline has expired.","Order cancelled, payment deadline has expired."
-"Order %1 was in state %2 has been updated to state %3 expired? %4.","Order %1 was in state %2 has been updated to state %3 expired? %4."
+"Order %1 was in state %2 has been updated to state %3.","Order %1 was in state %2 has been updated to state %3."
 "Order not found","Order not found"
 "Boleto Bancário - PagBank","Boleto Bancário - PagBank"
 "Cartão de Crédito - PagBank","Cartão de Crédito - PagBank"
@@ -124,7 +124,7 @@ expires,expires
 "Permission for set preference account PagBank","Permission for set preference account PagBank"
 "Permission for config PagBank","Permission for config PagBank"
 "Permission for clear config PagBank","Permission for clear config PagBank"
-"<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> uma empresa grupo do UOL.</p><p>O PagBank é o <b>pioneiro e líder</b> no mercado brasileiro de meios de pagamentos online, possui um portfolio completo para o seu negócio.</p></div>","<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> uma empresa grupo do UOL.</p><p>O PagBank é o <b>pioneiro e líder</b> no mercado brasileiro de meios de pagamentos online, possui um portfolio completo para o seu negócio.</p></div>"
+"<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> is a company within the UOL group.</p><p>PagBank is the <b>pioneer and leader</b> in the Brazilian online payment market, with a complete portfolio for your business.</p></div>","<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> is a company within the UOL group.</p><p>PagBank is the <b>pioneer and leader</b> in the Brazilian online payment market, with a complete portfolio for your business.</p></div>"
 "Technical support available <a href=""https://github.com/pagbank/payment-magento/issues/new/choose"">here</a>.","Technical support available <a href=""https://github.com/pagbank/payment-magento/issues/new/choose"">here</a>."
 Credentials,Credentials
 "Define the relationship between your store and our application.","Define the relationship between your store and our application."
@@ -166,6 +166,8 @@ Developers,Developers
 "Meet our <a href='https://github.com/pagbank/payment-magento/wiki'>Wiki</a>.","Meet our <a href='https://github.com/pagbank/payment-magento/wiki'>Wiki</a>."
 Debug,Debug
 "Attention, you cannot use debug in production mode.","Attention, you cannot use debug in production mode."
+"Account Id","Account Id"
+"Your PagBank Account ID. Automatically captured after APP authorization.","Your PagBank Account ID. Automatically captured after APP authorization."
 "Custom notification URL","Custom notification URL"
 "You can use services like <a href='https://pipedream.com/'>Pipedream</a> to intercept outgoing notifications.","You can use services like <a href='https://pipedream.com/'>Pipedream</a> to intercept outgoing notifications."
 Pix,Pix
@@ -221,6 +223,7 @@ Pix,Pix
 "[10002] Transação não autorizada, por favor utilize outro forma de pagamento.","[10002] Transação não autorizada, por favor utilize outro forma de pagamento."
 "[10003] Transação inválida, por favor utilize outra forma de pagamento.","[10003] Transação inválida, por favor utilize outra forma de pagamento."
 "[10004] Transação não permitida, por favor utilize outro forma de pagamento.","[10004] Transação não permitida, por favor utilize outro forma de pagamento."
+"PagBank Interest","PagBank Interest"
 "qr_code_image","Qr Code Image"
 "qr_code","Qr Code"
 "expiration_date","Expiration date"
