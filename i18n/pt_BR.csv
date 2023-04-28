@@ -4,10 +4,10 @@
 Production,Produção
 "Environment for tests","Ambiente de testes"
 "Authorize for the store %1 in %2","Autorizar a loja %1 em %2"
-"Disallow for the store %1 in %2","Desatorizar a loja %1 em %2"
+"Disallow for the store %1 in %2","Desautorizar a loja %1 em %2"
 "Order not found.","Pedido não encontrado."
-"You are diconnected to PagBank.","Você foi desconectado do PagBank."
-"You are connected to PagBank. =)","Você foi conectado ao PagBank. =)"
+"You are diconnected to PagBank.","Você foi desconectado do PagSeguro."
+"You are connected to PagBank. =)","Você foi conectado ao PagSeguro. =)"
 "Unable to get the code, try again. =(","Não foi possível obter o código, tente novamente. =("
 "You should not be here...","Não é para você estar aqui..."
 "Transaction has been declined. Please try again later.","Pedido recusado, por favor, tente mais tarde."
@@ -65,13 +65,13 @@ Finished,Finalizado
 "token update returns errors code: %1","Erro ao atualizar o token: %1"
 "Querying the status of the order at the gateway.","Consultando o status do pedido no gateway."
 "Order cancelled, payment deadline has expired.","Pedido cancelado, prazo de pagamento expirou."
-"Order %1 was in state %2 has been updated to state %3 expired? %4.","O pedido %1 estava no estado %2 foi atualizado para o estado %3 expirou? % 4."
+"Order %1 was in state %2 has been updated to state %3 expired?","O pedido %1 estava no estado %2 foi atualizado para o estado %3 expirou?"
 "Order not found","Pedido não encontrado"
-"Boleto Bancário - PagBank","Boleto Bancário - PagBank"
-"Cartão de Crédito - PagBank","Cartão de Crédito - PagBank"
-"Pix - PagBank","Pix - PagBank"
+"Boleto Bancário - PagBank","Boleto Bancário - PagSeguro"
+"Cartão de Crédito - PagBank","Cartão de Crédito - PagSeguro"
+"Pix - PagBank","Pix - PagSeguro"
 "Get Payment Update","Obter Atualização de Pagamento"
-"This decision will not change the status in PagBank.","Esta decisão não mudará o status no PagBank."
+"This decision will not change the status in PagBank.","Esta decisão não mudará o status no PagSeguro."
 "Accept Offline Payment","Aceitar Pagamento Offline"
 "Deny Offline Payment","Negar Pagamento Offline"
 Due,Vencimento
@@ -121,10 +121,10 @@ expires,expirando
 "Please enter a valid credit card verification number.","Insira um número de verificação de cartão de crédito válido (CVV)."
 "Please provide a valid CPF/CNPJ.","Forneça um CPF/CNPJ válido."
 "Payment Services","Serviços de Pagamento"
-"Permission for set preference account PagBank","Permissão para definir preferências do PagBank"
-"Permission for config PagBank","Permissão para configurar o PagBank"
-"Permission for clear config PagBank","Permissão para apagar a configuração do PagBank"
-"<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> uma empresa grupo do UOL.</p><p>O PagBank é o <b>pioneiro e líder</b> no mercado brasileiro de meios de pagamentos online, possui um portfolio completo para o seu negócio.</p></div>","<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> uma empresa grupo do UOL.</p><p>O PagBank é o <b>pioneiro e líder</b> no mercado brasileiro de meios de pagamentos online, possui um portfolio completo para o seu negócio.</p></div>"
+"Permission for set preference account PagBank","Permissão para definir preferências do PagSeguro"
+"Permission for config PagBank","Permissão para configurar o PagSeguro"
+"Permission for clear config PagBank","Permissão para apagar a configuração do PagSeguro"
+"<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagSeguro</b> is a company within the UOL group.</p><p>PagSeguro is the <b>pioneer and leader</b> in the Brazilian online payment market, with a complete portfolio for your business.</p></div>","<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> é uma empresa do grupo UOL.</p><p>O PagSeguro é o <b>pioneiro e líder</b> no mercado brasileiro de meios de pagamentos online, possui um portfólio completo para o seu negócio.</p></div>"
 "Technical support available <a href=""https://github.com/pagbank/payment-magento/issues/new/choose"">here</a>.","Suporte técnico disponível <a href=""https://github.com/pagbank/payment-magento/issues/new/choose"">aqui</a>."
 Credentials,Credenciais
 "Define the relationship between your store and our application.","Defina a relação entre sua loja e nosso aplicativo."
@@ -132,7 +132,7 @@ Credentials,Credenciais
 Environment,Ambiente
 "Module Authorization","Autorização do Módulo"
 "Boleto Bancário","Boleto Bancário"
-"A charge registered and authenticated by PagBank.","Uma cobrança cadastrada e autenticada pelo PagBank."
+"A charge registered and authenticated by PagBank.","Uma cobrança cadastrada e autenticada pelo PagSeguro."
 Enabled,Habilitado
 Title,Título
 "Days due","Dias de vencimento"
@@ -166,6 +166,8 @@ Developers,Desenvolvedores
 "Meet our <a href='https://github.com/pagbank/payment-magento/wiki'>Wiki</a>.","Conheça a nossa <a href='https://github.com/pagbank/payment-magento/wiki'>Wiki</a>."
 Debug,Debug
 "Attention, you cannot use debug in production mode.","Atenção, você não pode usar o debug no modo de produção."
+"Account Id","Código da Conta"
+"Your PagBank Account ID. Automatically captured after APP authorization.","É o código da sua conta no PagSeguro. Essa informação é capturada automaticamente após autorizar o APP."
 "Custom notification URL","URL de notificação personalizada"
 "You can use services like <a href='https://pipedream.com/'>Pipedream</a> to intercept outgoing notifications.","Você pode usar serviços como <a href='https://pipedream.com/'>Pipedream</a> para interceptar notificações enviadas."
 Pix,Pix

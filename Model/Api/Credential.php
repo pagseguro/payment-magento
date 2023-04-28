@@ -109,7 +109,9 @@ class Credential
         foreach ($configs as $config => $value) {
             $pathConfig = sprintf($basePathConfig, $config, $environment);
 
-            $value = $this->encryptor->encrypt($value);
+            if ($config !== 'account_id') {
+                $value = $this->encryptor->encrypt($value);
+            }
 
             if ($storeIdIsDefault) {
                 $scope = ScopeConfigInterface::SCOPE_TYPE_DEFAULT;
