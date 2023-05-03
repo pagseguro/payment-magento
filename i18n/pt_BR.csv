@@ -124,7 +124,7 @@ expires,expirando
 "Permission for set preference account PagBank","Permissão para definir preferências do PagSeguro"
 "Permission for config PagBank","Permissão para configurar o PagSeguro"
 "Permission for clear config PagBank","Permissão para apagar a configuração do PagSeguro"
-"<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagSeguro</b> is a company within the UOL group.</p><p>PagSeguro is the <b>pioneer and leader</b> in the Brazilian online payment market, with a complete portfolio for your business.</p></div>","<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> é uma empresa do grupo UOL.</p><p>O PagSeguro é o <b>pioneiro e líder</b> no mercado brasileiro de meios de pagamentos online, possui um portfólio completo para o seu negócio.</p></div>"
+"<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> is a company within the UOL group.</p><p>PagBank is the <b>pioneer and leader</b> in the Brazilian online payment market, with a complete portfolio for your business.</p></div>","<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagSeguro</b> é uma empresa do grupo UOL.</p><p>O PagSeguro é o <b>pioneiro e líder</b> no mercado brasileiro de meios de pagamentos online, possui um portfólio completo para o seu negócio.</p></div>"
 "Technical support available <a href=""https://github.com/pagbank/payment-magento/issues/new/choose"">here</a>.","Suporte técnico disponível <a href=""https://github.com/pagbank/payment-magento/issues/new/choose"">aqui</a>."
 Credentials,Credenciais
 "Define the relationship between your store and our application.","Defina a relação entre sua loja e nosso aplicativo."
