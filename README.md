@@ -1,10 +1,10 @@
-# PagBank para Magento e Adobe <img src="view/adminhtml/web/images/logo.gif" align="right" width="180"/>
+# PagSeguro para Magento e Adobe <img src="view/adminhtml/web/images/logo.gif" align="right" width="180"/>
 
 Módulo para pagamento em Magento e Adobe Commerce.
 
 ## Badges
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/f492e1411f73602d4a37/maintainability)](https://codeclimate.com/github/elisei/pagbank-payment-magento/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/cc263cca6df24df090ad/maintainability)](https://codeclimate.com/github/elisei/pagbank-payment-magento/maintainability)
 [![Magento Coding Quality](https://github.com/pagseguro/payment-magento/actions/workflows/magento-coding-quality.yml/badge.svg)](https://github.com/pagseguro/payment-magento/actions/workflows/magento-coding-quality.yml)
 [![Magento Mess Detector](https://github.com/pagseguro/payment-magento/actions/workflows/mess-detector.yml/badge.svg)](https://github.com/pagseguro/payment-magento/actions/workflows/mess-detector.yml)
 [![Run ESLint](https://github.com/pagseguro/payment-magento/actions/workflows/ESLint.yml/badge.svg)](https://github.com/pagseguro/payment-magento/actions/workflows/ESLint.yml)
@@ -13,10 +13,10 @@ Módulo para pagamento em Magento e Adobe Commerce.
 
 Desenvolvida no padrão Gateway, nosso módulo irá oferecer uma perfeita integração com a sua loja.
 
-Receba e gerencie pagamentos a pioneira e lider de mercado no Brasil!
+Receba e gerencie pagamentos com a pioneira e líder de mercado no Brasil!
 
 
-### Cartão de Crédito e Cofre (Vault) <img src="view/base/web/images/cc/ae.svg" align="right" width="35"/> <img src="view/base/web/images/cc/au.svg" align="right" width="35"/> <img src="view/base/web/images/cc/au.svg" align="right" width="35"/> <img src="view/base/web/images/cc/dn.svg" align="right" width="35"/> <img src="view/base/web/images/cc/elo.svg" align="right" width="35"/> <img src="view/base/web/images/cc/hc.svg" align="right" width="35"/> <img src="view/base/web/images/cc/mc.svg" align="right" width="35"/> <img src="view/base/web/images/cc/vi.svg" align="right" width="35"/>
+### Cartão de Crédito e Cofre (Vault) <img src="view/base/web/images/cc/ae.svg" align="right" width="35"/> <img src="view/base/web/images/cc/au.svg" align="right" width="35"/> <img src="view/base/web/images/cc/dn.svg" align="right" width="35"/> <img src="view/base/web/images/cc/elo.svg" align="right" width="35"/> <img src="view/base/web/images/cc/hc.svg" align="right" width="35"/> <img src="view/base/web/images/cc/mc.svg" align="right" width="35"/> <img src="view/base/web/images/cc/vi.svg" align="right" width="35"/>
 
 Receba e gerencie transações de cartão de crédito em sua loja.
 
@@ -56,8 +56,8 @@ Principais Recursos:
 
 ## Instalação e Configuração
 
-Visite nossa [Wiki](wiki) e veja como é fácil instalar e configurar o módulo.
+Visite nossa [Wiki](../../wiki) e veja como é fácil instalar e configurar o módulo.
 
 ## License
 
-[Open Source License](LICENSE)
+[Open Source License](../../LICENSE)
