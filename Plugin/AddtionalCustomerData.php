@@ -21,7 +21,7 @@ class AddtionalCustomerData
     /**
      * @var CurrentCustomer
      */
-    private $currentCustomer;
+    protected $currentCustomer;
 
     /**
      * @param CurrentCustomer $currentCustomer

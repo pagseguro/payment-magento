@@ -81,7 +81,7 @@ class ShippingsDataRequest implements BuilderInterface
             $result[self::SHIPPING] = [
                 self::ADDRESS           => [
                     // phpcs:ignore Generic.Files.LineLength
-                    AddressDataRequest::POSTAL_CODE   => preg_replace('/[^0-9]/', '', $shippingAddress->getPostcode()),
+                    AddressDataRequest::POSTAL_CODE   => preg_replace('/[^0-9]/', '', (string) $shippingAddress->getPostcode()),
                     // phpcs:ignore Generic.Files.LineLength
                     AddressDataRequest::STREET        => $this->config->getValueForAddress($shippingAddress, AddressDataRequest::STREET),
                     // phpcs:ignore Generic.Files.LineLength

@@ -71,4 +71,14 @@ class OrderAdapter extends MageOrderAdapter
     {
         return $this->order->getBasePagbankInterestAmount();
     }
+
+    /**
+     * Returns order shipping amount
+     *
+     * @return float|null
+     */
+    public function getShippingAmount()
+    {
+        return $this->order->getBaseShippingAmount();
+    }
 }
