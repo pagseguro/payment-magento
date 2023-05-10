@@ -111,7 +111,7 @@ class HolderDataRequest implements BuilderInterface
                     self::HOLDER  => [
                         self::HOLDER_NAME     => $name,
                         self::HOLDER_EMAIL    => $billingAddress->getEmail(),
-                        self::HOLDER_TAX_ID   => preg_replace('/[^0-9]/', '', $taxId),
+                        self::HOLDER_TAX_ID   => preg_replace('/[^0-9]/', '', (string) $taxId),
                     ],
                 ],
             ],
