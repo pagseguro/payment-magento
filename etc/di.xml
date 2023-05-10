@@ -64,6 +64,8 @@
     <virtualType name="PagBankBaseFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
             <argument name="code" xsi:type="const">PagBank\PaymentMagento\Model\Ui\ConfigProviderBase::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\Info</argument>
             <argument name="valueHandlerPool" xsi:type="object">PagBankValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PagBankCcCommandPool</argument>
         </arguments>

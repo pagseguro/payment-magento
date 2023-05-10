@@ -144,7 +144,7 @@ class Credential
 
         $store = $this->storeManager->getStore('admin');
         $storeCode = '/'.$store->getCode().'/';
-        $redirectUrl = $store->getUrl('pagbank/system_config/oauth', [
+        $redirectUrl = (string) $store->getUrl('pagbank/system_config/oauth', [
             'website'       => $storeId,
             'code_verifier' => $codeVerifier,
         ]);

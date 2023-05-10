@@ -41,4 +41,11 @@ interface OrderAdapterInterface extends MageOrderAdapterInterface
      * @return float|null
      */
     public function getBasePagbankInterestAmount();
+
+    /**
+     * Returns order shipping amount.
+     *
+     * @return float|null
+     */
+    public function getShippingAmount();
 }

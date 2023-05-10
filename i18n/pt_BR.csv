@@ -1,4 +1,4 @@
-"Installments Interest","Juros de Parcelamento"
+"Installments Interest","Juros de Parcelamento"FormattingLegacyBrazilian
 "Discount in cash","Desconto à vista"
 "Default Config","Configuração Padrão"
 Production,Produção
@@ -6,8 +6,8 @@ Production,Produção
 "Authorize for the store %1 in %2","Autorizar a loja %1 em %2"
 "Disallow for the store %1 in %2","Desautorizar a loja %1 em %2"
 "Order not found.","Pedido não encontrado."
-"You are diconnected to PagBank.","Você foi desconectado do PagSeguro."
-"You are connected to PagBank. =)","Você foi conectado ao PagSeguro. =)"
+"You are diconnected to PagBank.","Você foi desconectado do PagBank."
+"You are connected to PagBank. =)","Você foi conectado ao PagBank. =)"
 "Unable to get the code, try again. =(","Não foi possível obter o código, tente novamente. =("
 "You should not be here...","Não é para você estar aqui..."
 "Transaction has been declined. Please try again later.","Pedido recusado, por favor, tente mais tarde."
@@ -67,11 +67,11 @@ Finished,Finalizado
 "Order cancelled, payment deadline has expired.","Pedido cancelado, prazo de pagamento expirou."
 "Order %1 was in state %2 has been updated to state %3 expired?","O pedido %1 estava no estado %2 foi atualizado para o estado %3 expirou?"
 "Order not found","Pedido não encontrado"
-"Boleto Bancário - PagBank","Boleto Bancário - PagSeguro"
-"Cartão de Crédito - PagBank","Cartão de Crédito - PagSeguro"
-"Pix - PagBank","Pix - PagSeguro"
+"Boleto Bancário - PagBank","Boleto Bancário - PagBank"
+"Cartão de Crédito - PagBank","Cartão de Crédito - PagBank"
+"Pix - PagBank","Pix - PagBank"
 "Get Payment Update","Obter Atualização de Pagamento"
-"This decision will not change the status in PagBank.","Esta decisão não mudará o status no PagSeguro."
+"This decision will not change the status in PagBank.","Esta decisão não mudará o status no PagBank."
 "Accept Offline Payment","Aceitar Pagamento Offline"
 "Deny Offline Payment","Negar Pagamento Offline"
 Due,Vencimento
@@ -82,7 +82,7 @@ Link,Link
 "Download the Boleto","Download do Boleto"
 "Line Code","Linha digitável"
 "Payer Name","Nome do Pagador"
-"Payer Tax Id","Documento do Pagador"
+"Payer Tax Id","CPF/CNPJ do Pagador"
 "Pix Qr Code","Pix Qr Code"
 "Pix Copy and Paste","Pix Cópia e Cola"
 "Payer Phone","Telefone do Pagador"
@@ -106,7 +106,7 @@ Waiting...,Aguardando...
 "A 3-digit number in italics on the back of your credit card.","Um número de 3 dígitos em itálico no verso do seu cartão de crédito."
 Month,Mês
 Year,Ano
-"Payer Tax id","Documento do Pagador"
+"Payer Tax id","CPF/CNPJ do Pagador"
 "Payer Full Name","Nome do Pagador"
 "Pix Information","Informações do Pix"
 ending,terminando
@@ -121,10 +121,10 @@ expires,expirando
 "Please enter a valid credit card verification number.","Insira um número de verificação de cartão de crédito válido (CVV)."
 "Please provide a valid CPF/CNPJ.","Forneça um CPF/CNPJ válido."
 "Payment Services","Serviços de Pagamento"
-"Permission for set preference account PagBank","Permissão para definir preferências do PagSeguro"
-"Permission for config PagBank","Permissão para configurar o PagSeguro"
-"Permission for clear config PagBank","Permissão para apagar a configuração do PagSeguro"
-"<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> is a company within the UOL group.</p><p>PagBank is the <b>pioneer and leader</b> in the Brazilian online payment market, with a complete portfolio for your business.</p></div>","<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagSeguro</b> é uma empresa do grupo UOL.</p><p>O PagSeguro é o <b>pioneiro e líder</b> no mercado brasileiro de meios de pagamentos online, possui um portfólio completo para o seu negócio.</p></div>"
+"Permission for set preference account PagBank","Permissão para definir preferências do PagBank"
+"Permission for config PagBank","Permissão para configurar o PagBank"
+"Permission for clear config PagBank","Permissão para apagar a configuração do PagBank"
+"<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> is a company within the UOL group.</p><p>PagBank is the <b>pioneer and leader</b> in the Brazilian online payment market, with a complete portfolio for your business.</p></div>","<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> é uma empresa do grupo UOL.</p><p>O PagBank é o <b>pioneiro e líder</b> no mercado brasileiro de meios de pagamentos online, possui um portfólio completo para o seu negócio.</p></div>"
 "Technical support available <a href=""https://github.com/pagbank/payment-magento/issues/new/choose"">here</a>.","Suporte técnico disponível <a href=""https://github.com/pagbank/payment-magento/issues/new/choose"">aqui</a>."
 Credentials,Credenciais
 "Define the relationship between your store and our application.","Defina a relação entre sua loja e nosso aplicativo."
@@ -132,7 +132,7 @@ Credentials,Credenciais
 Environment,Ambiente
 "Module Authorization","Autorização do Módulo"
 "Boleto Bancário","Boleto Bancário"
-"A charge registered and authenticated by PagBank.","Uma cobrança cadastrada e autenticada pelo PagSeguro."
+"A charge registered and authenticated by PagBank.","Uma cobrança cadastrada e autenticada pelo PagBank."
 Enabled,Habilitado
 Title,Título
 "Days due","Dias de vencimento"
@@ -167,7 +167,7 @@ Developers,Desenvolvedores
 Debug,Debug
 "Attention, you cannot use debug in production mode.","Atenção, você não pode usar o debug no modo de produção."
 "Account Id","Código da Conta"
-"Your PagBank Account ID. Automatically captured after APP authorization.","É o código da sua conta no PagSeguro. Essa informação é capturada automaticamente após autorizar o APP."
+"Your PagBank Account ID. Automatically captured after APP authorization.","É o código da sua conta no PagBank. Essa informação é capturada automaticamente após autorizar o APP."
 "Custom notification URL","URL de notificação personalizada"
 "You can use services like <a href='https://pipedream.com/'>Pipedream</a> to intercept outgoing notifications.","Você pode usar serviços como <a href='https://pipedream.com/'>Pipedream</a> para interceptar notificações enviadas."
 Pix,Pix
