@@ -100,8 +100,8 @@ class ItemsDataRequest implements BuilderInterface
             }
 
             $result[] = [
-                self::ITEM_REFERENCE_ID => $item->getSku(),
-                self::ITEM_NAME         => $item->getName(),
+                self::ITEM_REFERENCE_ID => substr($item->getSku(), 0, 60),
+                self::ITEM_NAME         => substr($item->getName(), 0, 60),
                 self::ITEM_QUANTITY     => $item->getQtyOrdered(),
                 self::ITEM_UNIT_AMOUNT  => $this->config->formatPrice($item->getPrice()),
             ];
