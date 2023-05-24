@@ -268,11 +268,13 @@ class Config extends PaymentConfig
     {
         $environment = $this->getEnvironmentMode($storeId);
 
+        $custom = $this->getAddtionalValue('production_custom_notification_url', $storeId);
+
         if ($environment === 'sandbox') {
-            return $this->getAddtionalValue('sandbox_custom_notification_url', $storeId);
+            $custom = $this->getAddtionalValue('sandbox_custom_notification_url', $storeId);
         }
 
-        return null;
+        return $custom;
     }
 
     /**

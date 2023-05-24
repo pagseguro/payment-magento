@@ -43,6 +43,14 @@
                 <field id="*/*/settings/environment">sandbox</field>
             </depends>
         </field>
+        <field id="production_custom_notification_url" translate="label comment" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Custom notification URL</label>
+            <config_path>payment/pagbank_paymentmagento/production_custom_notification_url</config_path>
+            <comment><![CDATA[You can use services like <a href='https://pipedream.com/'>Pipedream</a> to intercept outgoing notifications.]]></comment>
+            <depends>
+                <field id="*/*/settings/environment">production</field>
+            </depends>
+        </field>
         <include path="PagBank_PaymentMagento::system/relationship.xml"/>
     </group>
 </include>
