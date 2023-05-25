@@ -12,12 +12,11 @@ declare(strict_types=1);
 
 namespace PagBank\PaymentMagento\Model\Api;
 
-use Laminas\Http\ClientFactory;
-use Laminas\Http\Request;
 use Magento\Config\Model\ResourceModel\Config;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
-use Magento\Framework\HTTP\LaminasClient;
+use Magento\Framework\HTTP\ZendClient;
+use Magento\Framework\HTTP\ZendClientFactory;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -49,7 +48,7 @@ class Credential
     protected $configBase;
 
     /**
-     * @var ClientFactory
+     * @var ZendClientFactory
      */
     protected $httpClientFactory;
 
@@ -65,7 +64,7 @@ class Credential
      * @param EncryptorInterface    $encryptor
      * @param StoreManagerInterface $storeManager
      * @param ConfigBase            $configBase
-     * @param ClientFactory         $httpClientFactory
+     * @param ZendClientFactory     $httpClientFactory
      * @param Json                  $json
      */
     public function __construct(
@@ -73,7 +72,7 @@ class Credential
         EncryptorInterface $encryptor,
         StoreManagerInterface $storeManager,
         ConfigBase $configBase,
-        ClientFactory $httpClientFactory,
+        ZendClientFactory $httpClientFactory,
         Json $json
     ) {
         $this->resourceConfig = $resourceConfig;
@@ -138,13 +137,13 @@ class Credential
     public function getAuthorize($storeId, $code, $codeVerifier)
     {
         $url = $this->configBase->getApiUrl($storeId);
-        $headers = $this->configBase->getPubHeader($storeId);
+        $header = $this->configBase->getPubHeader($storeId);
         $apiConfigs = $this->configBase->getApiConfigs();
         $uri = $url.'oauth2/token';
 
         $store = $this->storeManager->getStore('admin');
         $storeCode = '/'.$store->getCode().'/';
-        $redirectUrl = (string) $store->getUrl('pagbank/system_config/oauth', [
+        $redirectUrl = $store->getUrl('pagbank/system_config/oauth', [
             'website'       => $storeId,
             'code_verifier' => $codeVerifier,
         ]);
@@ -159,17 +158,17 @@ class Credential
             'code_verifier' => $codeVerifier,
         ];
 
-        /** @var LaminasClient $client */
+        $payload = $this->json->serialize($data);
+
+        /** @var ZendClient $client */
         $client = $this->httpClientFactory->create();
         $client->setUri($uri);
-        $client->setHeaders($headers);
-        $client->setMethod(Request::METHOD_POST);
-        $client->setOptions($apiConfigs);
-        $client->setRawBody($this->json->serialize($data));
+        $client->setHeaders($header);
+        $client->setMethod(ZendClient::POST);
+        $client->setConfig($apiConfigs);
+        $client->setRawData($payload, 'application/json');
 
-        $send = $client->send();
-
-        return $send->getBody();
+        return $client->request()->getBody();
     }
 
     /**
@@ -193,17 +192,17 @@ class Credential
 
         $data = ['type' => 'card'];
 
-        /** @var LaminasClient $client */
+        $payload = $this->json->serialize($data);
+
+        /** @var ZendClient $client */
         $client = $this->httpClientFactory->create();
         $client->setUri($uri);
         $client->setHeaders($headers);
-        $client->setMethod(Request::METHOD_POST);
-        $client->setOptions($apiConfigs);
-        $client->setRawBody($this->json->serialize($data));
+        $client->setMethod(ZendClient::POST);
+        $client->setConfig($apiConfigs);
+        $client->setRawData($payload, 'application/json');
 
-        $send = $client->send();
-
-        return $send->getBody();
+        return $client->request()->getBody();
     }
 
     /**
@@ -228,16 +227,14 @@ class Credential
 
         $payload = $this->json->serialize($data);
 
-        /** @var LaminasClient $client */
+        /** @var ZendClient $client */
         $client = $this->httpClientFactory->create();
-
         $client->setUri($uri);
         $client->setHeaders($header);
-        $client->setMethod(Request::METHOD_POST);
-        $client->setOptions($apiConfigs);
-        $client->setRawBody($payload);
-        $send = $client->send();
+        $client->setMethod(ZendClient::POST);
+        $client->setConfig($apiConfigs);
+        $client->setRawData($this->json->serialize($payload), 'application/json');
 
-        return $send->getBody();
+        return $client->request()->getBody();
     }
 }
