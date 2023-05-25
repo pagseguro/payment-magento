@@ -140,7 +140,7 @@ class Credential
         $header = $this->configBase->getPubHeader($storeId);
         $apiConfigs = $this->configBase->getApiConfigs();
         $uri = $url.'oauth2/token';
-
+        
         $store = $this->storeManager->getStore('admin');
         $storeCode = '/'.$store->getCode().'/';
         $redirectUrl = $store->getUrl('pagbank/system_config/oauth', [
@@ -150,6 +150,11 @@ class Credential
 
         $search = '/'.preg_quote($storeCode, '/').'/';
         $redirectUrl = preg_replace($search, '/', $redirectUrl, 0);
+
+        $firstAdminIndex = strpos($redirectUrl, '/admin/');
+        if ($firstAdminIndex !== false) {
+            $redirectUrl = substr_replace($redirectUrl, '/', $firstAdminIndex, strlen('/admin/'));
+        }
 
         $data = [
             'grant_type'    => 'authorization_code',
