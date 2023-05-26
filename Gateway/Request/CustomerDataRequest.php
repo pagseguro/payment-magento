@@ -113,11 +113,11 @@ class CustomerDataRequest implements BuilderInterface
 
         $billingAddress = $orderAdapter->getBillingAddress();
 
-        $name = $billingAddress->getFirstname().' '.$billingAddress->getLastname();
+        $name = $this->getName($payment, $orderAdapter);
 
         $taxId = $this->getTaxId($payment, $orderAdapter);
 
-        $phones = $this->structurePhone($billingAddress->getTelephone(), $billingAddress->getCountryId());
+        $phones = $this->getPhone($payment, $orderAdapter);
 
         $result[self::CUSTOMER] = [
             self::CUSTOMER_NAME     => $name,
@@ -127,6 +127,56 @@ class CustomerDataRequest implements BuilderInterface
         ];
 
         return $result;
+    }
+
+    /**
+     * Get Name.
+     *
+     * @param InfoInterface       $payment
+     * @param OrderAdapterFactory $orderAdapter
+     *
+     * @return string|null
+     */
+    public function getName($payment, $orderAdapter): ?string
+    {
+        $name = null;
+
+        $billingAddress = $orderAdapter->getBillingAddress();
+
+        if ($payment->getAdditionalInformation('payer_name')) {
+            $name = $payment->getAdditionalInformation('payer_name');
+        }
+
+        if (!$name) {
+            $name = $billingAddress->getFirstname().' '.$billingAddress->getLastname();
+        }
+
+        return $name;
+    }
+
+    /**
+     * Get Phone.
+     *
+     * @param InfoInterface       $payment
+     * @param OrderAdapterFactory $orderAdapter
+     *
+     * @return array|null
+     */
+    public function getPhone($payment, $orderAdapter): ?array
+    {
+        $phone = null;
+
+        $billingAddress = $orderAdapter->getBillingAddress();
+
+        if ($payment->getAdditionalInformation('payer_phone')) {
+            $phone = $payment->getAdditionalInformation('payer_phone');
+        }
+
+        if (!$phone) {
+            $phone = $billingAddress->getTelephone();
+        }
+
+        return $this->structurePhone($phone, $billingAddress->getCountryId());
     }
 
     /**
