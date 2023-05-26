@@ -30,6 +30,7 @@ class PixExpiration implements ArrayInterface
             '60'    => __('1 hour'),
             '720'   => __('12 hours'),
             '1440'  => __('24 hours'),
+            '4320'  => __('72 hours'),
         ];
     }
 }
