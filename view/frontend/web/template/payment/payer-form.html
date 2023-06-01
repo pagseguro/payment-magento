@@ -8,6 +8,7 @@
  * @license   See LICENSE for license details.
  */
 -->
+<!-- ko if: payerFormData.hasTaxIdCapture() || payerFormData.hasPhoneCapture() || payerFormData.hasNameCapture() -->
 <fieldset data-bind="attr: {class: 'fieldset payment items pagbank-payer-data ' + getCode(), id: 'payment_form_payer_form_' + getCode()}">
     <legend class="legend">
         <span class="legend-title"><span data-bind="{i18n: 'Payer Information'}"></span></span>
@@ -83,3 +84,4 @@
         </div>
     </div>
 </fieldset>
+<!-- /ko -->
