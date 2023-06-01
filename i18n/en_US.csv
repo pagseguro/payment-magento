@@ -49,6 +49,7 @@ Close,Close
 "30 minutes - recommended","30 minutes - recommended"
 "12 hours","12 hours"
 "24 hours","24 hours"
+"72 hours","72 hours"
 "Please select","Please select"
 "1st line of the street","1st line of the street"
 "2st line of the street","2st line of the street"
@@ -106,9 +107,11 @@ Waiting...,Waiting...
 "A 3-digit number in italics on the back of your credit card.","A 3-digit number in italics on the back of your credit card."
 Month,Month
 Year,Year
+"Payer Information","Payer Information"
 "Payer Tax id","Payer Tax id"
 "Payer Full Name","Payer Full Name"
 "Pix Information","Pix Information"
+"Option for installments...","Option for installments..."
 ending,ending
 expires,expires
 "Enter card number...","Enter card number..."

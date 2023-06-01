@@ -14,6 +14,7 @@ define([
     'Magento_Vault/js/view/payment/method-renderer/vault',
     'PagBank_PaymentMagento/js/action/checkout/list-installments',
     'PagBank_PaymentMagento/js/action/checkout/set-interest',
+    'PagBank_PaymentMagento/js/view/payment/payer-form',
     'Magento_Payment/js/model/credit-card-validation/credit-card-data',
     'Magento_Checkout/js/model/quote',
     'mage/translate'
@@ -24,6 +25,7 @@ define([
     VaultComponent,
     ListInstallments,
     setInterest,
+    PayerFormData,
     creditCardData,
     quote,
     $t
@@ -35,6 +37,7 @@ define([
             active: false,
             template: 'PagBank_PaymentMagento/payment/vault',
             vaultForm: 'PagBank_PaymentMagento/payment/vault-form',
+            payerForm: 'PagBank_PaymentMagento/payment/payer-form',
             creditCardInstallment: '',
             creditCardOptionsInstallments: ''
         },
@@ -77,6 +80,9 @@ define([
             var self = this;
 
             self._super();
+
+            self.payerFormData = new PayerFormData();
+            self.payerFormData.setPaymentCode(self.getCode());
 
             self.active.subscribe((value) => {
                 if (value === true) {
@@ -192,7 +198,9 @@ define([
                 'method': this.getCode(),
                 'additional_data': {
                     'cc_installments': this.creditCardInstallment(),
-                    'public_hash': this.getToken()
+                    'public_hash': this.getToken(),
+                    'payer_tax_id': this.payerFormData.payerTaxId(),
+                    'payer_phone': this.payerFormData.payerPhone()
                 }
             };
 
