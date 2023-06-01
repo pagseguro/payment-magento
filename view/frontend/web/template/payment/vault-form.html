@@ -8,10 +8,10 @@
  * @license   See LICENSE for license details.
  */
 -->
-<fieldset data-bind="attr: {class: 'fieldset payment items ccard field-to-pay' + getId(), id: 'payment_form_cc_' + getId()}">
-    <!-- ko if: (isShowLegend())-->
+<render args="payerForm"></render>
+<fieldset data-bind="attr: {class: 'fieldset payment payment-pagbank vault items ccard field-to-pay' + getId(), id: 'payment_form_cc_' + getId()}">
     <legend class="legend">
-        <span class="legend-title"><span text="getMaskedCard()"></span></span>
+        <span class="legend-title"><span data-bind="{i18n: 'Option for installments...'}"></span></span>
         <span class="legend-icon">
             <ul class="credit-card-types">
               <li class="item">
@@ -23,32 +23,34 @@
             </ul>
         </span>
     </legend>
-    <!-- /ko -->
-    <div class="field-to-pay"  data-bind="css: { _hidden:isPlaceOrderActionAllowed() }">
-      <p class="form-waiting"><!-- ko i18n: 'Waiting...'--><!-- /ko --></p>
-    </div>
-    <div class="field-to-pay"  data-bind="css: { _hidden:!isPlaceOrderActionAllowed() }">
-        <div class="field installments">
-            <div class="control pagbank-input-group">
-                <select name="payment[cc_installments]"
-                        class="select select-year"
-                        data-bind="attr: {
-                                        autocomplete: 'off',
-                                        id: getId() + '_installments',
-                                        'data-container': getId() + '-installments',
-                                        'data-validate': JSON.stringify({required:true})
-                                    },
-                                    enable: isActive($parents),
-                                    options: getOptionsInstallmentsVault(),
-                                    optionsValue: 'installment_value',
-                                    optionsText: 'installment_label',
-                                    optionsCaption: $t('Select Instalmment'),
-                                    value: creditCardInstallment">
-                </select>
-                <label data-bind="attr: {for: getId() + '_installments'}" class="label">
-                        <span><!-- ko i18n: 'Select Instalmment' --><!-- /ko --></span>
-                </label>
+    <div class="form-pay">
+        <div class="field-to-pay"  data-bind="css: { _hidden:isPlaceOrderActionAllowed() }">
+            <p class="form-waiting"><!-- ko i18n: 'Waiting...'--><!-- /ko --></p>
+        </div>
+        <div class="field-to-pay"  data-bind="css: { _hidden:!isPlaceOrderActionAllowed() }">
+            <div class="field installments">
+                <div class="control pagbank-input-group">
+                    <select name="payment[cc_installments]"
+                            class="select select-year"
+                            data-bind="attr: {
+                                            autocomplete: 'off',
+                                            id: getId() + '_installments',
+                                            'data-container': getId() + '-installments',
+                                            'data-validate': JSON.stringify({required:true})
+                                        },
+                                        enable: isActive($parents),
+                                        options: getOptionsInstallmentsVault(),
+                                        optionsValue: 'installment_value',
+                                        optionsText: 'installment_label',
+                                        optionsCaption: $t('Select Instalmment'),
+                                        value: creditCardInstallment">
+                    </select>
+                    <label data-bind="attr: {for: getId() + '_installments'}" class="label">
+                            <span><!-- ko i18n: 'Select Instalmment' --><!-- /ko --></span>
+                    </label>
+                </div>
             </div>
         </div>
     </div>
+    
 </fieldset>

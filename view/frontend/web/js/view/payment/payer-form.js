@@ -59,7 +59,7 @@ define([
                 self._super();
 
                 self.payerTaxId.subscribe((value) => {
-                    fieldVatId = $('#' + this.paymentCode + '-payer-tax-id');
+                    fieldVatId = $('input[name="payment[payer_tax_id]"]');
                     fieldVatId.unmask();
                     typeMaskVat = value.replace(/\D/g, '').length >= 12 ? '00.000.000/0000-00' : '000.000.000-009';
                     fieldVatId.mask(typeMaskVat, { clearIfNotMatch: true });
@@ -68,7 +68,7 @@ define([
                 });
 
                 self.payerPhone.subscribe((value) => {
-                    fieldPhone = $('#' + this.paymentCode + '-payer-phone');
+                    fieldPhone = $('input[name="payment[payer_phone]"]');
                     fieldPhone.mask('(00)00000-0000', { clearIfNotMatch: true });
                     pagbankPayerData.payerPhone = value;
                 });
@@ -86,7 +86,7 @@ define([
              * Set Payment Code
              * @param {String} paymentCode
              */
-            setPaymentCode: function (paymentCode) {
+            setPaymentCode(paymentCode) {
                 this.paymentCode = paymentCode;
             },
 

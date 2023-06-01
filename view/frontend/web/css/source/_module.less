@@ -50,9 +50,18 @@
             }
         }
 
+        .pagbank-payer-data {
+            margin-bottom: @indent__base;
+        }
+
+        .form-persona-information {
+            margin: @indent__base @indent__s 0 @indent__s;
+        }
+
         .fieldset {
 
-            &.payment-pagbank {
+            &.payment-pagbank,
+            &.pagbank-payer-data {
                 border: 1px solid;
                 border-color: @color-gray-light2;
                 display: grid;
@@ -86,6 +95,12 @@
                     padding: @indent__base;
                     text-align: center;
                     .lib-heading(h3);
+                }
+
+                &.vault {
+                    .installments {
+                        margin-top: @indent__base;
+                    }
                 }
             }
             .field {
@@ -244,6 +259,10 @@
                 }
             }
         }
+    }
+
+    .full-checkout .checkout-payment-method .payment-method-content .fieldset.pagbank-payer-data:not(:last-child) {
+        margin-bottom: @indent__base;
     }
 }
 

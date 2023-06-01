@@ -9,70 +9,77 @@
  */
 -->
 <fieldset data-bind="attr: {class: 'fieldset payment items pagbank-payer-data ' + getCode(), id: 'payment_form_payer_form_' + getCode()}">
-    <!-- ko if: payerFormData.hasTaxIdCapture() -->
-    <div class="field payer-tax-id required">
-        <div class="control pagbank-input-group">
-            <input type="text" name="payment[payer_tax_id]" class="input-text" value=""
-                data-bind="attr: {
-                                autocomplete: 'taxvat',
-                                id: getCode() + '-payer-tax-id',
-                                title: $t('Payer Tax id'),
-                                placeholder: $t('Payer Tax id'),
-                                'data-container': getCode() + '-payer-tax-id',
-                                'data-validate': JSON.stringify({
-                                    'required':true,
-                                    'pagbank-validate-tax-id': '#' + getCode() + '-payer-tax-id'
-                                })},
-                            enable: isActive($parents),
-                            value: payerFormData.payerTaxId,
-                            valueUpdate: 'keyup' ">
-            </input>
-            <label data-bind="attr: {for: getCode() + '-payer-tax-id'}" class="label">
-                <span><!-- ko i18n: 'Payer Tax id'--><!-- /ko --></span>
-            </label>
+    <legend class="legend">
+        <span class="legend-title"><span data-bind="{i18n: 'Payer Information'}"></span></span>
+    </legend>
+    <div class="form-pay">
+        <div class="form-persona-information field-to-pay">
+            <!-- ko if: payerFormData.hasTaxIdCapture() -->
+            <div class="field payer-tax-id required">
+                <div class="control pagbank-input-group">
+                    <input type="tel" name="payment[payer_tax_id]" class="input-text" value=""
+                        data-bind="attr: {
+                                        autocomplete: 'taxvat',
+                                        id: getCode() + '-payer-tax-id',
+                                        title: $t('Payer Tax id'),
+                                        placeholder: $t('Payer Tax id'),
+                                        'data-container': getCode() + '-payer-tax-id',
+                                        'data-validate': JSON.stringify({
+                                            'required':true,
+                                            'pagbank-validate-tax-id': '#' + getCode() + '-payer-tax-id'
+                                        })},
+                                    enable: isActive($parents),
+                                    value: payerFormData.payerTaxId,
+                                    valueUpdate: 'keyup' ">
+                    </input>
+                    <label data-bind="attr: {for: getCode() + '-payer-tax-id'}" class="label">
+                        <span><!-- ko i18n: 'Payer Tax id'--><!-- /ko --></span>
+                    </label>
+                </div>
+            </div>
+            <!-- /ko -->
+            <!-- ko if: payerFormData.hasPhoneCapture() -->
+            <div class="field payer-phone required">
+                <div class="control pagbank-input-group">
+                    <input type="tel" name="payment[payer_phone]" class="input-text" value=""
+                        data-bind="attr: {
+                                        autocomplete: 'tel-national',
+                                        id: getCode() + '-payer-phone',
+                                        title: $t('Payer Phone'),
+                                        placeholder: $t('Payer Phone'),
+                                        'data-container': getCode() + '-payer-phone',
+                                        'data-validate': JSON.stringify({'required':true})},
+                                    enable: isActive($parents),
+                                    value: payerFormData.payerPhone,
+                                    valueUpdate: 'keyup' ">
+                    </input>
+                    <label data-bind="attr: {for: getCode() + '-payer-phone'}" class="label">
+                        <span><!-- ko i18n: 'Payer Phone'--><!-- /ko --></span>
+                    </label>
+                </div>
+            </div>
+            <!-- /ko -->
+            <!-- ko if: payerFormData.hasNameCapture() -->
+            <div class="field payer-name required">
+                <div class="control pagbank-input-group">
+                    <input type="text" name="payment[payer_name]" class="input-text" value=""
+                        data-bind="attr: {
+                                        autocomplete: 'fullname',
+                                        id: getCode() + '-payer-name',
+                                        title: $t('Payer Full Name'),
+                                        placeholder: $t('Payer Full Name'),
+                                        'data-container': getCode() + '-payer-name',
+                                        'data-validate': JSON.stringify({'required':true})},
+                                    enable: isActive($parents),
+                                    value: payerFormData.payerName,
+                                    valueUpdate: 'keyup' ">
+                    </input>
+                    <label data-bind="attr: {for: getCode() + '-payer-name'}" class="label">
+                        <span><!-- ko i18n: 'Payer Full Name'--><!-- /ko --></span>
+                    </label>
+                </div>
+            </div>
+            <!-- /ko -->
         </div>
     </div>
-    <!-- /ko -->
-    <!-- ko if: payerFormData.hasPhoneCapture() -->
-    <div class="field payer-phone required">
-        <div class="control pagbank-input-group">
-            <input type="text" name="payment[payer_phone]" class="input-text" value=""
-                data-bind="attr: {
-                                autocomplete: 'tel-national',
-                                id: getCode() + '-payer-phone',
-                                title: $t('Payer Phone'),
-                                placeholder: $t('Payer Phone'),
-                                'data-container': getCode() + '-payer-phone',
-                                'data-validate': JSON.stringify({'required':true})},
-                            enable: isActive($parents),
-                            value: payerFormData.payerPhone,
-                            valueUpdate: 'keyup' ">
-            </input>
-            <label data-bind="attr: {for: getCode() + '-payer-phone'}" class="label">
-                <span><!-- ko i18n: 'Payer Phone'--><!-- /ko --></span>
-            </label>
-        </div>
-    </div>
-    <!-- /ko -->
-    <!-- ko if: payerFormData.hasNameCapture() -->
-    <div class="field payer-name required">
-        <div class="control pagbank-input-group">
-            <input type="text" name="payment[payer_name]" class="input-text" value=""
-                data-bind="attr: {
-                                autocomplete: 'fullname',
-                                id: getCode() + '-payer-name',
-                                title: $t('Payer Full Name'),
-                                placeholder: $t('Payer Full Name'),
-                                'data-container': getCode() + '-payer-name',
-                                'data-validate': JSON.stringify({'required':true})},
-                            enable: isActive($parents),
-                            value: payerFormData.payerName,
-                            valueUpdate: 'keyup' ">
-            </input>
-            <label data-bind="attr: {for: getCode() + '-payer-name'}" class="label">
-                <span><!-- ko i18n: 'Payer Full Name'--><!-- /ko --></span>
-            </label>
-        </div>
-    </div>
-    <!-- /ko -->
 </fieldset>

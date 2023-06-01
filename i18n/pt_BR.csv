@@ -49,6 +49,7 @@ Close,Fechar
 "30 minutes - recommended","30 minutos - recomendado"
 "12 hours","12 horas"
 "24 hours","24 horas"
+"72 hours","72 horas"
 "Please select","Por favor, selecione"
 "1st line of the street","1ª linha de endereço"
 "2st line of the street","2ª linha de endereço"
@@ -106,9 +107,11 @@ Waiting...,Aguardando...
 "A 3-digit number in italics on the back of your credit card.","Um número de 3 dígitos em itálico no verso do seu cartão de crédito."
 Month,Mês
 Year,Ano
+"Payer Information","Informação do Pagador"
 "Payer Tax id","CPF/CNPJ do Pagador"
 "Payer Full Name","Nome do Pagador"
 "Pix Information","Informações do Pix"
+"Option for installments...","Opções de parcelamento..."
 ending,terminando
 expires,expirando
 "Enter card number...","Digite um cartão..."
