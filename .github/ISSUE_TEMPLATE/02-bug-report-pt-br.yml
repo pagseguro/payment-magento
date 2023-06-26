@@ -26,6 +26,17 @@ body:
     validations:
       required: true
   - type: dropdown
+    id: installation-method
+    attributes:
+      label: Método de Instalação
+      description: Como instalou o módulo?
+      options:
+        - Via Composer
+        - Via upload de arquivs (app/code)
+        - Via Marketplace Adobe
+    validations:
+      required: true
+  - type: dropdown
     id: version
     attributes:
       label: Versão da Magento/Adobe
