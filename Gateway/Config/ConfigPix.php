@@ -177,6 +177,7 @@ class ConfigPix extends PaymentConfig
             60   => __('1 hour'),
             720  => __('12 hour'),
             1440 => __('1 day'),
+            4320 => __('3 days'),
         ];
 
         if (isset($types[$exp])) {
