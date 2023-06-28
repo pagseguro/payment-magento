@@ -98,10 +98,13 @@ class ItemsDataRequest implements BuilderInterface
             if ($item->getParentItem()) {
                 continue;
             }
+            
+            $productName = iconv('UTF-8', 'ASCII//TRANSLIT', $item->getName());
+            $productName = preg_replace('/[^a-zA-Z0-9\s]/u', '', $productName);
 
             $result[] = [
                 self::ITEM_REFERENCE_ID => substr($item->getSku(), 0, 60),
-                self::ITEM_NAME         => substr($item->getName(), 0, 50),
+                self::ITEM_NAME         => substr($productName, 0, 60),
                 self::ITEM_QUANTITY     => $item->getQtyOrdered(),
                 self::ITEM_UNIT_AMOUNT  => $this->config->formatPrice($item->getPrice()),
             ];
