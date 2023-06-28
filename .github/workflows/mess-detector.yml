@@ -1,5 +1,5 @@
 name: Magento Mess Detector
-on: [pull_request]
+on: [push, pull_request]
 
 jobs:
   build-test:
