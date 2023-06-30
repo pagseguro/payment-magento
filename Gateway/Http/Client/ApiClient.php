@@ -85,7 +85,7 @@ class ApiClient
                 $uri,
                 $headers,
                 $responseBody,
-                $request,
+                $request
             );
         } catch (InvalidArgumentException $exc) {
             $this->collectLogger(
@@ -131,9 +131,9 @@ class ApiClient
                 $uri,
                 $headers,
                 $responseBody,
-                [],
+                []
             );
-        } catch (InvalidArgumentException $exc) {
+        } catch (\InvalidArgumentException $exc) {
             $this->collectLogger(
                 $uri,
                 $headers,
@@ -142,7 +142,7 @@ class ApiClient
                 $exc->getMessage()
             );
             // phpcs:ignore Magento2.Exceptions.DirectThrow
-            throw new LocalizedException('Invalid JSON was returned by the gateway');
+            throw new LocalizedException(__('Invalid JSON was returned by the gateway'));
         }
 
         return $data;
@@ -179,7 +179,7 @@ class ApiClient
                 'header'    => $this->json->serialize($headers),
                 'payload'   => $this->json->serialize($payload),
                 'response'  => $this->json->serialize($responseFilter),
-                'error_msg' => $message,
+                'error_msg' => $message
             ]
         );
     }
