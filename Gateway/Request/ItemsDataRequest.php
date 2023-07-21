@@ -99,8 +99,7 @@ class ItemsDataRequest implements BuilderInterface
                 continue;
             }
             
-            $productName = iconv('UTF-8', 'ASCII//TRANSLIT', $item->getName());
-            $productName = preg_replace('/[^a-zA-Z0-9\s]/u', '', $productName);
+            $productName = preg_replace('/[^\p{L}0-9\s]/u', '', $item->getName());
 
             $result[] = [
                 self::ITEM_REFERENCE_ID => substr($item->getSku(), 0, 60),
