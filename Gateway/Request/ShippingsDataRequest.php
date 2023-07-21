@@ -78,10 +78,13 @@ class ShippingsDataRequest implements BuilderInterface
 
         $shippingAddress = $orderAdapter->getShippingAddress();
         if ($shippingAddress) {
+            $postalCode = preg_replace('/[^0-9]/', '', (string) $shippingAddress->getPostcode());
+            $postalCode = str_pad($postalCode, 8, '0', STR_PAD_RIGHT);
+
             $result[self::SHIPPING] = [
                 self::ADDRESS           => [
                     // phpcs:ignore Generic.Files.LineLength
-                    AddressDataRequest::POSTAL_CODE   => preg_replace('/[^0-9]/', '', $shippingAddress->getPostcode()),
+                    AddressDataRequest::POSTAL_CODE   => $postalCode,
                     // phpcs:ignore Generic.Files.LineLength
                     AddressDataRequest::STREET        => $this->config->getValueForAddress($shippingAddress, AddressDataRequest::STREET),
                     // phpcs:ignore Generic.Files.LineLength

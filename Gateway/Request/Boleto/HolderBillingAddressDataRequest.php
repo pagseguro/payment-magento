@@ -70,12 +70,15 @@ class HolderBillingAddressDataRequest implements BuilderInterface
 
         $billingAddress = $orderAdapter->getBillingAddress();
         if ($billingAddress) {
+            $postalCode = preg_replace('/[^0-9]/', '', (string) $billingAddress->getPostcode());
+            $postalCode = str_pad($postalCode, 8, '0', STR_PAD_RIGHT);
+
             $result[ChargesDataRequest::CHARGES][][PaymentMethodDataRequest::PAYMENT_METHOD] = [
                 strtolower(PaymentMethodDataRequest::METHOD)    => [
                     HolderDataRequest::HOLDER  => [
                         AddressDataRequest::ADDRESS => [
                             // phpcs:ignore Generic.Files.LineLength
-                            AddressDataRequest::POSTAL_CODE   => preg_replace('/[^0-9]/', '', $billingAddress->getPostcode()),
+                            AddressDataRequest::POSTAL_CODE   => $postalCode,
                             // phpcs:ignore Generic.Files.LineLength
                             AddressDataRequest::STREET        => $this->config->getValueForAddress($billingAddress, AddressDataRequest::STREET),
                             // phpcs:ignore Generic.Files.LineLength
