@@ -73,9 +73,9 @@ class ConsultPSInstallments
     /**
      * Get PagBank Installments.
      *
-     * @param int    $storeId
-     * @param string $creditCardBin
-     * @param string $amount
+     * @param int|null  $storeId
+     * @param string    $creditCardBin
+     * @param string    $amount
      *
      * @return array
      */
@@ -115,7 +115,9 @@ class ConsultPSInstallments
                     $list = $brand;
                 }
 
-                $response = $list['installment_plans'];
+                $list = $this->getAvailableInstallments($list['installment_plans'], $storeId);
+
+                $response = $list;
             }
 
             if (!$client->request()->isSuccessful()) {
@@ -135,5 +137,27 @@ class ConsultPSInstallments
         }
 
         return $response;
+    }
+
+    /**
+     * Get Available Installments.
+     *
+     * @param array     $list
+     * @param int|null  $storeId
+     * @return array
+     */
+    public function getAvailableInstallments($list, $storeId)
+    {
+        $minInstallment = $this->configCc->getMinValuelInstallment($storeId) * 100;
+
+        foreach ($list as $key => $allInstallments) {
+            if ($key >= 1) {
+                if ($allInstallments['installment_value'] <= $minInstallment) {
+                    unset($list[$key]);
+                }
+            }
+        }
+
+        return $list;
     }
 }

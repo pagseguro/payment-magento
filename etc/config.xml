@@ -81,6 +81,7 @@
                 <cctypes>HC,ELO,AE,VI,MC,DN,AU</cctypes>
                 <max_installment>18</max_installment>
                 <interest_free>1</interest_free>
+                <min_value_installment>5.00</min_value_installment>
                 <get_tax_id>0</get_tax_id>
                 <get_phone>0</get_phone>
                 <min_order_total>1</min_order_total>
