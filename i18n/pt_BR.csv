@@ -166,6 +166,8 @@ Title,Título
 "Maximum number of installments accepted","Número máximo de parcelas aceitas"
 "Number of interest-free installments","Número de parcelas sem juros"
 "Number of installments you want to accept without applying interest","Número de parcelas que pretende aceitar sem aplicar juros"
+"The minimum installment price","O preço mínimo da parcela"
+"It is the minimum value that the installment can have","É o valor mínimo que a parcela pode ter"
 Developers,Desenvolvedores
 "Meet our <a href='https://github.com/pagbank/payment-magento/wiki'>Wiki</a>.","Conheça a nossa <a href='https://github.com/pagbank/payment-magento/wiki'>Wiki</a>."
 Debug,Debug

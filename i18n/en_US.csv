@@ -166,6 +166,8 @@ Title,Title
 "Maximum number of installments accepted","Maximum number of installments accepted"
 "Number of interest-free installments","Number of interest-free installments"
 "Number of installments you want to accept without applying interest","Number of installments you want to accept without applying interest"
+"The minimum installment price","The minimum installment price"
+"It is the minimum value that the installment can have,"It is the minimum value that the installment can have"
 Developers,Developers
 "Meet our <a href='https://github.com/pagbank/payment-magento/wiki'>Wiki</a>.","Meet our <a href='https://github.com/pagbank/payment-magento/wiki'>Wiki</a>."
 Debug,Debug
