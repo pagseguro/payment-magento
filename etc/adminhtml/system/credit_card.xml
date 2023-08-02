@@ -82,19 +82,25 @@
         </group>
         <group id="installment" translate="label" type="text" sortOrder="3000" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Installment and interest</label>
-            <field id="max_installment" translate="label comment" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <field id="max_installment" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                 <label>Maximum number of installment</label>
                 <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\Installments</source_model>
                 <comment>Maximum number of installments accepted</comment>
                 <validate>required-entry validate-number</validate>
                 <config_path>payment/pagbank_paymentmagento_cc/max_installment</config_path>
             </field>
-            <field id="interest_free" translate="label comment" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <field id="interest_free" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                 <label>Number of interest-free installments</label>
                 <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\Installments</source_model>
                 <comment>Number of installments you want to accept without applying interest</comment>
                 <validate>required-entry validate-number</validate>
                 <config_path>payment/pagbank_paymentmagento_cc/interest_free</config_path>
+            </field>
+            <field id="min_value_installment" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>The minimum installment price</label>
+                <comment>It is the minimum value that the installment can have</comment>
+                <validate>required-entry validate-number validate-number-range validate-date-range number-range-5-9999</validate>
+                <config_path>payment/pagbank_paymentmagento_cc/min_value_installment</config_path>
             </field>
         </group>
     </group>
