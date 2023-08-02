@@ -66,26 +66,6 @@ class ConfigCc extends PaymentConfig
     /**
      * @const string
      */
-    public const USE_FRAUD_MANAGER = 'fraud_manager';
-
-    /**
-     * @const string
-     */
-    public const INSTALL_WITH_INTEREST = 'INSTALL_WITH_INTEREST';
-
-    /**
-     * @const string
-     */
-    public const INSTALL_NO_INTEREST = 'INSTALL_NO_INTEREST';
-
-    /**
-     * @const string
-     */
-    public const INSTALL_FULL = 'FULL';
-
-    /**
-     * @const string
-     */
     public const PAYMENT_ACTION = 'payment_action';
 
     /**
@@ -301,5 +281,21 @@ class ConfigCc extends PaymentConfig
         }
 
         return $free;
+    }
+
+    /**
+     * Get Min Value Installments.
+     *
+     * @param int|null $storeId
+     *
+     * @return int
+     */
+    public function getMinValuelInstallment($storeId = null): int
+    {
+        return (int) $this->scopeConfig->getValue(
+            'payment/pagbank_paymentmagento_cc/min_value_installment',
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
     }
 }
