@@ -110,7 +110,7 @@ class HolderDataRequest implements BuilderInterface
                 strtolower(PaymentMethodDataRequest::METHOD)    => [
                     self::HOLDER  => [
                         self::HOLDER_NAME     => $name,
-                        self::HOLDER_EMAIL    => $billingAddress->getEmail(),
+                        self::HOLDER_EMAIL    => strtolower($billingAddress->getEmail()),
                         self::HOLDER_TAX_ID   => preg_replace('/[^0-9]/', '', $taxId),
                     ],
                 ],
