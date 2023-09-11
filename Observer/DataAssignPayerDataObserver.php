@@ -60,7 +60,10 @@ class DataAssignPayerDataObserver extends AbstractDataAssignObserver
             return;
         }
 
+        /** @var \Magento\Sales\Model\Order\Payment $payment */
         $paymentInfo = $this->readPaymentModelArgument($observer);
+
+        $paymentInfo->unsAdditionalInformation();
 
         foreach ($this->payerData as $addInformationKey) {
             if (isset($additionalData[$addInformationKey])) {
