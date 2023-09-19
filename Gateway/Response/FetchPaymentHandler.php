@@ -13,6 +13,7 @@ namespace PagBank\PaymentMagento\Gateway\Response;
 use InvalidArgumentException;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use Magento\Payment\Model\InfoInterface;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 
 /**
@@ -61,6 +62,11 @@ class FetchPaymentHandler implements HandlerInterface
     public const RESPONSE_STATUS_DECLINED = 'DECLINED';
 
     /**
+     * Response Pay Status Canceled - Value.
+     */
+    public const RESPONSE_STATUS_CANCELED = 'CANCELED';
+
+    /**
      * Response Pay Authorized - Block name.
      */
     public const RESPONSE_AUTHORIZED = 'AUTHORIZED';
@@ -71,12 +77,18 @@ class FetchPaymentHandler implements HandlerInterface
     protected $invoiceSender;
 
     /**
+     * @var String
+     */
+    protected $finalStatus;
+
+    /**
      * @param InvoiceSender $invoiceSender
      */
     public function __construct(
         InvoiceSender $invoiceSender
     ) {
         $this->invoiceSender = $invoiceSender;
+        $this->finalStatus = null;
     }
 
     /**
@@ -104,38 +116,83 @@ class FetchPaymentHandler implements HandlerInterface
 
             $amount = $order->getBaseGrandTotal();
 
-            $order = $payment->getOrder();
-
             if (isset($response[self::RESPONSE_CHARGES])) {
-                $charges = $response[self::RESPONSE_CHARGES][0];
-                $pagbankPayId = $charges[self::RESPONSE_PAGBANK_ID];
+                $charges = $response[self::RESPONSE_CHARGES];
+                $pagbankPayId = $charges[0][self::RESPONSE_PAGBANK_ID];
                 $paymentParentId = $pagbankPayId;
 
                 if (isset($response[self::RESPONSE_QR_CODES])) {
-                    $qrCodes = $response[self::RESPONSE_QR_CODES][0];
-                    $paymentParentId = $qrCodes[self::RESPONSE_PAGBANK_ID];
+                    $paymentParentId = $response[self::RESPONSE_QR_CODES][0][self::RESPONSE_PAGBANK_ID];
                 }
 
-                if ($charges[self::RESPONSE_STATUS] === self::RESPONSE_AUTHORIZED) {
-                    $payment->setIsTransactionApproved(false);
-                    $payment->setIsTransactionDenied(false);
-                    $payment->setIsInProcess(false);
-                    $order->setStatus('payment_review');
-                    $comment = __('Awaiting payment review.');
-                    $order->addStatusHistoryComment($comment, $payment->getOrder()->getStatus());
-                }
+                $this->findForPaymentStatus($response, $charges);
 
-                if ($charges[self::RESPONSE_STATUS] === self::RESPONSE_STATUS_PAID) {
-                    $charges = $response[self::RESPONSE_CHARGES][0];
-                    $pagbankPayId = $charges[self::RESPONSE_PAGBANK_ID];
+                if ($this->finalStatus === 'PAID') {
                     $this->setPaymentPay($payment, $paymentParentId, $pagbankPayId, $amount);
                 }
 
-                if ($charges[self::RESPONSE_STATUS] === self::RESPONSE_STATUS_DECLINED) {
+                if ($this->finalStatus === 'AUTH') {
+                    $this->setPaymentAuth($payment);
+                }
+
+                if ($this->finalStatus === 'CANCEL') {
                     $this->setPaymentDeny($payment, $paymentParentId, $pagbankPayId, $amount);
                 }
             }
         }
+    }
+
+    /**
+     * Find for Payment Status.
+     *
+     * @param array $response
+     * @param array $charges
+     */
+    public function findForPaymentStatus($response, $charges)
+    {
+        $isPix = isset($response[self::RESPONSE_QR_CODES]) ? true : false;
+        $isTempCancel = false;
+
+        foreach ($charges as $charge) {
+            switch ($charge[self::RESPONSE_STATUS]) {
+                case self::RESPONSE_AUTHORIZED:
+                    $this->finalStatus = 'AUTH';
+                    break;
+
+                case self::RESPONSE_STATUS_PAID:
+                    $this->finalStatus = 'PAID';
+                    break;
+
+                case self::RESPONSE_STATUS_CANCELED:
+                case self::RESPONSE_STATUS_DECLINED:
+                    if ($isPix) {
+                        $isTempCancel = $charge['summary']['paid'] === 0 ? 1 : 0;
+                    }
+
+                    if (!$isTempCancel && !$this->finalStatus) {
+                        $this->finalStatus = 'CANCEL';
+                    }
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Set Payment Auth.
+     *
+     * @param InfoInterface $payment
+     *
+     * @return void
+     */
+    public function setPaymentAuth($payment)
+    {
+        $order = $payment->getOrder();
+        $payment->setIsTransactionApproved(false);
+        $payment->setIsTransactionDenied(false);
+        $payment->setIsInProcess(false);
+        $order->setStatus('payment_review');
+        $comment = __('Awaiting payment review.');
+        $order->addStatusHistoryComment($comment, $payment->getOrder()->getStatus());
     }
 
     /**
