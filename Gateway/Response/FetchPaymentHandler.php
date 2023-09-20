@@ -98,7 +98,6 @@ class FetchPaymentHandler implements HandlerInterface
      * @param array $response
      *
      * @return void
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function handle(array $handlingSubject, array $response)
     {
@@ -148,6 +147,7 @@ class FetchPaymentHandler implements HandlerInterface
      *
      * @param array $response
      * @param array $charges
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function findForPaymentStatus($response, $charges)
     {
