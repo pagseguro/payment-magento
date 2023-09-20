@@ -98,7 +98,7 @@ class FetchPaymentHandler implements HandlerInterface
      * @param array $response
      *
      * @return void
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function handle(array $handlingSubject, array $response)
     {
