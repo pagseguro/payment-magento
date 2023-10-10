@@ -129,7 +129,7 @@ expires,expires
 "Permission for config PagBank","Permission for config PagBank"
 "Permission for clear config PagBank","Permission for clear config PagBank"
 "<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> is a company within the UOL group.</p><p>PagBank is the <b>pioneer and leader</b> in the Brazilian online payment market, with a complete portfolio for your business.</p></div>","<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> is a company within the UOL group.</p><p>PagBank is the <b>pioneer and leader</b> in the Brazilian online payment market, with a complete portfolio for your business.</p></div>"
-"Technical support available <a href=""https://github.com/pagbank/payment-magento/issues/new/choose"">here</a>.","Technical support available <a href=""https://github.com/pagbank/payment-magento/issues/new/choose"">here</a>."
+"Technical support available <a href=""https://github.com/pagseguro/payment-magento/issues/new/choose"">here</a>.","Technical support available <a href=""https://github.com/pagseguro/payment-magento/issues/new/choose"">here</a>."
 Credentials,Credentials
 "Define the relationship between your store and our application.","Define the relationship between your store and our application."
 "Statement Descriptor","Statement Descriptor"
@@ -169,7 +169,7 @@ Title,Title
 "The minimum installment price","The minimum installment price"
 "It is the minimum value that the installment can have,"It is the minimum value that the installment can have"
 Developers,Developers
-"Meet our <a href='https://github.com/pagbank/payment-magento/wiki'>Wiki</a>.","Meet our <a href='https://github.com/pagbank/payment-magento/wiki'>Wiki</a>."
+"Meet our <a href='https://github.com/pagseguro/payment-magento/wiki'>Wiki</a>.","Meet our <a href='https://github.com/pagseguro/payment-magento/wiki'>Wiki</a>."
 Debug,Debug
 "Attention, you cannot use debug in production mode.","Attention, you cannot use debug in production mode."
 "Account Id","Account Id"
