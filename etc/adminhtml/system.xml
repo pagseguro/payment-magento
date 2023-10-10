@@ -16,7 +16,7 @@
                 <label><![CDATA[<div class='pagbank-payment-logo'></div><div class='pagbank-payment-byline'><p><b>PagBank</b> is a company within the UOL group.</p><p>PagBank is the <b>pioneer and leader</b> in the Brazilian online payment market, with a complete portfolio for your business.</p></div>]]></label>
                 <fieldset_css>complex pagbank-payment-section</fieldset_css>
                 <frontend_model>PagBank\PaymentMagento\Model\Adminhtml\Source\PaymentGroup</frontend_model>
-                <comment><![CDATA[Technical support available <a href="https://github.com/pagbank/payment-magento/issues/new/choose">here</a>.]]></comment>
+                <comment><![CDATA[Technical support available <a href="https://github.com/pagseguro/payment-magento/issues/new/choose">here</a>.]]></comment>
                 <include path="PagBank_PaymentMagento::system/base_settings.xml"/>
                 <include path="PagBank_PaymentMagento::system/credit_card.xml"/>
                 <include path="PagBank_PaymentMagento::system/pix.xml"/>

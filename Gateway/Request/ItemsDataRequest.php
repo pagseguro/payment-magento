@@ -99,10 +99,10 @@ class ItemsDataRequest implements BuilderInterface
                 continue;
             }
             
-            $productName = preg_replace('/[^\p{L}0-9\s]/u', '', $item->getName());
+            $productName = preg_replace('/[^a-zA-Z0-9áàâãéèêíìóòôõúùçñÁÀÂÃÉÈÊÍÌÓÒÔÕÚÙÇ ]/u', '', $item->getName());
 
             $result[] = [
-                self::ITEM_REFERENCE_ID => substr($item->getSku(), 0, 60),
+                self::ITEM_REFERENCE_ID => substr($item->getSku(), 0, 55),
                 self::ITEM_NAME         => substr($productName, 0, 55),
                 self::ITEM_QUANTITY     => $item->getQtyOrdered(),
                 self::ITEM_UNIT_AMOUNT  => $this->config->formatPrice($item->getPrice()),
