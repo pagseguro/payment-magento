@@ -150,7 +150,7 @@ class FetchPaymentHandler implements HandlerInterface
      */
     public function findForPaymentStatus($response, $charges)
     {
-        $isPix = isset($response[self::RESPONSE_QR_CODES]) ? true : false;
+        $isPix = isset($response[self::RESPONSE_QR_CODES]);
         $isTempCancel = false;
 
         foreach ($charges as $charge) {
