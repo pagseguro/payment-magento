@@ -88,9 +88,7 @@ class DataAssignCcObserver extends AbstractDataAssignObserver
         $paymentInfo = $this->readPaymentModelArgument($observer);
 
         foreach ($this->addInformationList as $addInformationKey) {
-            if (isset($additionalData[$addInformationKey])) {
-                $paymentInfo->unsAdditionalInformation($addInformationKey);
-            }
+            $paymentInfo->unsAdditionalInformation($addInformationKey);
         }
 
         foreach ($this->addInformationList as $addInformationKey) {
