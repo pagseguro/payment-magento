@@ -10,6 +10,7 @@
 
 namespace PagBank\PaymentMagento\Cron;
 
+use Magento\Framework\Notification\NotifierInterface;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
@@ -41,6 +42,11 @@ class GetStatusUpdate
     protected $logger;
 
     /**
+     * @var NotifierInterface
+     */
+    protected $notifierInterface;
+
+    /**
      * @var Update
      */
     protected $update;
@@ -54,15 +60,18 @@ class GetStatusUpdate
      * Constructor.
      *
      * @param Logger            $logger
+     * @param NotifierInterface $notifierInterface
      * @param Update            $update
      * @param CollectionFactory $collectionFactory
      */
     public function __construct(
         Logger $logger,
+        NotifierInterface $notifierInterface,
         Update $update,
         CollectionFactory $collectionFactory
     ) {
         $this->logger = $logger;
+        $this->notifierInterface = $notifierInterface;
         $this->update = $update;
         $this->collectionFactory = $collectionFactory;
     }
@@ -107,7 +116,12 @@ class GetStatusUpdate
         foreach ($orders as $order) {
             $incrementId = $order->getIncrementId();
 
-            $this->update->getUpdate($incrementId);
+            try {
+                $this->update->getUpdate($incrementId);
+            } catch (\Throwable $th) {
+                $this->errorNotificationManager($order);
+                continue;
+            }
         }
     }
 
@@ -123,7 +137,12 @@ class GetStatusUpdate
         foreach ($orders as $order) {
             $incrementId = $order->getIncrementId();
 
-            $this->update->getUpdate($incrementId);
+            try {
+                $this->update->getUpdate($incrementId);
+            } catch (\Throwable $th) {
+                $this->errorNotificationManager($order);
+                continue;
+            }
         }
     }
 
@@ -139,7 +158,30 @@ class GetStatusUpdate
         foreach ($orders as $order) {
             $incrementId = $order->getIncrementId();
 
-            $this->update->getUpdate($incrementId);
+            try {
+                $this->update->getUpdate($incrementId);
+            } catch (\Throwable $th) {
+                $this->errorNotificationManager($order);
+                continue;
+            }
         }
+    }
+
+    /**
+     * Error Notification Manager.
+     *
+     * @param Order $order
+     * @return void
+     */
+    public function errorNotificationManager($order)
+    {
+        $header = __('PagBank, error when checking order status.');
+
+        $detail = __(
+            'It is not possible to check the status of order %1, please perform a manual verification.',
+            $order->getIncrementId()
+        );
+
+        $this->notifierInterface->addCritical($header, $detail);
     }
 }
