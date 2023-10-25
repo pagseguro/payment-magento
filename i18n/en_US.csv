@@ -10,6 +10,8 @@ Production,Production
 "You are connected to PagBank. =)","You are connected to PagBank. =)"
 "Unable to get the code, try again. =(","Unable to get the code, try again. =("
 "You should not be here...","You should not be here..."
+"PagBank, error when checking order status.","PagBank, error when checking order status."
+"It is not possible to check the status of order %1, please perform a manual verification.","It is not possible to check the status of order %1, please perform a manual verification."
 "Transaction has been declined. Please try again later.","Transaction has been declined. Please try again later."
 "15 minutes","15 minutes"
 "30 minutes","30 minutes"
@@ -167,7 +169,7 @@ Title,Title
 "Number of interest-free installments","Number of interest-free installments"
 "Number of installments you want to accept without applying interest","Number of installments you want to accept without applying interest"
 "The minimum installment price","The minimum installment price"
-"It is the minimum value that the installment can have,"It is the minimum value that the installment can have"
+"It is the minimum value that the installment can have","It is the minimum value that the installment can have"
 Developers,Developers
 "Meet our <a href='https://github.com/pagseguro/payment-magento/wiki'>Wiki</a>.","Meet our <a href='https://github.com/pagseguro/payment-magento/wiki'>Wiki</a>."
 Debug,Debug
