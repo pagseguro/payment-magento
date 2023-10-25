@@ -166,7 +166,7 @@ class FetchPaymentHandler implements HandlerInterface
                 case self::RESPONSE_STATUS_CANCELED:
                 case self::RESPONSE_STATUS_DECLINED:
                     if ($isPix) {
-                        $isTempCancel = $charge['summary']['paid'] === 0 ? 1 : 0;
+                        $isTempCancel = $charge['amount']['summary']['paid'] === 0 ? 1 : 0;
                     }
 
                     if (!$isTempCancel && !$this->finalStatus) {
