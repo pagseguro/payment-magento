@@ -532,32 +532,27 @@ class VaultAddtionalCommand implements VaultPaymentInterface
      * Attaches token extension attribute.
      *
      * @param OrderPaymentInterface $orderPayment
-     *
-     * @throws LocalizedException
-     *
      * @return void
      */
-    protected function attachTokenExtensionAttribute(OrderPaymentInterface $orderPayment)
+    private function attachTokenExtensionAttribute(OrderPaymentInterface $orderPayment)
     {
-        $paymentToken = null;
-        $addInformation = $orderPayment->getAdditionalInformation();
-        if (empty($addInformation[PaymentTokenInterface::PUBLIC_HASH])) {
-            throw new LocalizedException('Public hash should be defined');
+        $additionalInformation = $orderPayment->getAdditionalInformation();
+        if (empty($additionalInformation[PaymentTokenInterface::PUBLIC_HASH])) {
+            throw new \LogicException('Public hash should be defined');
         }
 
-        $customerId = isset($addInformation[PaymentTokenInterface::CUSTOMER_ID]) ?
-            $addInformation[PaymentTokenInterface::CUSTOMER_ID] : null;
+        $customerId = isset($additionalInformation[PaymentTokenInterface::CUSTOMER_ID]) ?
+            $additionalInformation[PaymentTokenInterface::CUSTOMER_ID] : null;
 
-        $publicHash = $addInformation[PaymentTokenInterface::PUBLIC_HASH];
+        $publicHash = $additionalInformation[PaymentTokenInterface::PUBLIC_HASH];
 
         $paymentToken = $this->tokenManagement->getByPublicHash($publicHash, $customerId);
 
-        if (!$paymentToken) {
-            throw new LocalizedException('Public hash should be defined');
+        if ($paymentToken === null) {
+            throw new \LogicException("No token found");
         }
 
         $extensionAttributes = $this->getPaymentExtensionAttributes($orderPayment);
-
         $extensionAttributes->setVaultPaymentToken($paymentToken);
     }
 

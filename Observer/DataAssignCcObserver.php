@@ -87,7 +87,11 @@ class DataAssignCcObserver extends AbstractDataAssignObserver
         /** @var \Magento\Sales\Model\Order\Payment $payment */
         $paymentInfo = $this->readPaymentModelArgument($observer);
 
-        $paymentInfo->unsAdditionalInformation();
+        foreach ($this->addInformationList as $addInformationKey) {
+            if (isset($additionalData[$addInformationKey])) {
+                $paymentInfo->unsAdditionalInformation($addInformationKey);
+            }
+        }
 
         foreach ($this->addInformationList as $addInformationKey) {
             if (isset($additionalData[$addInformationKey])) {
