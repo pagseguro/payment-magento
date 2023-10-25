@@ -10,6 +10,8 @@ Production,Produção
 "You are connected to PagBank. =)","Você foi conectado ao PagBank. =)"
 "Unable to get the code, try again. =(","Não foi possível obter o código, tente novamente. =("
 "You should not be here...","Não é para você estar aqui..."
+"PagBank, error when checking order status.","PagBank, erro ao verificar o status do pedido."
+"It is not possible to check the status of order %1, please perform a manual verification.","Não é possível verificar o status do pedido %1, por favor, realize uma verificação manual."
 "Transaction has been declined. Please try again later.","Pedido recusado, por favor, tente mais tarde."
 "15 minutes","15 minutos"
 "30 minutes","30 minutos"

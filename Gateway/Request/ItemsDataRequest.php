@@ -98,7 +98,7 @@ class ItemsDataRequest implements BuilderInterface
             if ($item->getParentItem()) {
                 continue;
             }
-            
+
             $productName = preg_replace('/[^a-zA-Z0-9áàâãéèêíìóòôõúùçñÁÀÂÃÉÈÊÍÌÓÒÔÕÚÙÇ ]/u', '', $item->getName());
 
             $result[] = [
