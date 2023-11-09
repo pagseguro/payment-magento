@@ -98,8 +98,46 @@ class ItemsDataRequest implements BuilderInterface
             if ($item->getParentItem()) {
                 continue;
             }
+
+            $replacements = [
+                'á' => 'a',
+                'à' => 'a',
+                'â' => 'a',
+                'ã' => 'a',
+                'é' => 'e',
+                'è' => 'e',
+                'ê' => 'e',
+                'í' => 'i',
+                'ì' => 'i',
+                'ó' => 'o',
+                'ò' => 'o',
+                'ô' => 'o',
+                'õ' => 'o',
+                'ú' => 'u',
+                'ù' => 'u',
+                'ç' => 'c',
+                'ñ' => 'n',
+                'Á' => 'A',
+                'À' => 'A',
+                'Â' => 'A',
+                'Ã' => 'A',
+                'É' => 'E',
+                'È' => 'E',
+                'Ê' => 'E',
+                'Í' => 'I',
+                'Ì' => 'I',
+                'Ó' => 'O',
+                'Ò' => 'O',
+                'Ô' => 'O',
+                'Õ' => 'O',
+                'Ú' => 'U',
+                'Ù' => 'U',
+                'Ç' => 'C',
+                'Ñ' => 'N'
+            ];
             
-            $productName = preg_replace('/[^a-zA-Z0-9áàâãéèêíìóòôõúùçñÁÀÂÃÉÈÊÍÌÓÒÔÕÚÙÇ ]/u', '', $item->getName());
+            $productName = strtr($item->getName(), $replacements);
+            $productName = preg_replace('/[^a-zA-Z0-9 ]/u', '', $productName);
 
             $result[] = [
                 self::ITEM_REFERENCE_ID => substr($item->getSku(), 0, 55),

@@ -137,6 +137,7 @@ class FetchPaymentHandler implements HandlerInterface
 
                 if ($this->finalStatus === 'CANCEL') {
                     $this->setPaymentDeny($payment, $paymentParentId, $pagbankPayId, $amount);
+                    $order->isPaymentReview(0);
                 }
             }
         }
@@ -223,6 +224,7 @@ class FetchPaymentHandler implements HandlerInterface
             if ($invoice && !$invoice->getEmailSent()) {
                 $this->invoiceSender->send($invoice, false);
             }
+            $order->save();
         }
     }
 
@@ -245,7 +247,7 @@ class FetchPaymentHandler implements HandlerInterface
         $payment->setIsTransactionApproved(false);
         $payment->setIsTransactionDenied(true);
         $payment->setIsTransactionPending(false);
-        $payment->setIsInProcess(true);
+        $payment->setIsInProcess(false);
         $payment->setIsTransactionClosed(true);
         $payment->setShouldCloseParentTransaction(true);
         $payment->setAmountCanceled($amount);
