@@ -10,10 +10,12 @@
 
 namespace PagBank\PaymentMagento\Gateway\Response;
 
-use InvalidArgumentException;
+use Magento\Framework\Exception\InvalidArgumentException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
 use Magento\Payment\Model\InfoInterface;
+use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 
 /**
@@ -115,6 +117,14 @@ class FetchPaymentHandler implements HandlerInterface
             $order = $payment->getOrder();
 
             $amount = $order->getBaseGrandTotal();
+
+            $state = $order->getState();
+
+            if ($state !== Order::STATE_NEW && $state !== Order::STATE_PAYMENT_REVIEW) {
+                throw new LocalizedException(
+                    __('Update not available because the initial state is incompatible: %1', $order->getState())
+                );
+            }
 
             if (isset($response[self::RESPONSE_CHARGES])) {
                 $charges = $response[self::RESPONSE_CHARGES];
