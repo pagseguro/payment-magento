@@ -20,6 +20,7 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Sales\Model\Order;
 use PagBank\PaymentMagento\Model\Console\Command\AbstractModel;
 
 /**
@@ -156,6 +157,15 @@ class Update extends AbstractModel
             if (!$order->getId()) {
                 $order = null;
                 $this->writeln('<error>'.__('Order not found').'</error>');
+            }
+
+            $state = $order->getState();
+
+            if ($state !== Order::STATE_NEW && $state !== Order::STATE_PAYMENT_REVIEW) {
+                $this->writeln('<error>'.
+                __('Update not available because the initial state is incompatible: %1', $order->getState())
+                .'</error>');
+                $order = null;
             }
         } catch (LocalizedException $exc) {
             $this->writeln('<error>'.$exc->getMessage().'</error>');
