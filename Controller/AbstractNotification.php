@@ -206,6 +206,18 @@ abstract class AbstractNotification extends Action
             return $result;
         }
 
+        $state = $order->getState();
+
+        if ($state !== Order::STATE_NEW && $state !== Order::STATE_PAYMENT_REVIEW) {
+            $result = [
+                'isInvalid' => true,
+                'code'      => 406,
+                'msg'       => __('Not Apply.'),
+            ];
+
+            return $result;
+        }
+
         $result = [
             'isInvalid' => false,
         ];
