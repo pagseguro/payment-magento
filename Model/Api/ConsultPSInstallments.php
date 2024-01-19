@@ -120,7 +120,7 @@ class ConsultPSInstallments
                 $response = $list;
             }
 
-            if (!$client->request()->isSuccessful()) {
+            if (!isset($response[0])) {
                 $response[0] = [
                     'installments'      => 1,
                     'installment_value' => $amount,

@@ -13,6 +13,9 @@
 "cc_exp_month","Expiry month"
 "cc_exp_year","Expiry year"
 "cc_cardholder_name","Holder name"
+"three_ds_session","3DS Session ID"
+"three_ds_auth","3DS Authentication Type"
+"three_ds_auth_status","3DS Authentication Status"
 [pt_BR]
 "qr_code_image","Imagem do Qr Code"
 "qr_code","Qr Code"
@@ -28,3 +31,6 @@
 "cc_exp_month","Mês de expiração"
 "cc_exp_year","Ano de expiração"
 "cc_cardholder_name","Nome Impresso"
+"three_ds_session","Id da Sessão 3DS"
+"three_ds_auth","Tipo de Autenticação 3DS"
+"three_ds_auth_status","Status da Autenticação 3DS"

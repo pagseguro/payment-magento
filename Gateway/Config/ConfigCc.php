@@ -69,6 +69,21 @@ class ConfigCc extends PaymentConfig
     public const PAYMENT_ACTION = 'payment_action';
 
     /**
+     * @const string
+     */
+    public const USE_THREE_DS_AUTH = 'use_three_ds';
+
+    /**
+     * @const string
+     */
+    public const REJECT_NOT_AUTH = 'reject_not_auth';
+
+    /**
+     * @const string
+     */
+    public const INSTRUCTION_THREE_DS = 'instruction_three_ds';
+
+    /**
      * @var ScopeConfigInterface
      */
     protected $scopeConfig;
@@ -178,6 +193,82 @@ class ConfigCc extends PaymentConfig
 
         return (bool) $this->scopeConfig->getValue(
             sprintf($pathPattern, self::METHOD, self::GET_PHONE),
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Has 3ds Auth.
+     *
+     * @param int|null $storeId
+     *
+     * @return bool
+     */
+    public function hasThreeDsAuth($storeId = null): bool
+    {
+        $pathPattern = 'payment/%s/%s';
+
+        return (bool) $this->scopeConfig->getValue(
+            sprintf($pathPattern, self::METHOD, self::USE_THREE_DS_AUTH),
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Get Instruction for 3ds.
+     *
+     * @param string|null $storeId
+     *
+     * @return string
+     */
+    public function getInstructionForThreeDs($storeId = null): string
+    {
+        $pathPattern = 'payment/%s/%s';
+
+        return $this->scopeConfig->getValue(
+            sprintf($pathPattern, self::METHOD, self::INSTRUCTION_THREE_DS),
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Has 3ds Env.
+     *
+     * @param int|null $storeId
+     *
+     * @return string
+     */
+    public function getThreeDsEnv($storeId = null): string
+    {
+        $env = $this->scopeConfig->getValue(
+            'payment/pagbank_paymentmagento/environment',
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+
+        if ($env === 'sandbox') {
+            return 'SANDBOX';
+        }
+
+        return 'PROD';
+    }
+
+    /**
+     * Has Reject Not Auth.
+     *
+     * @param int|null $storeId
+     *
+     * @return bool
+     */
+    public function hasRejectNotAuth($storeId = null): bool
+    {
+        $pathPattern = 'payment/%s/%s';
+
+        return (bool) $this->scopeConfig->getValue(
+            sprintf($pathPattern, self::METHOD, self::REJECT_NOT_AUTH),
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
