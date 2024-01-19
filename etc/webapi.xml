@@ -11,6 +11,14 @@
 -->
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+
+    <route url="/V1/PagBankThreeDsSession" method="GET">
+        <service class="PagBank\PaymentMagento\Api\ThreeDsSessionInterface" method="getSession"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+
     <route url="/V1/guest-carts/:cartId/pagbank-list-installments" method="POST">
         <service class="PagBank\PaymentMagento\Api\GuestListInstallmentsManagementInterface" method="generateListInstallments"/>
         <resources>

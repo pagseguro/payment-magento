@@ -39,6 +39,10 @@
         </arguments>
     </type>
 
+    <!-- API - 3ds Session -->
+    <preference for="PagBank\PaymentMagento\Api\Data\ThreeDsSessionDataInterface" type="PagBank\PaymentMagento\Model\Api\Data\Session" />
+    <preference for="PagBank\PaymentMagento\Api\ThreeDsSessionInterface" type="PagBank\PaymentMagento\Model\Api\ThreeDsSession" />
+
     <!-- API - List Installments -->
     <preference for="PagBank\PaymentMagento\Api\Data\CreditCardBinInterface" type="PagBank\PaymentMagento\Model\Api\Data\CreditCardBin" />
     <preference for="PagBank\PaymentMagento\Api\ListInstallmentsManagementInterface" type="PagBank\PaymentMagento\Model\Api\ListInstallmentsManagement" />
@@ -367,6 +371,8 @@
                 <!-- Specific to the payment method. -->
                 <item name="paymentMethod" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\CreditCard\PaymentCcDataRequest</item>
                 <item name="vaultBuilder" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\CreditCard\VaultDataBuilder</item>
+                <!-- 3ds. -->
+                <item name="threeDs" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\CreditCard\ThreeDsAuthDataRequest</item>
             </argument>
         </arguments>
     </virtualType>

@@ -72,8 +72,8 @@
                 <can_accept_payment>1</can_accept_payment>
                 <can_fetch_transaction_info>1</can_fetch_transaction_info>
                 <can_fetch_transaction_information>1</can_fetch_transaction_information>
-                <paymentInfoKeys>cc_installments,cc_type,cc_number,cc_exp_month,cc_exp_year,cc_cardholder_name,payer_tax_id,payer_phone</paymentInfoKeys>
-                <privateInfoKeys></privateInfoKeys>
+                <paymentInfoKeys>cc_installments,cc_type,cc_number,cc_exp_month,cc_exp_year,cc_cardholder_name,payer_tax_id,payer_phone,three_ds_session,three_ds_auth,three_ds_auth_status</paymentInfoKeys>
+                <privateInfoKeys>three_ds_session,three_ds_auth,three_ds_auth_status</privateInfoKeys>
                 <cctypes_mapper><![CDATA[{"AMEX":"AE","ELO":"ELO","MASTERCARD":"MC","VISA":"VI","HIPERCARD":"HC","AURA":"AU","DINNERS":"DN"}]]></cctypes_mapper>
                 <active>1</active>
                 <title>Cartão de Crédito</title>
@@ -89,6 +89,15 @@
                 <allowspecific>1</allowspecific>
                 <specificcountry>BR</specificcountry>
                 <sort_order>10</sort_order>
+                <use_three_ds>0</use_three_ds>
+                <reject_not_auth>1</reject_not_auth>
+                <instruction_three_ds><![CDATA[O emissor do seu cartão <b>%1</b> solicita a confirmação dos seus dados junto ao seu banco.
+
+Para isso, uma nova tela será aberta, onde você precisará seguir as instruções passo a passo fornecidas pelo banco emissor do seu cartão.
+
+Você autenticará suas informações diretamente com <b>%2</b>.
+
+Este é o processo de autenticação 3DS, um processo seguro, como você pode verificar diretamente com o seu banco.]]></instruction_three_ds>
             </pagbank_paymentmagento_cc>
             <pagbank_paymentmagento_cc_vault>
                 <group>pagbank_group</group>
@@ -96,8 +105,8 @@
                 <can_use_internal>0</can_use_internal>
                 <can_fetch_transaction_info>1</can_fetch_transaction_info>
                 <can_fetch_transaction_information>1</can_fetch_transaction_information>
-                <paymentInfoKeys>cc_installments,cc_type,cc_number,cc_exp_month,cc_exp_year,cc_cardholder_name,payer_tax_id,payer_phone</paymentInfoKeys>
-                <privateInfoKeys></privateInfoKeys>
+                <paymentInfoKeys>cc_installments,cc_type,cc_number,cc_exp_month,cc_exp_year,cc_cardholder_name,payer_tax_id,payer_phone,three_ds_session,three_ds_auth,three_ds_auth_status</paymentInfoKeys>
+                <privateInfoKeys>three_ds_session,three_ds_auth,three_ds_auth_status</privateInfoKeys>
                 <active>1</active>
                 <title>Stored Cards (PagBank)</title>
             </pagbank_paymentmagento_cc_vault>
