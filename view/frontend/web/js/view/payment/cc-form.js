@@ -62,7 +62,10 @@ define([
                     'creditCardHolderName',
                     'creditCardInstallment',
                     'selectedCardType',
-                    'creditCardOptionsInstallments'
+                    'creditCardOptionsInstallments',
+                    'threeDSecureSession',
+                    'threeDSecureAuth',
+                    'threeDSecureAuthStatus'
                 ]);
 
             return this;

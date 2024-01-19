@@ -37,6 +37,27 @@
             <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\PaymentAction</source_model>
             <config_path>payment/pagbank_paymentmagento_cc/payment_action</config_path>
         </field>
+        <!-- <group id="three_ds" translate="label comment" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>3D Secure</label>
+            <comment>3D Secure configuration.</comment>
+            <field id="active" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Enabled</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>payment/pagbank_paymentmagento_cc/use_three_ds</config_path>
+                <comment>Authorization is required to use this service. Please get in touch with PagBank for further assistance.</comment>
+            </field>
+            <field id="reject_not_auth" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Reject payment not authenticated</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>payment/pagbank_paymentmagento_cc/reject_not_auth</config_path>
+            </field>
+            <field id="instruction" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Instruction before challenge</label>
+                <frontend_class>required-entry</frontend_class>
+                <comment>%1 and %2 are two variables, they will be replaced by the card's flag and the issuer bank's name, respectively.</comment>
+                <config_path>payment/pagbank_paymentmagento_cc/instruction_three_ds</config_path>
+            </field>
+        </group> -->
         <group id="basic_configuration" translate="label comment" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Basic configuration</label>
             <comment>Basic configuration of payment methods.</comment>
