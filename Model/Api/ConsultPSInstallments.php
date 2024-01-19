@@ -116,11 +116,11 @@ class ConsultPSInstallments
                 }
 
                 $list = $this->getAvailableInstallments($list['installment_plans'], $storeId);
-               
+
                 $response = $list;
             }
 
-            if (!$client->request()->isSuccessful()) {
+            if (!isset($response[0])) {
                 $response[0] = [
                     'installments'      => 1,
                     'installment_value' => $amount,

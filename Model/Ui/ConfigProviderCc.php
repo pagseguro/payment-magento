@@ -11,6 +11,7 @@
 namespace PagBank\PaymentMagento\Model\Ui;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
+use Magento\Framework\Escaper;
 use Magento\Framework\Session\SessionManager;
 use Magento\Framework\View\Asset\Source;
 use Magento\Payment\Model\CcConfig;
@@ -69,12 +70,18 @@ class ConfigProviderCc implements ConfigProviderInterface
     protected $session;
 
     /**
+     * @var Escaper
+     */
+    protected $escaper;
+
+    /**
      * @param ConfigBase     $configBase
      * @param ConfigCc       $configCc
      * @param CartInterface  $cart
      * @param CcConfig       $ccConfig
      * @param Source         $assetSource
      * @param SessionManager $session
+     * @param Escaper        $escaper
      */
     public function __construct(
         ConfigBase $configBase,
@@ -82,7 +89,8 @@ class ConfigProviderCc implements ConfigProviderInterface
         CartInterface $cart,
         CcConfig $ccConfig,
         Source $assetSource,
-        SessionManager $session
+        SessionManager $session,
+        Escaper $escaper
     ) {
         $this->configBase = $configBase;
         $this->configCc = $configCc;
@@ -90,6 +98,7 @@ class ConfigProviderCc implements ConfigProviderInterface
         $this->ccConfig = $ccConfig;
         $this->assetSource = $assetSource;
         $this->session = $session;
+        $this->escaper = $escaper;
     }
 
     /**
@@ -114,6 +123,17 @@ class ConfigProviderCc implements ConfigProviderInterface
                     'phone_capture'        => $this->configCc->hasPhoneCapture($storeId),
                     'public_key'           => $this->configBase->getMerchantGatewayPublicKey($storeId),
                     'ccVaultCode'          => self::VAULT_CODE,
+                    'threeDs'              => [
+                        'env'           => $this->configCc->getThreeDsEnv($storeId),
+                        'active'        => $this->configCc->hasThreeDsAuth($storeId),
+                        'reject'        => $this->configCc->hasRejectNotAuth($storeId),
+                        'instruction'   => nl2br(
+                            $this->escaper->escapeHtml(
+                                $this->configCc->getInstructionForThreeDs($storeId),
+                                ['b']
+                            )
+                        ),
+                    ],
                 ],
             ],
         ];

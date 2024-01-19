@@ -7,13 +7,14 @@
  * @license   See LICENSE for license details.
  */
 
- define([
+
+define([
     'pagBankCardJs',
     'underscore',
     'jquery',
     'PagBank_PaymentMagento/js/view/payment/cc-form',
     'Magento_Vault/js/view/payment/vault-enabler',
-    'Magento_Checkout/js/model/full-screen-loader',
+    'PagBank_PaymentMagento/js/view/payment/pagbank-place-order',
     'PagBank_PaymentMagento/js/view/payment/payer-form',
     'PagBank_PaymentMagento/js/view/payment/base-data-for-payment-form'
 ], function (
@@ -22,7 +23,7 @@
     $,
     Component,
     VaultEnabler,
-    fullScreenLoader,
+    PagBankPlaceOrder,
     PayerFormData,
     BaseDataForPaymentForm
 ) {
@@ -34,7 +35,11 @@
             template: 'PagBank_PaymentMagento/payment/cc',
             ccForm: 'PagBank_PaymentMagento/payment/cc-form',
             payerForm: 'PagBank_PaymentMagento/payment/payer-form',
-            creditCardNumberToken: ''
+            creditCardNumberToken: '',
+            threeDSecureSession: '',
+            threeDSecureAuth: '',
+            threeDSecureAuthStatus: '',
+            isProcessing: false
         },
 
         /**
@@ -67,6 +72,8 @@
 
             self.payerFormData = new PayerFormData();
             self.payerFormData.setPaymentCode(self.getCode());
+
+            self.pagBankPlaceOrder = new PagBankPlaceOrder();
 
             self.baseDataForPaymentForm = new BaseDataForPaymentForm();
             self.baseDataForPaymentForm.setPaymentCode(self.getCode());
@@ -104,49 +111,18 @@
          * @returns {Void}
          */
         beforePlaceOrder() {
-            if (!$(this.formElement).valid()) {
+            var self = this;
+
+            if (!$(self.formElement).valid()) {
                 return;
             }
-            this.getTokenize();
-        },
 
-        /**
-         * Get Tokenize
-         * @returns {Void}
-         */
-        getTokenize() {
-            var self = this,
-                cardPs,
-                cardTokenized,
-                cardHasError,
-                cardError,
-                cardData = {
-                    publicKey: self.baseDataForPaymentForm.getPublicKey(),
-                    holder: self.creditCardHolderName(),
-                    number: self.creditCardNumber().replace(/\s/g,''),
-                    expMonth: self.creditCardExpMonth(),
-                    expYear: self.creditCardExpYear(),
-                    securityCode: self.creditCardVerificationNumber()
-                };
-
-            fullScreenLoader.startLoader();
-
-            // eslint-disable-next-line no-undef
-            cardPs = PagSeguro.encryptCard(cardData);
-            cardTokenized = cardPs.encryptedCard;
-            cardHasError = cardPs.hasErrors;
-            if (cardHasError) {
-                cardError = cardPs.errors;
-                console.log(cardError);
-                fullScreenLoader.stopLoader();
-            }
-
-            if (cardTokenized) {
-                self.creditCardNumberToken(cardTokenized);
-                fullScreenLoader.stopLoader();
-                self.placeOrder();
-            }
-
+            // place order on success validation
+            self.pagBankPlaceOrder.getPagBankPlace(self, () => {
+                self.placeOrder('parent');
+            }, () => {
+                self.isProcessing = false;
+            });
         },
 
         /**
@@ -159,6 +135,9 @@
                 'additional_data': {
                     'cc_number_token': this.creditCardNumberToken(),
                     'cc_installments': this.creditCardInstallment(),
+                    'three_ds_session': this.threeDSecureSession(),
+                    'three_ds_auth': this.threeDSecureAuth(),
+                    'three_ds_auth_status': this.threeDSecureAuthStatus(),
                     'payer_tax_id': this.payerFormData.payerTaxId(),
                     'payer_phone': this.payerFormData.payerPhone()
                 }

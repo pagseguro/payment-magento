@@ -22,6 +22,9 @@ define([], function () {
         creditCardHolderName: null,
         creditCardInstallment: null,
         selectedCardType: null,
-        creditCardOptionsInstallments: null
+        creditCardOptionsInstallments: null,
+        threeDSecureSession: null,
+        threeDSecureAuth: null,
+        threeDSecureAuthStatus: null
     };
 });

@@ -67,6 +67,36 @@ function (
         },
 
         /**
+         * Has 3ds
+         * @returns {Boolean|*}
+         */
+        hasThreeDs() {
+            return window.checkoutConfig.payment[this.paymentCode].threeDs.hasOwnProperty('active') ?
+            window.checkoutConfig.payment[this.paymentCode].threeDs.active
+            : false;
+        },
+
+        /**
+         * Get Env
+         * @returns {String|*}
+         */
+        getEnv() {
+            return window.checkoutConfig.payment[this.paymentCode].threeDs.hasOwnProperty('active') ?
+            window.checkoutConfig.payment[this.paymentCode].threeDs.env
+            : false;
+        },
+
+        /**
+         * Has 3ds Reject Not Auth
+         * @returns {Boolean|*}
+         */
+        hasThreeDsRejectNotAuth() {
+            return window.checkoutConfig.payment[this.paymentCode].threeDs.hasOwnProperty('reject') ?
+            window.checkoutConfig.payment[this.paymentCode].threeDs.reject
+            : false;
+        },
+
+        /**
          * Get payment icons
          * @param {String} type
          * @returns {Boolean}
