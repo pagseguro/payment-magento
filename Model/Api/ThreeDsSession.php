@@ -20,7 +20,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\HTTP\ZendClient;
-use Magento\Framework\HTTP\ZendZendClientFactory;
+use Magento\Framework\HTTP\ZendClientFactory;
 use PagBank\PaymentMagento\Api\ThreeDsSessionInterface;
 use PagBank\PaymentMagento\Api\Data\ThreeDsSessionDataInterface;
 use PagBank\PaymentMagento\Api\Data\ThreeDsSessionDataInterfaceFactory;
