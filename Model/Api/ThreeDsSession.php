@@ -14,7 +14,6 @@ namespace PagBank\PaymentMagento\Model\Api;
 
 use Magento\Framework\Exception\InvalidArgumentException;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\HTTP\LaminasClient;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Exception\InputException;
