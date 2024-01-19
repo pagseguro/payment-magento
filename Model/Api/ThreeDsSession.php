@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace PagBank\PaymentMagento\Model\Api;
 
-use Laminas\Http\ClientFactory;
-use Laminas\Http\Request;
 use Magento\Framework\Exception\InvalidArgumentException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\HTTP\LaminasClient;
@@ -21,6 +19,8 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\HTTP\ZendClient;
+use Magento\Framework\HTTP\ZendZendClientFactory;
 use PagBank\PaymentMagento\Api\ThreeDsSessionInterface;
 use PagBank\PaymentMagento\Api\Data\ThreeDsSessionDataInterface;
 use PagBank\PaymentMagento\Api\Data\ThreeDsSessionDataInterfaceFactory;
@@ -42,9 +42,9 @@ class ThreeDsSession implements ThreeDsSessionInterface
     protected $configBase;
 
     /**
-     * @var ClientFactory
+     * @var ZendClientFactory
      */
-    protected $httpClientFactory;
+    protected $httpZendClientFactory;
 
     /**
      * @var Json
@@ -61,20 +61,20 @@ class ThreeDsSession implements ThreeDsSessionInterface
      *
      * @param StoreManagerInterface                 $storeManager
      * @param ConfigBase                            $configBase
-     * @param ClientFactory                         $httpClientFactory
+     * @param ZendClientFactory                     $httpZendClientFactory
      * @param Json                                  $json
      * @param ThreeDsSessionDataInterfaceFactory    $sessionData
      */
     public function __construct(
         StoreManagerInterface $storeManager,
         ConfigBase $configBase,
-        ClientFactory $httpClientFactory,
+        ZendClientFactory $httpZendClientFactory,
         Json $json,
         ThreeDsSessionDataInterfaceFactory $sessionData
     ) {
         $this->storeManager = $storeManager;
         $this->configBase = $configBase;
-        $this->httpClientFactory = $httpClientFactory;
+        $this->httpZendClientFactory = $httpZendClientFactory;
         $this->json = $json;
         $this->sessionData = $sessionData;
     }
@@ -110,8 +110,8 @@ class ThreeDsSession implements ThreeDsSessionInterface
     {
         $storeId = $this->storeManager->getStore()->getId();
 
-        /** @var LaminasClient $client */
-        $client = $this->httpClientFactory->create();
+        /** @var ZendClient $client */
+        $client = $this->httpZendClientFactory->create();
         $url = $this->configBase->getApiUrl($storeId);
         $apiConfigs = $this->configBase->getApiConfigs();
         $headers = $this->configBase->getApiHeaders($storeId);
@@ -119,8 +119,8 @@ class ThreeDsSession implements ThreeDsSessionInterface
         try {
             $client->setUri($uri);
             $client->setHeaders($headers);
-            $client->setMethod(Request::METHOD_POST);
-            $client->setOptions($apiConfigs);
+            $client->setMethod(Request::POST);
+            $client->setConfig($apiConfigs);
             $responseBody = $client->send()->getBody();
 
             $dataResponse = $this->json->unserialize($responseBody);
@@ -128,7 +128,7 @@ class ThreeDsSession implements ThreeDsSessionInterface
             return $dataResponse;
         } catch (InvalidArgumentException $exc) {
             // phpcs:ignore Magento2.Exceptions.DirectThrow
-            return throw new NoSuchEntityException('Invalid JSON was returned by the gateway');
+            throw new NoSuchEntityException(__('Invalid JSON was returned by the gateway'));
         }
     }
 }
