@@ -128,7 +128,7 @@ class ThreeDsSession implements ThreeDsSessionInterface
             return $dataResponse;
         } catch (InvalidArgumentException $exc) {
             // phpcs:ignore Magento2.Exceptions.DirectThrow
-            return throw new NoSuchEntityException('Invalid JSON was returned by the gateway');
+            throw new NoSuchEntityException('Invalid JSON was returned by the gateway');
         }
     }
 }
