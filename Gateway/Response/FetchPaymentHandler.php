@@ -15,6 +15,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
 use Magento\Payment\Model\InfoInterface;
+use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 
 /**
@@ -189,12 +190,15 @@ class FetchPaymentHandler implements HandlerInterface
     public function setPaymentAuth($payment)
     {
         $order = $payment->getOrder();
-        $payment->setIsTransactionApproved(false);
-        $payment->setIsTransactionDenied(false);
-        $payment->setIsInProcess(false);
-        $order->setStatus('payment_review');
-        $comment = __('Awaiting payment review.');
-        $order->addStatusHistoryComment($comment, $payment->getOrder()->getStatus());
+
+        if ($order->getState() !== Order::STATE_PAYMENT_REVIEW) {
+            $payment->setIsTransactionApproved(false);
+            $payment->setIsTransactionDenied(false);
+            $payment->setIsInProcess(false);
+            $order->setStatus('payment_review');
+            $comment = __('Awaiting payment review.');
+            $order->addStatusHistoryComment($comment, $payment->getOrder()->getStatus());
+        }
     }
 
     /**
