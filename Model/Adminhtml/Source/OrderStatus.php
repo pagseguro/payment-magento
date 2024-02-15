@@ -19,17 +19,17 @@ class OrderStatus implements ArrayInterface
     /**
      * @var CollectionFactory
      */
-    protected $statusCollectionFactory;
+    protected $statusColFactory;
 
     /**
      * Constructor
      *
-     * @param CollectionFactory $statusCollectionFactory
+     * @param CollectionFactory $statusColFactory
      */
     public function __construct(
-        CollectionFactory $statusCollectionFactory
+        CollectionFactory $statusColFactory
     ) {
-        $this->statusCollectionFactory = $statusCollectionFactory;
+        $this->statusColFactory = $statusColFactory;
     }
 
     /**
@@ -40,7 +40,7 @@ class OrderStatus implements ArrayInterface
     public function toOptionArray()
     {
         $options = [];
-        $statusCollection = $this->statusCollectionFactory->create();
+        $statusCollection = $this->statusColFactory->create();
         foreach ($statusCollection as $status) {
             $options[] = [
                 'value' => $status->getStatus(),
