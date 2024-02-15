@@ -44,6 +44,7 @@
                 <min_order_total>5</min_order_total>
                 <max_order_total>200000</max_order_total>
                 <allowspecific>1</allowspecific>
+                <exclude_fetch_cron>fraud,processing,pending_payment,holded,complete,closed,canceled,paypal_canceled_reversal,paypal_reversed,pending_paypal</exclude_fetch_cron>
                 <debugReplaceKeys>header</debugReplaceKeys>
                 <cipher_text_production>TDTmdLh3LyGKMrRqdg6CLF4FxWhSBDRMYFqG7o4EwUIS6vESXJCmtjjzdX8NY+ggxLci6dcZrNfnYYezdY/wSi/sdNNzijSDgjVX5nRSdExr8DXPdlgTlEAKg8iZFeoFvtxJZPqgxeEJVjZ3bwRm2nYGU/YPXTH5wk+w2LOKeaSEfewgMfiElFZW8F9ay+Exwivmxosa8nqQzlmLyJhBnvYLjHJuaXy+lAjFyFSQh75gHnr3bGcKGZx2roDnozFLQlMf+ix4RywVaMg0+5Y3Z8BaYwIjtyX0gddgi4hRm2nFVFVaAHf2uFWvUlLGMNZiLhCpixe9tjFJ25Qlcuf+sA==</cipher_text_production>
                 <cipher_text_sandbox>JIPYFxLrvP0wFDYTdUSzvvDCetb/GQxDRGEqfKsh4vSEKZvQKaQtvy8+/dyYclbkZhQPxiTdN2mg6Z6GVSrRJg2JPp62EzGGZt+9cI6xTQDlqCByolVPP2rJLF1IcRnnUjdHNjipXpL6B8Q7FANzoCgIGMux6frge3VdhXCb1zIkWhGeAGCunmBDjNetrUyt91Tw+xJ04grQNhrUvIHZfJ8qmapoGja4jrhA9hZFoBTGIg5UJKBJdLze/cmNnhDTt5WFBQEbq2I2kwsxuStSVT9rnS3Jet2lYCLEk0WAqmZmMg1ux0JTMU7Bk2S3MUn/w/hIfjccG7q4Lh7MX5zb3A==</cipher_text_sandbox>
