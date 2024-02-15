@@ -14,6 +14,7 @@ use Magento\Framework\Notification\NotifierInterface;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
+use PagBank\PaymentMagento\Gateway\Config\Config;
 use PagBank\PaymentMagento\Model\Console\Command\Orders\Update;
 
 /**
@@ -25,6 +26,11 @@ class GetStatusUpdate
      * Payment Method Credit Card.
      */
     public const PAYMENT_METHOD_CC = 'pagbank_paymentmagento_cc';
+
+    /**
+     * Payment Method Vault.
+     */
+    public const PAYMENT_METHOD_VAULT = 'pagbank_paymentmagento_cc_vault';
 
     /**
      * Payment Method Pix.
@@ -40,6 +46,11 @@ class GetStatusUpdate
      * @var Logger
      */
     protected $logger;
+
+    /**
+     * @var Config
+     */
+    protected $config;
 
     /**
      * @var NotifierInterface
@@ -60,17 +71,20 @@ class GetStatusUpdate
      * Constructor.
      *
      * @param Logger            $logger
+     * @param Config            $config
      * @param NotifierInterface $notifierInterface
      * @param Update            $update
      * @param CollectionFactory $collectionFactory
      */
     public function __construct(
         Logger $logger,
+        Config $config,
         NotifierInterface $notifierInterface,
         Update $update,
         CollectionFactory $collectionFactory
     ) {
         $this->logger = $logger;
+        $this->config = $config;
         $this->notifierInterface = $notifierInterface;
         $this->update = $update;
         $this->collectionFactory = $collectionFactory;
@@ -85,12 +99,18 @@ class GetStatusUpdate
      */
     public function getFilterdOrders($method)
     {
+        $exclude = $this->config->getAddtionalValue('exclude_fetch_cron');
+        $exclude = explode(',', $exclude);
+
         $orders = $this->collectionFactory->create()
                     ->addFieldToFilter('state', [
                         'in' => [
                             Order::STATE_NEW,
                             Order::STATE_PAYMENT_REVIEW,
                         ],
+                    ])
+                    ->addFieldToFilter('status', [
+                        'nin' => $exclude,
                     ]);
 
         $orders->getSelect()
@@ -154,6 +174,27 @@ class GetStatusUpdate
     public function findCc()
     {
         $orders = $this->getFilterdOrders(self::PAYMENT_METHOD_CC);
+
+        foreach ($orders as $order) {
+            $incrementId = $order->getIncrementId();
+
+            try {
+                $this->update->getUpdate($incrementId);
+            } catch (\Throwable $th) {
+                $this->errorNotificationManager($order);
+                continue;
+            }
+        }
+    }
+
+    /**
+     * Find Vault.
+     *
+     * @return void
+     */
+    public function findVault()
+    {
+        $orders = $this->getFilterdOrders(self::PAYMENT_METHOD_VAULT);
 
         foreach ($orders as $order) {
             $incrementId = $order->getIncrementId();
