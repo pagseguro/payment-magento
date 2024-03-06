@@ -149,12 +149,7 @@ class Credential
         ]);
 
         $search = '/'.preg_quote($storeCode, '/').'/';
-        $redirectUrl = preg_replace($search, '/', $redirectUrl, 0);
-
-        $firstAdminIndex = strpos($redirectUrl, '/admin/');
-        if ($firstAdminIndex !== false) {
-            $redirectUrl = substr_replace($redirectUrl, '/', $firstAdminIndex, strlen('/admin/'));
-        }
+        $redirectUrl = preg_replace($search, '/', $redirectUrl, -1);
 
         $data = [
             'grant_type'    => 'authorization_code',
