@@ -460,7 +460,7 @@ class VaultAddtionalCommand implements VaultPaymentInterface
      */
     public function order(\Magento\Payment\Model\InfoInterface $payment, $amount)
     {
-        throw new LocalizedException('Not implemented');
+        throw new LocalizedException(__('Not implemented'));
     }
 
     /**
@@ -471,7 +471,7 @@ class VaultAddtionalCommand implements VaultPaymentInterface
     public function authorize(\Magento\Payment\Model\InfoInterface $payment, $amount)
     {
         if (!$payment instanceof OrderPaymentInterface) {
-            throw new LocalizedException('Not implemented');
+            throw new LocalizedException(__('Not implemented'));
         }
         /** @var $payment OrderPaymentInterface */
         $this->attachTokenExtensionAttribute($payment);
@@ -504,11 +504,11 @@ class VaultAddtionalCommand implements VaultPaymentInterface
     public function capture(\Magento\Payment\Model\InfoInterface $payment, $amount)
     {
         if (!$payment instanceof OrderPaymentInterface) {
-            throw new LocalizedException('Not implemented');
+            throw new LocalizedException(__('Not implemented'));
         }
 
         if ($payment->getAuthorizationTransaction()) {
-            throw new LocalizedException('Capture can not be performed through vault');
+            throw new LocalizedException(__('Capture can not be performed through vault'));
         }
 
         $this->attachTokenExtensionAttribute($payment);
@@ -609,7 +609,7 @@ class VaultAddtionalCommand implements VaultPaymentInterface
      */
     public function refund(\Magento\Payment\Model\InfoInterface $payment, $amount)
     {
-        throw new LocalizedException('Not implemented');
+        throw new LocalizedException(__('Not implemented'));
     }
 
     /**
@@ -619,7 +619,7 @@ class VaultAddtionalCommand implements VaultPaymentInterface
      */
     public function cancel(\Magento\Payment\Model\InfoInterface $payment)
     {
-        throw new LocalizedException('Not implemented');
+        throw new LocalizedException(__('Not implemented'));
     }
 
     /**
@@ -629,7 +629,7 @@ class VaultAddtionalCommand implements VaultPaymentInterface
      */
     public function void(\Magento\Payment\Model\InfoInterface $payment)
     {
-        throw new LocalizedException('Not implemented');
+        throw new LocalizedException(__('Not implemented'));
     }
 
     /**
@@ -639,7 +639,7 @@ class VaultAddtionalCommand implements VaultPaymentInterface
      */
     public function canReviewPayment()
     {
-        throw new LocalizedException('Not implemented');
+        throw new LocalizedException(__('Not implemented'));
     }
 
     /**
@@ -649,7 +649,7 @@ class VaultAddtionalCommand implements VaultPaymentInterface
      */
     public function acceptPayment(InfoInterface $payment)
     {
-        throw new LocalizedException('Not implemented');
+        throw new LocalizedException(__('Not implemented'));
     }
 
     /**
@@ -659,7 +659,7 @@ class VaultAddtionalCommand implements VaultPaymentInterface
      */
     public function denyPayment(InfoInterface $payment)
     {
-        throw new LocalizedException('Not implemented');
+        throw new LocalizedException(__('Not implemented'));
     }
 
     /**
