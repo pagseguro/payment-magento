@@ -31,7 +31,7 @@ class SalesOrderViewButtonPlugin
         $payment = $order->getPayment();
         $method = (string) $payment->getMethod();
 
-        if (str_contains($method, 'pagbank_paymentmagento')) {
+        if (strpos($method, 'pagbank_paymentmagento') !== false) {
             if ($subject->getOrder()->getState() === 'new') {
                 $subject->addButton(
                     'get_review_payment_update',
