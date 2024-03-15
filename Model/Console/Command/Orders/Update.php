@@ -36,6 +36,11 @@ class Update extends AbstractModel
     public const TIME_DUE_PIX = 5;
 
     /**
+     * Time due for Deep Link.
+     */
+    public const TIME_DUE_DEEP_LINK = 5;
+
+    /**
      * Time due for Boleto.
      */
     public const TIME_DUE_BOLETO = 2880;
@@ -195,6 +200,10 @@ class Update extends AbstractModel
 
         if ($method === 'pagbank_paymentmagento_boleto') {
             $due = self::TIME_DUE_BOLETO * -1;
+        }
+
+        if ($method === 'pagbank_paymentmagento_deep_link') {
+            $due = self::TIME_DUE_DEEP_LINK * -1;
         }
 
         $initDateNow = $this->date->gmtDate('Y-m-d\TH:i:s.uP', strtotime("{$due} minutes"));

@@ -1,0 +1,105 @@
+<?php
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+
+/**
+ * @var \PagBank\PaymentMagento\Block\Sales\Form\DeepLink $block
+ * @see \PagBank\PaymentMagento\Block\Sales\Form\DeepLink
+ */
+$specificInfo = $block->getSpecificInformation();
+$title = $block->escapeHtml($block->getMethod()->getTitle());
+$deepLink = isset($specificInfo['deep_link_url']) ? $specificInfo['deep_link_url']: null;
+$qrCodeImage = isset($specificInfo['qr_code_url_image']) ? $specificInfo['qr_code_url_image'] : null;
+$expirationDate = isset($specificInfo['expiration_date']) ? $specificInfo['expiration_date'] : null;
+$payerName = isset($specificInfo['payer_name']) ? $specificInfo['payer_name'] : null;
+$payerPhone = isset($specificInfo['payer_phone']) ? $specificInfo['payer_phone'] : null;
+$payerTaxId = isset($specificInfo['payer_tax_id']) ? $specificInfo['payer_tax_id'] : null;
+?>
+
+<?php if ($specificInfo): ?>
+    <table class="admin__table-secondary order-information-table">
+        <caption class="table-caption"><?= /* @noEscape */ $title ?></caption>
+        <tbody>
+            <?php if ($expirationDate): ?>
+                <tr>
+                    <th scope="row"><?= $block->escapeHtml(__('Expiration')); ?></th>
+                    <td>
+                        <?= /* @noEscape */ $block->formatDate(
+                            $expirationDate,
+                            \IntlDateFormatter::LONG,
+                            true
+                        ) ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if ($qrCodeImage): ?>
+                <tr>
+                    <th scope="row">
+                        <?= $block->escapeHtml(__('Pay by Compute')); ?>
+                    </th>
+                    <td>
+                        <img
+                            src="<?=  $block->escapeHtml($qrCodeImage) ?>" 
+                            alt="<?= /* @noEscape */ $title ?>"
+                            width="250">
+                        </img>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if ($deepLink): ?>
+                <tr>
+                    <th scope="row">
+                        <?= $block->escapeHtml(__('Pay by Mobile')); ?>
+                    </th>
+                    <td>
+                        <a href="<?= $block->escapeUrl($deepLink); ?>"
+                            target="_blank"
+                            class="action">
+                            <img src="<?= $block->escapeUrl(
+                                $block->getViewFileUrl('PagBank_PaymentMagento::images/deep-link/btn.svg')
+                            ) ?>"
+                            width="250px"
+                            />
+                        </a>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if ($payerName): ?>
+                <tr>
+                    <th scope="row">
+                        <?= $block->escapeHtml(__('Payer Name')); ?>
+                    </th>
+                    <td>
+                        <?= $block->escapeHtml($payerName) ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if ($payerPhone): ?>
+                <tr>
+                    <th scope="row">
+                        <?= $block->escapeHtml(__('Payer Phone')); ?>
+                    </th>
+                    <td>
+                        <?= $block->escapeHtml($payerPhone) ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if ($payerTaxId): ?>
+                <tr>
+                    <th scope="row">
+                        <?= $block->escapeHtml(__('Payer Tax Id')); ?>
+                    </th>
+                    <td>
+                        <?= $block->escapeHtml($payerTaxId) ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+<?php endif;?>
