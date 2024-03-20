@@ -73,6 +73,16 @@ class All extends AbstractNotification implements CsrfAwareActionInterface
 
         $psData = $this->json->unserialize($response);
 
+        if (!isset($psData['id'])) {
+            return $this->createResult(
+                200,
+                [
+                    'error'   => 200,
+                    'message' => __('Not apply.'),
+                ]
+            );
+        };
+
         $psPaymentId = $psData['id'];
 
         $this->logger->debug([
