@@ -1,0 +1,25 @@
+<?php
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+
+/**
+ * @var \PagBank\PaymentMagento\Block\Sales\Form\DeepLink $block
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+$code = $block->escapeHtml($block->getMethodCode());
+?>
+<fieldset class="admin__fieldset payment-method" id="payment_form_<?= $block->escapeHtml($code) ?>"
+    style="display: none">
+    <div class="admin__field">
+        <label class="admin__field-label"><span><?= $block->escapeHtml(__('Instruction')) ?></span></label>
+        <div class="admin__field-control checkmo-mailing-address">
+            <?= /* @noEscape */ nl2br($block->escapeHtml($block->getInstruction(), ['b', 'a', 'h3', 'target'])) ?>
+        </div>
+    </div>
+</fieldset>

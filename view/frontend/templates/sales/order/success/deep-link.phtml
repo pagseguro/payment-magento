@@ -1,0 +1,63 @@
+
+<?php
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <strongrunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+
+/**
+ * @var PagBank\PaymentMagento\Block\Sales\Order\Success $block
+ * @see PagBank\PaymentMagento\Block\Order\Success
+ */
+$deepLink = $block->getInfo('deep_link_url');
+$qrCodeImage = $block->getInfo('qr_code_url_image');
+?>
+<div class="pagbank-payment-success-details">
+    <h3>
+        <?= $block->escapeHtml(
+            __('To make the payment:')
+        ) ?>
+    </h3>
+    <div class="pagbank-payment-deep-link-url">
+        <p><?= $block->escapeHtml(__('Access your PagBank account by clicking on the link:')) ?></p>
+        <a href="<?= $block->escapeUrl($deepLink); ?>"
+            target="_blank"
+            class="action">
+            <img src="<?= $block->escapeUrl(
+                $block->getViewFileUrl('PagBank_PaymentMagento::images/deep-link/btn.svg')
+            ) ?>"
+            width="250px"
+            />
+        </a>
+        <p>
+            <?= $block->escapeHtml(
+                __('You must <strong>be redirected to PagBank</strong> to complete the payment.'),
+                ['strong']
+            ) ?>
+        </p>
+    </div>
+    <div class="pagbank-payment-deep-link-image">
+        <p>
+            <?= $block->escapeHtml(
+                __('Use the <strong>camera on your mobile device</strong> to scan the QR Code:'),
+                ['strong']
+            ) ?>
+        </p>
+        <div class="qrcode-image">
+            <img src="<?= $block->escapeUrl($block->getMediaUrl($qrCodeImage)); ?>"
+                class="deep-link-qrcode"
+                alt="<?= $block->escapeHtml(__('Pay in PagBank')) ?>">
+            </img>
+        </div>
+        <p>
+            <?= $block->escapeHtml(
+                __('You must <strong/>click the link indicated by the camera</strong>.'),
+                ['strong']
+            ) ?>
+        </p>
+    </div>
+</div>

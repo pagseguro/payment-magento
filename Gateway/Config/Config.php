@@ -467,9 +467,9 @@ class Config extends PaymentConfig
      */
     public function hasPathDir($type): bool
     {
-        $pixPath = $this->filesystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath('/pagbank/'.$type);
+        $path = $this->filesystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath('/pagbank/'.$type);
 
-        return $this->fileIo->checkAndCreateFolder($pixPath);
+        return $this->fileIo->checkAndCreateFolder($path);
     }
 
     /**

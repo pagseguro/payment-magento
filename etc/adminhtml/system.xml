@@ -21,6 +21,7 @@
                 <include path="PagBank_PaymentMagento::system/credit_card.xml"/>
                 <include path="PagBank_PaymentMagento::system/pix.xml"/>
                 <include path="PagBank_PaymentMagento::system/boleto.xml"/>
+                <include path="PagBank_PaymentMagento::system/deep_link.xml"/>
                 <include path="PagBank_PaymentMagento::system/developers.xml"/>
             </group>
         </section>

@@ -51,12 +51,6 @@
                 <field id="*/*/settings/environment">production</field>
             </depends>
         </field>
-        <field id="exclude_fetch_cron" translate="label comment" type="multiselect" sortOrder="150" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
-            <label>Exclude Status for Order Fetch via Cron</label>
-            <config_path>payment/pagbank_paymentmagento/exclude_fetch_cron</config_path>
-            <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\OrderStatus</source_model>
-            <comment>The selected statuses will be excluded from the cron flow for order update.</comment>
-        </field>
         <include path="PagBank_PaymentMagento::system/relationship.xml"/>
     </group>
 </include>

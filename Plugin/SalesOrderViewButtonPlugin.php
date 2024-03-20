@@ -31,7 +31,7 @@ class SalesOrderViewButtonPlugin
         $payment = $order->getPayment();
         $method = (string) $payment->getMethod();
 
-        if (strpos($method, 'pagbank_paymentmagento') !== false) {
+        if (str_contains($method, 'pagbank_paymentmagento')) {
             if ($subject->getOrder()->getState() === 'new') {
                 $subject->addButton(
                     'get_review_payment_update',
@@ -71,7 +71,8 @@ class SalesOrderViewButtonPlugin
         $method = (string) $payment->getMethod();
 
         if ($method === 'pagbank_paymentmagento_pix'
-            || $method === 'pagbank_paymentmagento_boleto') {
+            || $method === 'pagbank_paymentmagento_boleto'
+            || $method === 'pagbank_paymentmagento_deep_link') {
             if ($buttonId === 'accept_payment') {
                 $message = __('This decision will not change the status in PagBank.');
                 $data = [

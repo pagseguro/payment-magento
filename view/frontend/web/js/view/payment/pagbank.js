@@ -20,7 +20,8 @@ define(
         var config = window.checkoutConfig.payment,
             methodBoleto = 'pagbank_paymentmagento_boleto',
             methodCc = 'pagbank_paymentmagento_cc',
-            methodPix = 'pagbank_paymentmagento_pix';
+            methodPix = 'pagbank_paymentmagento_pix',
+            methodDeepLink = 'pagbank_paymentmagento_deep_link';
 
         if (config[methodBoleto].isActive) {
             rendererList.push(
@@ -45,6 +46,15 @@ define(
                 {
                     type: methodPix,
                     component: 'PagBank_PaymentMagento/js/view/payment/method-renderer/pix'
+                }
+            );
+        }
+
+        if (config[methodDeepLink].isActive) {
+            rendererList.push(
+                {
+                    type: methodDeepLink,
+                    component: 'PagBank_PaymentMagento/js/view/payment/method-renderer/deep-link'
                 }
             );
         }

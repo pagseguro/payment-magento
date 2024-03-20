@@ -44,7 +44,6 @@
                 <min_order_total>5</min_order_total>
                 <max_order_total>200000</max_order_total>
                 <allowspecific>1</allowspecific>
-                <exclude_fetch_cron>fraud,processing,pending_payment,holded,complete,closed,canceled,paypal_canceled_reversal,paypal_reversed,pending_paypal</exclude_fetch_cron>
                 <debugReplaceKeys>header</debugReplaceKeys>
                 <cipher_text_production>TDTmdLh3LyGKMrRqdg6CLF4FxWhSBDRMYFqG7o4EwUIS6vESXJCmtjjzdX8NY+ggxLci6dcZrNfnYYezdY/wSi/sdNNzijSDgjVX5nRSdExr8DXPdlgTlEAKg8iZFeoFvtxJZPqgxeEJVjZ3bwRm2nYGU/YPXTH5wk+w2LOKeaSEfewgMfiElFZW8F9ay+Exwivmxosa8nqQzlmLyJhBnvYLjHJuaXy+lAjFyFSQh75gHnr3bGcKGZx2roDnozFLQlMf+ix4RywVaMg0+5Y3Z8BaYwIjtyX0gddgi4hRm2nFVFVaAHf2uFWvUlLGMNZiLhCpixe9tjFJ25Qlcuf+sA==</cipher_text_production>
                 <cipher_text_sandbox>JIPYFxLrvP0wFDYTdUSzvvDCetb/GQxDRGEqfKsh4vSEKZvQKaQtvy8+/dyYclbkZhQPxiTdN2mg6Z6GVSrRJg2JPp62EzGGZt+9cI6xTQDlqCByolVPP2rJLF1IcRnnUjdHNjipXpL6B8Q7FANzoCgIGMux6frge3VdhXCb1zIkWhGeAGCunmBDjNetrUyt91Tw+xJ04grQNhrUvIHZfJ8qmapoGja4jrhA9hZFoBTGIg5UJKBJdLze/cmNnhDTt5WFBQEbq2I2kwsxuStSVT9rnS3Jet2lYCLEk0WAqmZmMg1ux0JTMU7Bk2S3MUn/w/hIfjccG7q4Lh7MX5zb3A==</cipher_text_sandbox>
@@ -184,6 +183,40 @@ A confirmação do seu pagamento é automática, em até 5 minutos.]]></instruct
                 <specificcountry>BR</specificcountry>
                 <sort_order>12</sort_order>
             </pagbank_paymentmagento_boleto>
+            <pagbank_paymentmagento_deep_link>
+                <group>pagbank_group</group>
+                <model>PagBankDeepLinkFacade</model>
+                <payment_action>order</payment_action>
+                <order_status>pending</order_status>
+                <currency>BRL</currency>
+                <is_gateway>1</is_gateway>
+                <can_initialize>1</can_initialize>
+                <can_use_internal>1</can_use_internal>
+                <can_use_checkout>1</can_use_checkout>
+                <can_capture>0</can_capture>
+                <can_capture_partial>0</can_capture_partial>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <can_refund>1</can_refund>
+                <can_void>0</can_void>
+                <can_cancel>0</can_cancel>
+                <can_review_payment>1</can_review_payment>
+                <can_deny_payment>0</can_deny_payment>
+                <can_accept_payment>0</can_accept_payment>
+                <can_fetch_transaction_info>1</can_fetch_transaction_info>
+                <can_fetch_transaction_information>1</can_fetch_transaction_information>
+                <paymentInfoKeys>qr_code_url_image,deep_link_url,expiration_date,payer_name,payer_phone,payer_tax_id</paymentInfoKeys>
+                <active>1</active>
+                <title>Pagar com PagBank</title>
+                <instruction_checkout><![CDATA[Pague suas compras com o app PagBank utilizando o seu saldo ou cartões cadastrados! Além de toda a segurança do app, você tem a praticidade de não precisar preencher os dados do seu cartão.]]></instruction_checkout>
+                <get_tax_id>0</get_tax_id>
+                <get_phone>0</get_phone>
+                <get_name>0</get_name>
+                <min_order_total>1</min_order_total>
+                <max_order_total>200000</max_order_total>
+                <allowspecific>1</allowspecific>
+                <specificcountry>BR</specificcountry>
+                <sort_order>11</sort_order>
+            </pagbank_paymentmagento_deep_link>
         </payment>
         <dev>
             <js>
