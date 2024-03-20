@@ -234,6 +234,7 @@
 
         .pagbank-payment {
             &-boleto-copy,
+            &-deep-link-copy,
             &-pix-copy {
                 margin-bottom: @indent__s;
                 max-width: 500px;
@@ -250,13 +251,18 @@
                 }
             }
 
-            &-pix-image {
+            &-pix-image,
+            &-deep-link-image {
                 margin-bottom: @indent__s;
                 max-width: 500px;
     
                 .pix-qrcode {
                     max-width: 250px;
                 }
+            }
+
+            &-deep-link-image {
+                .lib-visually-hidden()
             }
         }
     }
@@ -280,6 +286,20 @@
                         width: 32px;
                     }
                 }
+            }
+        }
+    }
+
+    .pagbank-payment-success-details {
+
+        .pagbank-payment {
+
+            &-deep-link-image {
+                .lib-visually-hidden-reset()
+            }
+
+            &-deep-link-url {
+                .lib-visually-hidden()
             }
         }
     }

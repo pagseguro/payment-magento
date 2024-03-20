@@ -184,6 +184,40 @@ A confirmação do seu pagamento é automática, em até 5 minutos.]]></instruct
                 <specificcountry>BR</specificcountry>
                 <sort_order>12</sort_order>
             </pagbank_paymentmagento_boleto>
+            <pagbank_paymentmagento_deep_link>
+                <group>pagbank_group</group>
+                <model>PagBankDeepLinkFacade</model>
+                <payment_action>order</payment_action>
+                <order_status>pending</order_status>
+                <currency>BRL</currency>
+                <is_gateway>1</is_gateway>
+                <can_initialize>1</can_initialize>
+                <can_use_internal>1</can_use_internal>
+                <can_use_checkout>1</can_use_checkout>
+                <can_capture>0</can_capture>
+                <can_capture_partial>0</can_capture_partial>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <can_refund>1</can_refund>
+                <can_void>0</can_void>
+                <can_cancel>0</can_cancel>
+                <can_review_payment>1</can_review_payment>
+                <can_deny_payment>0</can_deny_payment>
+                <can_accept_payment>0</can_accept_payment>
+                <can_fetch_transaction_info>1</can_fetch_transaction_info>
+                <can_fetch_transaction_information>1</can_fetch_transaction_information>
+                <paymentInfoKeys>qr_code_url_image,deep_link_url,expiration_date,payer_name,payer_phone,payer_tax_id</paymentInfoKeys>
+                <active>1</active>
+                <title>Pagar com PagBank</title>
+                <instruction_checkout><![CDATA[Pague suas compras com o app PagBank utilizando o seu saldo ou cartões cadastrados! Além de toda a segurança do app, você tem a praticidade de não precisar preencher os dados do seu cartão.]]></instruction_checkout>
+                <get_tax_id>0</get_tax_id>
+                <get_phone>0</get_phone>
+                <get_name>0</get_name>
+                <min_order_total>1</min_order_total>
+                <max_order_total>200000</max_order_total>
+                <allowspecific>1</allowspecific>
+                <specificcountry>BR</specificcountry>
+                <sort_order>11</sort_order>
+            </pagbank_paymentmagento_deep_link>
         </payment>
         <dev>
             <js>

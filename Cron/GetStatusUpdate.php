@@ -38,6 +38,11 @@ class GetStatusUpdate
     public const PAYMENT_METHOD_PIX = 'pagbank_paymentmagento_pix';
 
     /**
+     * Payment Method Deep Link.
+     */
+    public const PAYMENT_METHOD_DEEP_LINK = 'pagbank_paymentmagento_deep_link';
+
+    /**
      * Payment Method Boleto.
      */
     public const PAYMENT_METHOD_BOLETO = 'pagbank_paymentmagento_boleto';
@@ -132,6 +137,27 @@ class GetStatusUpdate
     public function findPix()
     {
         $orders = $this->getFilterdOrders(self::PAYMENT_METHOD_PIX);
+
+        foreach ($orders as $order) {
+            $incrementId = $order->getIncrementId();
+
+            try {
+                $this->update->getUpdate($incrementId);
+            } catch (\Throwable $th) {
+                $this->errorNotificationManager($order);
+                continue;
+            }
+        }
+    }
+
+    /**
+     * Find Deep Link.
+     *
+     * @return void
+     */
+    public function findDeepLink()
+    {
+        $orders = $this->getFilterdOrders(self::PAYMENT_METHOD_DEEP_LINK);
 
         foreach ($orders as $order) {
             $incrementId = $order->getIncrementId();

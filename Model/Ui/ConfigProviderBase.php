@@ -40,6 +40,11 @@ class ConfigProviderBase implements ConfigProviderInterface
      */
     public const METHOD_CODE_BOLETO = 'pagbank_paymentmagento_boleto';
 
+    /*
+     * @var METHOD CODE Deep Link
+     */
+    public const METHOD_CODE_DEEP_LINK = 'pagbank_paymentmagento_deep_link';
+
     /**
      * @var Config
      */

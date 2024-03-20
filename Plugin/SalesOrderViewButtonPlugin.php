@@ -71,7 +71,8 @@ class SalesOrderViewButtonPlugin
         $method = (string) $payment->getMethod();
 
         if ($method === 'pagbank_paymentmagento_pix'
-            || $method === 'pagbank_paymentmagento_boleto') {
+            || $method === 'pagbank_paymentmagento_boleto'
+            || $method === 'pagbank_paymentmagento_deep_link') {
             if ($buttonId === 'accept_payment') {
                 $message = __('This decision will not change the status in PagBank.');
                 $data = [
