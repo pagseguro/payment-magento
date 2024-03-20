@@ -31,6 +31,11 @@ class Success extends Template
     public const TEMPLATE_PIX = 'PagBank_PaymentMagento::sales/order/success/pix.phtml';
 
     /**
+     * Template Pix.
+     */
+    public const TEMPLATE_DEEP_LINK = 'PagBank_PaymentMagento::sales/order/success/deep-link.phtml';
+
+    /**
      * @var Session
      */
     protected $checkoutSession;
@@ -67,8 +72,9 @@ class Success extends Template
         $paymentType = $this->getMethodCode();
 
         $templates = [
-            'pagbank_paymentmagento_boleto' => self::TEMPLATE_BOLETO,
-            'pagbank_paymentmagento_pix'    => self::TEMPLATE_PIX,
+            'pagbank_paymentmagento_boleto'     => self::TEMPLATE_BOLETO,
+            'pagbank_paymentmagento_pix'        => self::TEMPLATE_PIX,
+            'pagbank_paymentmagento_deep_link'  => self::TEMPLATE_DEEP_LINK,
         ];
 
         if (isset($templates[$paymentType])) {

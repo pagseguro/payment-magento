@@ -26,5 +26,8 @@
         <method name="pagbank_paymentmagento_pix">
             <allow_multiple_address>0</allow_multiple_address>
         </method>
+        <method name="pagbank_paymentmagento_deep_link">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
     </methods>
 </payment>

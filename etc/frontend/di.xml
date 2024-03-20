@@ -18,6 +18,7 @@
                 <item name="pagbank_paymentmagento_cc_vault_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\Vault\ConfigProvider</item>
                 <item name="pagbank_paymentmagento_boleto_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\ConfigProviderBoleto</item>
                 <item name="pagbank_paymentmagento_pix_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\ConfigProviderPix</item>
+                <item name="pagbank_paymentmagento_deep_link_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\ConfigProviderDeepLink</item>
             </argument>
         </arguments>
     </type>
@@ -36,6 +37,13 @@
         </arguments>
     </type>
     <type name="PagBank\PaymentMagento\Block\Sales\Info\Pix">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="PagBank\PaymentMagento\Block\Sales\Info\DeepLink">
         <arguments>
             <argument name="data" xsi:type="array">
                 <item xsi:type="string" name="is_secure_mode">1</item>

@@ -118,6 +118,17 @@
         </arguments>
     </virtualType>
 
+    <virtualType name="PagBankDeepLinkFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">PagBank\PaymentMagento\Model\Ui\ConfigProviderDeepLink::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">PagBank\PaymentMagento\Block\Sales\Form\DeepLink</argument>
+            <argument name="infoBlockType" xsi:type="string">PagBank\PaymentMagento\Block\Sales\Info\DeepLink</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PagBankDeepLinkValueHandlerPool</argument>
+            <argument name="validatorPool" xsi:type="object">PagBankDeepLinkValidatorPool</argument>
+            <argument name="commandPool" xsi:type="object">PagBankDeepLinkCommandPool</argument>
+        </arguments>
+    </virtualType>
+
     <!-- All - Executors -->
     <type name="Magento\Payment\Gateway\Command\CommandManagerPool">
         <arguments>
@@ -126,6 +137,7 @@
                 <item name="pagbank_paymentmagento_cc_vault" xsi:type="string">PagBankCcCommandManager</item>
                 <item name="pagbank_paymentmagento_boleto" xsi:type="string">PagBankBoletoCommandManager</item>
                 <item name="pagbank_paymentmagento_pix" xsi:type="string">PagBankPixCommandManager</item>
+                <item name="pagbank_paymentmagento_deep_link" xsi:type="string">PagBankDeepLinkCommandManager</item>
             </argument>
         </arguments>
     </type>
@@ -162,6 +174,12 @@
         </arguments>
     </virtualType>
 
+    <virtualType name="PagBankDeepLinkConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\PagBank\PaymentMagento\Model\Ui\ConfigProviderDeepLink::CODE</argument>
+        </arguments>
+    </virtualType>
+
     <!-- All - Block Info -->
     <type name="PagBank\PaymentMagento\Block\Sales\Info\CreditCard">
         <arguments>
@@ -178,6 +196,12 @@
     <type name="PagBank\PaymentMagento\Block\Sales\Info\Pix">
         <arguments>
             <argument name="config" xsi:type="object">PagBankPixConfig</argument>
+        </arguments>
+    </type>
+
+    <type name="PagBank\PaymentMagento\Block\Sales\Info\DeepLink">
+        <arguments>
+            <argument name="config" xsi:type="object">PagBankDeepLinkConfig</argument>
         </arguments>
     </type>
 
@@ -330,6 +354,81 @@
         </arguments>
     </virtualType>
 
+
+
+    <!-- DeepLink - Commands infrastructure -->
+    <virtualType name="PagBankDeepLinkCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="initialize" xsi:type="string">PagBankDeepLinkOrderCommand</item>
+                <item name="refund" xsi:type="string">PagBankRefundCommand</item>
+                <item name="fetch_transaction_information" xsi:type="string">PagBankBaseFetchCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- DeepLink - Order Commands -->
+    <virtualType name="PagBankDeepLinkOrderCommand" type="PagBank\PaymentMagento\Gateway\Command\PaymentCommand">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PagBankDeepLinkCommandPool</argument>
+            <argument name="requestBuilder" xsi:type="object">PagBankDeepLinkOrderRequest</argument>
+            <argument name="handler" xsi:type="object">PagBankDeepLinkOrderResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\CreateOrderPaymentDeepLinkClient</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- DeepLink - Order Request -->
+    <virtualType name="PagBankDeepLinkOrderRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="storeId" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\MetadataRequest</item>
+                <item name="referenceId"  xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ReferenceIdRequest</item>
+                <item name="description" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\DescriptionDataRequest</item>
+                <item name="amount" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\AmountDataRequest</item>
+                <item name="customer" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\CustomerDataRequest</item>
+                <item name="items"  xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ItemsDataRequest</item>
+                <item name="shippingAddress" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ShippingsDataRequest</item>
+                <item name="billingAddress" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\BillingAddressDataRequest</item>
+                <item name="notificationUrl" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\NotificationUrlDataRequest</item>
+                <!-- Specific to the payment method. -->
+                <item name="qrCodeData" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\DeepLink\QrCodeDataRequest</item>
+                <item name="DeepLinkData" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\DeepLink\DeepLinkDataRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- DeepLink - Order Payment Response handlers -->
+    <virtualType name="PagBankDeepLinkOrderResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="extOrdId" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\ExtOrdIdHandler</item>
+                <item name="transaction" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\TxnOrderedHandler</item>
+                <item name="txnDataDeepLink" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\TxnDataDeepLinkHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- DeepLink - Validators -->
+    <virtualType name="PagBankDeepLinkValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PagBankDeepLinkCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- DeepLink - Country Validator -->
+    <virtualType name="PagBankDeepLinkCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PagBank\PaymentMagento\Gateway\Config\ConfigDeepLink</argument>
+        </arguments>
+    </virtualType>
+
+
+
     <!-- Cc - Commands infrastructure -->
     <virtualType name="PagBankCcCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
         <arguments>
@@ -415,7 +514,6 @@
         </arguments>
     </virtualType>
 
-
     <!-- Cc - Validators -->
     <virtualType name="PagBankCcValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
         <arguments>
@@ -431,6 +529,8 @@
             <argument name="config" xsi:type="object">PagBank\PaymentMagento\Gateway\Config\ConfigCc</argument>
         </arguments>
     </virtualType>
+
+
 
     <!-- Vault - Capture Command-->
     <virtualType name="PagBankCcVaultCaptureCommand" type="PagBank\PaymentMagento\Gateway\Command\PaymentCommand">
@@ -724,6 +824,26 @@
     <virtualType name="PagBankPixConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
         <arguments>
             <argument name="configInterface" xsi:type="object">PagBankPixConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankDeepLinkCommandManager" type="Magento\Payment\Gateway\Command\CommandManager">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PagBankDeepLinkCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankDeepLinkValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PagBankDeepLinkConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankDeepLinkConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PagBankDeepLinkConfig</argument>
         </arguments>
     </virtualType>
 

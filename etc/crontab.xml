@@ -23,6 +23,9 @@
         <job name="pagbank_update_pix" instance="PagBank\PaymentMagento\Cron\GetStatusUpdate" method="findPix">
             <schedule>*/30 * * * *</schedule>
         </job>
+        <job name="pagbank_update_deep_link" instance="PagBank\PaymentMagento\Cron\GetStatusUpdate" method="findDeepLink">
+            <schedule>0 */1 * * *</schedule>
+        </job>
         <job name="pagbank_update_boleto" instance="PagBank\PaymentMagento\Cron\GetStatusUpdate" method="findBoleto">
             <schedule>0 7 * * 1-5</schedule>
         </job>

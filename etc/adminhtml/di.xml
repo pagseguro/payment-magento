@@ -31,5 +31,12 @@
             </argument>
         </arguments>
     </type>
+    <type name="PagBank\PaymentMagento\Block\Sales\Info\DeepLink">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">0</item>
+            </argument>
+        </arguments>
+    </type>
     <preference for="Magento\Framework\UrlInterface" type="Magento\Backend\Model\UrlInterface" />
 </config>

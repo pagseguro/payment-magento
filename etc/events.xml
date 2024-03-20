@@ -25,4 +25,7 @@
     <event name="payment_method_assign_data_pagbank_paymentmagento_pix">
         <observer name="pagbank_paymentmagento_pix_data_assign" instance="PagBank\PaymentMagento\Observer\DataAssignPayerDataObserver" />
     </event>
+    <event name="payment_method_assign_data_pagbank_paymentmagento_deep_link">
+        <observer name="pagbank_paymentmagento_deep_link_data_assign" instance="PagBank\PaymentMagento\Observer\DataAssignPayerDataObserver" />
+    </event>
 </config>

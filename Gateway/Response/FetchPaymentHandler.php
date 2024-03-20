@@ -69,6 +69,11 @@ class FetchPaymentHandler implements HandlerInterface
     public const RESPONSE_STATUS_CANCELED = 'CANCELED';
 
     /**
+     * Response Pay Status Waiting - Value.
+     */
+    public const RESPONSE_STATUS_WAITING = 'WAITING';
+
+    /**
      * Response Pay Authorized - Block name.
      */
     public const RESPONSE_AUTHORIZED = 'AUTHORIZED';
@@ -98,6 +103,7 @@ class FetchPaymentHandler implements HandlerInterface
      *
      * @param array $handlingSubject
      * @param array $response
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return void
      */
@@ -141,6 +147,10 @@ class FetchPaymentHandler implements HandlerInterface
                     $this->setPaymentDeny($payment, $paymentParentId, $pagbankPayId, $amount);
                     $order->isPaymentReview(0);
                 }
+
+                if ($this->finalStatus === 'WAITING') {
+                    $this->setPaymentWaiting($payment);
+                }
             }
         }
     }
@@ -158,6 +168,10 @@ class FetchPaymentHandler implements HandlerInterface
 
         foreach ($charges as $charge) {
             switch ($charge[self::RESPONSE_STATUS]) {
+                case self::RESPONSE_STATUS_WAITING:
+                    $this->finalStatus = 'WAITING';
+                    break;
+
                 case self::RESPONSE_AUTHORIZED:
                     $this->finalStatus = 'AUTH';
                     break;
@@ -178,6 +192,26 @@ class FetchPaymentHandler implements HandlerInterface
                     break;
             }
         }
+    }
+
+    /**
+     * Set Payment Auth.
+     *
+     * @param InfoInterface $payment
+     *
+     * @return void
+     */
+    public function setPaymentWaiting($payment)
+    {
+        $order = $payment->getOrder();
+        $payment->setIsTransactionApproved(false);
+        $payment->setIsTransactionDenied(false);
+        $payment->setIsTransactionPending(true);
+        $payment->setIsInProcess(false);
+        $payment->setIsTransactionClosed(false);
+        $comment = __('Awaiting payment.');
+        $order->addStatusHistoryComment($comment, $payment->getOrder()->getStatus());
+        $order->save();
     }
 
     /**
