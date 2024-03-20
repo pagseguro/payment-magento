@@ -134,7 +134,7 @@ class ConsultPSInstallments
             }
         } catch (InvalidArgumentException $exc) {
             // phpcs:ignore Magento2.Exceptions.DirectThrow
-            throw new LocalizedException('Invalid JSON was returned by the gateway');
+            throw new LocalizedException(__('Invalid JSON was returned by the gateway'));
         }
 
         return $response;
