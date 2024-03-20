@@ -103,6 +103,7 @@ class FetchPaymentHandler implements HandlerInterface
      *
      * @param array $handlingSubject
      * @param array $response
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return void
      */
