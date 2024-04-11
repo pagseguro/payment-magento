@@ -99,6 +99,10 @@ class ItemsDataRequest implements BuilderInterface
                 continue;
             }
 
+            if ((int) $this->config->formatPrice($item->getPrice()) === 0) {
+                continue;
+            }
+
             $replacements = [
                 'á' => 'a',
                 'à' => 'a',
