@@ -71,7 +71,18 @@ class All extends AbstractNotification implements CsrfAwareActionInterface
 
         $response = $this->getRequest()->getContent();
 
-        $psData = $this->json->unserialize($response);
+        try {
+            $psData = $this->json->unserialize($response);
+        } catch (Exception $exc) {
+            /** @var ResultInterface $result */
+            return $this->createResult(
+                205,
+                [
+                    'error'   => 205,
+                    'message' => $exc->getMessage(),
+                ]
+            );
+        }
 
         if (!isset($psData['id'])) {
             return $this->createResult(
