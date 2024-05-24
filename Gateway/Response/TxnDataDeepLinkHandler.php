@@ -53,6 +53,11 @@ class TxnDataDeepLinkHandler implements HandlerInterface
     public const RESPONSE_QR_CODES = 'qr_codes';
 
     /**
+     * Response Pay Qr Code Links - Block name.
+     */
+    public const RESPONSE_QR_CODE_LINKS = 'links';
+
+    /**
      * Response Pay Deep Link - Block name.
      */
     public const RESPONSE_DEEP_LINK = 'deep_links';
@@ -156,9 +161,8 @@ class TxnDataDeepLinkHandler implements HandlerInterface
         $qrCodes = $response[self::RESPONSE_QR_CODES][0];
         $deepLink = $response[self::RESPONSE_DEEP_LINK][0];
 
-        if (isset($deepLink[self::RESPONSE_DEEP_LINK_URL])) {
-            $linkToImage = 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl='.
-                urlencode($deepLink[self::RESPONSE_DEEP_LINK_URL]);
+        if (isset($qrCodes[self::RESPONSE_QR_CODE_LINKS][0])) {
+            $linkToImage = $qrCodes[self::RESPONSE_QR_CODE_LINKS][0]['href'];
 
             $qrCodeImage = $this->configBase->copyFile('deep_link', $linkToImage, $pagbankPayId);
             $payment->setAdditionalInformation(

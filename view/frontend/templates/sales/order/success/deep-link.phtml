@@ -41,12 +41,31 @@ $qrCodeImage = $block->getInfo('qr_code_url_image');
         </p>
     </div>
     <div class="pagbank-payment-deep-link-image">
-        <p>
-            <?= $block->escapeHtml(
-                __('Use the <strong>camera on your mobile device</strong> to scan the QR Code:'),
-                ['strong']
-            ) ?>
-        </p>
+        <ol class="pagbank-items">
+            <li class="item">
+                <?= $block->escapeHtml(
+                    __('Open the <strong>PagBank app</strong> on your phone;'),
+                    ['strong']
+                ) ?>
+                </li>
+            <li class="item">
+                <?= $block->escapeHtml(
+                    __('Go to the <strong>Pix/Qr Code</strong> option;'),
+                    ['strong']
+                ) ?>
+            </li>
+            <li class="item">
+                <?= $block->escapeHtml(
+                    __('Select the option <strong>"Pay with Qr Code"</strong>;'),
+                    ['strong']
+                ) ?>
+            </li>
+            <li class="item">
+                <?= $block->escapeHtml(
+                    __('Scan the Qr Code:')
+                ) ?>
+            </li>
+        </ol>
         <div class="qrcode-image">
             <img src="<?= $block->escapeUrl($block->getMediaUrl($qrCodeImage)); ?>"
                 class="deep-link-qrcode"
@@ -55,7 +74,7 @@ $qrCodeImage = $block->getInfo('qr_code_url_image');
         </div>
         <p>
             <?= $block->escapeHtml(
-                __('You must <strong/>click the link indicated by the camera</strong>.'),
+                __('Atenção o Qr Code gerado <strong>só é válido para uso no aplicatico do PagBank.</strong>'),
                 ['strong']
             ) ?>
         </p>
