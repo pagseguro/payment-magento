@@ -88,6 +88,7 @@ define([
                             errorCallback();
                         });
                 } else {
+                    fullScreenLoader.stopLoader();
                     callback();
                 }
             }
