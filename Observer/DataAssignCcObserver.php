@@ -70,9 +70,15 @@ class DataAssignCcObserver extends AbstractDataAssignObserver
     public const PAYMENT_INFO_THREE_DS_AUTH_STATUS = 'three_ds_auth_status';
 
     /**
+     * @const string
+     */
+    public const PAYMENT_INFO_PUBLIC_HASH = 'public_hash';
+
+    /**
      * @var array
      */
     protected $addInformationList = [
+        self::PAYMENT_INFO_PUBLIC_HASH,
         self::PAYMENT_INFO_NUMBER_TOKEN,
         self::PAYMENT_INFO_CARDHOLDER_NAME,
         self::PAYMENT_INFO_CC_INSTALLMENTS,
