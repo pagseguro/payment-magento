@@ -37,7 +37,7 @@
             <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\PaymentAction</source_model>
             <config_path>payment/pagbank_paymentmagento_cc/payment_action</config_path>
         </field>
-        <!-- <group id="three_ds" translate="label comment" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+        <group id="three_ds" translate="label comment" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>3D Secure</label>
             <comment>3D Secure configuration.</comment>
             <field id="active" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
@@ -45,6 +45,12 @@
                 <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 <config_path>payment/pagbank_paymentmagento_cc/use_three_ds</config_path>
                 <comment>Authorization is required to use this service. Please get in touch with PagBank for further assistance.</comment>
+            </field>
+            <field id="enable_debit" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Enabled Debit Card</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>payment/pagbank_paymentmagento_cc/enable_debit</config_path>
+                <comment>Allow payment with debit card.</comment>
             </field>
             <field id="reject_not_auth" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                 <label>Reject payment not authenticated</label>
@@ -57,7 +63,31 @@
                 <comment>%1 and %2 are two variables, they will be replaced by the card's flag and the issuer bank's name, respectively.</comment>
                 <config_path>payment/pagbank_paymentmagento_cc/instruction_three_ds</config_path>
             </field>
-        </group> -->
+            <group id="three_ds_rules" translate="label comment" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Activation rules</label>
+                <comment>Advanced settings for 3D Secure application.</comment>
+                <field id="three_ds_max_try_place_order" translate="label comment tooltip" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Activate after the number of failed attempts</label>
+                    <comment><![CDATA[3D Secure authentication will be required if the <b>number of purchase attempts</b> (that fail) exceeds the value registered here.]]></comment>
+                    <tooltip><![CDATA[<p>During checkout, if the customer tries to purchase and their order is denied, the number of attempts will increase. This feature is useful to prevent automated fraud attempts.</p>]]></tooltip>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                    <config_path>payment/pagbank_paymentmagento_cc/three_ds_max_try_place_order</config_path>
+                </field>
+                <field id="three_ds_min_order_total" translate="label comment tooltip" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Activate after the order value exceeds</label>
+                    <comment><![CDATA[3D Secure authentication will be required if <b>the order value</b> exceeds the value registered here.]]></comment>
+                    <tooltip><![CDATA[<p>We recommend using values that exceed the normal ticket, which may indicate possible fraud.</p>]]></tooltip>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                    <config_path>payment/pagbank_paymentmagento_cc/three_ds_min_order_total</config_path>
+                </field>
+                <field id="three_ds_has_sku" translate="label comment tooltip" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>If the order contains the SKU</label>
+                    <comment><![CDATA[You can register multiple SKUs, use commas to separate them. 3D Secure authentication will be required if the <b>order contains the SKU</b>.]]></comment>
+                    <tooltip><![CDATA[<p>If you have products that are more sensitive to fraud, you can register these SKUs here.</p>]]></tooltip>
+                    <config_path>payment/pagbank_paymentmagento_cc/three_ds_has_sku</config_path>
+                </field>
+            </group>
+        </group>
         <group id="basic_configuration" translate="label comment" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Basic configuration</label>
             <comment>Basic configuration of payment methods.</comment>

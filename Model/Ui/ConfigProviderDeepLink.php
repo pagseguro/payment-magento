@@ -130,7 +130,7 @@ class ConfigProviderDeepLink implements ConfigProviderInterface
                 'url'    => $asset->getUrl(),
                 'width'  => '48px',
                 'height' => '32px',
-                'title'  => __('`Pay in PagBank'),
+                'title'  => __('Pay in PagBank'),
             ];
         }
 

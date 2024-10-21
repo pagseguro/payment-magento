@@ -18,23 +18,44 @@ require([
     'jquery',
     'prototype'
 ], function($) {
-    var pagbankOauthSpan = jQuery('#pagbank-oauth_span');
-    
+    console.log('account');
+
     $('#payment_other_pagbank_base_settings_environment').change(
         () => {
-        $('#pagbank_elements_for_pagbank-oauth').html(
-            'After changing the environment,' + 
-            ' it is necessary to save the configuration' +
-            'before using the authentication function.'
-        );}
+            $('#pagbank_elements_for_pagbank-oauth').html(
+                'After changing the environment,' +
+                ' it is necessary to save the configuration' +
+                'before using the authentication function.'
+            );
+        }
     );
 
     $('#payment_us_pagbank_base_settings_environment').change(
         () => {
-        $('#pagbank_elements_for_pagbank-oauth').html(
-            'Após mudar o ambiente é necessário salvar' +
-            ' a configuração antes de usar a função de autenticação.'
-        );}
+            $('#pagbank_elements_for_pagbank-oauth').html(
+                'Após mudar o ambiente é necessário salvar' +
+                ' a configuração antes de usar a função de autenticação.'
+            );
+        }
+    );
+
+    $('#payment_other_pagbank_base_settings_type_app').change(
+        () => {
+            $('#pagbank_elements_for_pagbank-oauth').html(
+                'After changing the environment,' +
+                ' it is necessary to save the configuration' +
+                'before using the authentication function.'
+            );
+        }
+    );
+
+    $('#payment_us_pagbank_base_settings_type_app').change(
+        () => {
+            $('#pagbank_elements_for_pagbank-oauth').html(
+                'Após mudar o ambiente é necessário salvar' +
+                ' a configuração antes de usar a função de autenticação.'
+            );
+        }
     );
 
     $('#pagbank-oauth').click(function () {

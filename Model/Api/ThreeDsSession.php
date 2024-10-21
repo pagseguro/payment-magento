@@ -111,16 +111,16 @@ class ThreeDsSession implements ThreeDsSessionInterface
 
         /** @var ZendClient $client */
         $client = $this->httpZendClientFactory->create();
-        $url = $this->configBase->getApiUrl($storeId);
+        $url = $this->configBase->getApiSDKUrl($storeId);
         $apiConfigs = $this->configBase->getApiConfigs();
         $headers = $this->configBase->getApiHeaders($storeId);
         $uri = $url.'checkout-sdk/sessions';
         try {
             $client->setUri($uri);
             $client->setHeaders($headers);
-            $client->setMethod(Request::POST);
+            $client->setMethod(ZendClient::POST);
             $client->setConfig($apiConfigs);
-            $responseBody = $client->send()->getBody();
+            $responseBody = $client->request()->getBody();
 
             $dataResponse = $this->json->unserialize($responseBody);
 

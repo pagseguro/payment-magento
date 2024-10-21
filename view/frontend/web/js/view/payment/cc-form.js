@@ -37,15 +37,16 @@ define([
 
     return Component.extend({
         defaults: {
-            creditCardNumber: '',
-            creditCardVerificationNumber: '',
-            creditCardType: '',
-            creditCardExpYear: '',
-            creditCardExpMonth: '',
-            creditCardHolderName: '',
+            creditCardNumber: '', //5200000000001096
+            creditCardVerificationNumber: '', //123
+            creditCardType: '', //MC
+            creditCardExpYear: '', //2024
+            creditCardExpMonth: '', //10
+            creditCardHolderName: '', //Test tres ds
             creditCardInstallment: '',
-            selectedCardType: '',
-            creditCardOptionsInstallments: null
+            selectedCardType: '', //MC
+            creditCardOptionsInstallments: null,
+            cardTypeTransaction: 'CREDIT_CARD'
         },
         totals: quote.getTotals(),
 
@@ -63,6 +64,8 @@ define([
                     'creditCardInstallment',
                     'selectedCardType',
                     'creditCardOptionsInstallments',
+                    'cardTypeTransaction',
+                    'countTryPlaceOrder',
                     'threeDSecureSession',
                     'threeDSecureAuth',
                     'threeDSecureAuthStatus'
@@ -124,6 +127,15 @@ define([
                     self.getListInstallments(number);
                 }
             });
+            self.cardTypeTransaction.subscribe((value) => {
+                if (value === 'DEBIT_CARD') {
+                    self.creditCardInstallment(1);
+                    creditCardData.creditCardInstallment = 1;
+                } else {
+                    self.creditCardInstallment(0);
+                    creditCardData.creditCardInstallment = 0;
+                }
+            });
         },
 
         /**
@@ -135,9 +147,19 @@ define([
         getListInstallments(number) {
             var self = this,
                 creditCardBin = number.replace(/\s/g,'').slice(0, 6),
-                deferred = $.Deferred();
+                cardTypeTransaction = self.cardTypeTransaction(),
+                deferred = $.Deferred(),
+                requestData = {
+                    'creditCardBin': {
+                        'credit_card_bin': creditCardBin
+                    },
+                    'cardTypeTransaction': {
+                        'card_type_transaction': cardTypeTransaction
+                    }
+                };
 
-            ListInstallments(creditCardBin)
+
+            ListInstallments(requestData)
                 .then((response) => {
                     self.creditCardOptionsInstallments(response);
                     deferred.resolve(response);
@@ -233,6 +255,23 @@ define([
          */
         hasVerification() {
             return window.checkoutConfig.payment.ccform.hasVerification[this.getCode()];
+        },
+
+        /**
+         * Get card type values
+         * @returns {Object}
+         */
+        getCardTypeTransactionValues() {
+            return [
+                {
+                    'value': 'CREDIT_CARD',
+                    'label': $t('Credit')
+                },
+                {
+                    'value': 'DEBIT_CARD',
+                    'label': $t('Debit')
+                }
+            ];
         },
 
         /**

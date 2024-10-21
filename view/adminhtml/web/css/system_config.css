@@ -44,3 +44,42 @@ fieldset#payment_us_pagbank_base {
 .pagbank-sub-title {
   padding-top: 15px;
 }
+
+.admin__table_apps_pagbank h1 {
+  text-align: center;
+  color: #2c3e50;
+}
+.admin__table_apps_pagbank table {
+  width: 96%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .24), 0 0 2px 0 rgba(0, 0, 0, .12);
+  margin: 20px auto;
+}
+.admin__table_apps_pagbank th, .admin__table_apps_pagbank td {
+  padding: 15px !important;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+.admin__table_apps_pagbank th {
+  background-color: #1bb99a;
+  color: white;
+  font-weight: bold;
+}
+.admin__table_apps_pagbank .feature {
+  width: 15%;
+  font-weight: bold;
+  background-color: #f8f8f8;
+}
+.admin__table_apps_pagbank .plan {
+  width: 28.33%;
+}
+.admin__table_apps_pagbank ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.admin__table_apps_pagbank .note {
+  color: #999;
+  font-size: 10;
+}

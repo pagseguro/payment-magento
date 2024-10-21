@@ -47,6 +47,11 @@ class Config extends PaymentConfig
     /**
      * @const string
      */
+    public const ENDPOINT_SDK_PRODUCTION = 'https://sdk.pagseguro.com/';
+
+    /**
+     * @const string
+     */
     public const ENDPOINT_CONNECT_PRODUCTION = 'https://connect.pagseguro.uol.com.br/oauth2/authorize';
 
     /**
@@ -54,6 +59,15 @@ class Config extends PaymentConfig
      */
     public const APP_ID_PRODUCTION = '1782a592-5eea-442c-8e67-c940d020dc53';
 
+    /**
+     * @const string
+     */
+    public const APP_ID_THIRTY_PRODUCTION = '4875151e-9caa-4019-b6b7-d29852efe7ee';
+
+    /**
+     * @const string
+     */
+    public const APP_ID_FOURTEEN_PRODUCTION = 'fd0305da-da00-42b6-a9f4-dac498bc05e4';
     /**
      * @const string
      */
@@ -67,7 +81,22 @@ class Config extends PaymentConfig
     /**
      * @const string
      */
+    public const ENDPOINT_SDK_SANDBOX = 'https://sandbox.sdk.pagseguro.com/';
+
+    /**
+     * @const string
+     */
     public const APP_ID_SANDBOX = '16670d56-c0cb-4a45-a7c7-616868c2c94d';
+
+    /**
+     * @const string
+     */
+    public const APP_ID_THIRTY_SANDBOX = '38a3acd5-b628-4bab-8364-079343cce978';
+
+    /**
+     * @const string
+     */
+    public const APP_ID_FOURTEEN_SANDBOX = 'ebde0a80-a80c-4e81-b375-9d1e8b8671d3';
 
     /**
      * @const string
@@ -186,6 +215,24 @@ class Config extends PaymentConfig
     }
 
     /**
+     * Gets the API endpoint URL.
+     *
+     * @param int|null $storeId
+     *
+     * @return string|null
+     */
+    public function getApiSDKUrl($storeId = null): ?string
+    {
+        $environment = $this->getEnvironmentMode($storeId);
+
+        if ($environment === 'sandbox') {
+            return self::ENDPOINT_SDK_SANDBOX;
+        }
+
+        return self::ENDPOINT_SDK_PRODUCTION;
+    }
+
+    /**
      * Gets the Environment Mode.
      *
      * @param int|null $storeId
@@ -201,6 +248,18 @@ class Config extends PaymentConfig
         }
 
         return self::ENVIRONMENT_PRODUCTION;
+    }
+
+    /**
+     * Get Type App.
+     *
+     * @param int|null $storeId
+     *
+     * @return string|null
+     */
+    public function getTypeApp($storeId = null): ?string
+    {
+        return $this->getAddtionalValue('type_app', $storeId);
     }
 
     /**
@@ -245,9 +304,24 @@ class Config extends PaymentConfig
     {
         $environment = $this->getAddtionalValue('environment', $storeId);
         $pub = $this->getAddtionalValue('cipher_text_production', $storeId);
+        $app = $this->getTypeApp($storeId);
 
         if ($environment === 'sandbox') {
             $pub = $this->getAddtionalValue('cipher_text_sandbox');
+        }
+
+        if ($app === 'd14') {
+            $pub = $this->getAddtionalValue('d14_cipher_text_production', $storeId);
+            if ($environment === 'sandbox') {
+                $pub = $this->getAddtionalValue('d14_cipher_text_sandbox');
+            }
+        }
+
+        if ($app === 'd30') {
+            $pub = $this->getAddtionalValue('d30_cipher_text_production', $storeId);
+            if ($environment === 'sandbox') {
+                $pub = $this->getAddtionalValue('d30_cipher_text_sandbox');
+            }
         }
 
         return [

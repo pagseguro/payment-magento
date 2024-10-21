@@ -28,8 +28,7 @@ define([
 ) {
     'use strict';
 
-    return function (creditCardBin) {
-
+    return function (payload) {
         var deferred = $.Deferred(),
             serviceUrl,
             options,
@@ -40,11 +39,7 @@ define([
             label,
             supplementaryText,
             quoteId = quote.getQuoteId(),
-            payload = {
-                'creditCardBin': {
-                  'credit_card_bin': creditCardBin
-                }
-            };
+            creditCardBin = payload.creditCardBin.credit_card_bin;
 
         serviceUrl = urlBuilder.createUrl('/carts/mine/pagbank-list-installments', {});
 
@@ -54,9 +49,8 @@ define([
             });
         }
 
-        if (creditCardBin.length === 6) {
+        if (creditCardBin && creditCardBin.length === 6) {
             try {
-
                 $.ajax({
                     url: urlFormatter.build(serviceUrl),
                     global: false,
@@ -70,21 +64,20 @@ define([
 
                         listFormated = _.map(options, (value) => {
                             supplementaryText = $t('in total of %1')
-                                                    .replace('%1', priceUtils.formatPrice(
-                                                        value.amount.value / 100, quote.getPriceFormat()
-                                                    ));
+                                .replace('%1', priceUtils.formatPrice(
+                                    value.amount.value / 100, quote.getPriceFormat()
+                                ));
 
                             if (value.interest_free) {
                                 supplementaryText = $t('not interest');
                             }
 
                             label = $t('%1x of %2 %3')
-                                        .replace('%1', value.installments)
-                                        .replace('%2', priceUtils.formatPrice(
-                                                value.installment_value / 100, quote.getPriceFormat()
-                                            )
-                                        )
-                                        .replace('%3', supplementaryText);
+                                .replace('%1', value.installments)
+                                .replace('%2', priceUtils.formatPrice(
+                                    value.installment_value / 100, quote.getPriceFormat()
+                                ))
+                                .replace('%3', supplementaryText);
 
                             return {
                                 'installment_value': value.installments,
@@ -94,10 +87,14 @@ define([
 
                         deferred.resolve(listFormated);
                     }
-                );
+                ).fail(() => {
+                    deferred.reject(new Error('Error when generating installments.'));
+                });
             } catch (exc) {
                 deferred.reject(new Error('Error when generating installments.'));
             }
+        } else {
+            deferred.resolve(listFormated);
         }
 
         return deferred.promise();

@@ -45,6 +45,7 @@
 
     <!-- API - List Installments -->
     <preference for="PagBank\PaymentMagento\Api\Data\CreditCardBinInterface" type="PagBank\PaymentMagento\Model\Api\Data\CreditCardBin" />
+    <preference for="PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface" type="PagBank\PaymentMagento\Model\Api\Data\CardTypeTransaction" />
     <preference for="PagBank\PaymentMagento\Api\ListInstallmentsManagementInterface" type="PagBank\PaymentMagento\Model\Api\ListInstallmentsManagement" />
     <preference for="PagBank\PaymentMagento\Api\GuestListInstallmentsManagementInterface" type="PagBank\PaymentMagento\Model\Api\GuestListInstallmentsManagement" />
 
@@ -509,6 +510,7 @@
                 <item name="extOrdId" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\ExtOrdIdHandler</item>
                 <item name="transaction" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\TxnOrderedHandler</item>
                 <item name="txnDataCc" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\TxnDataCcHandler</item>
+                <item name="txnDetailDataCc" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\TxnDetailDataCcHandler</item>
                 <item name="vaultBuilder" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\VaultDetailsHandler</item>
             </argument>
         </arguments>

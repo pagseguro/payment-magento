@@ -12,10 +12,9 @@ namespace PagBank\PaymentMagento\Model\Ui;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Framework\Escaper;
-use Magento\Framework\Session\SessionManager;
 use Magento\Framework\View\Asset\Source;
 use Magento\Payment\Model\CcConfig;
-use Magento\Quote\Api\Data\CartInterface;
+use Magento\Checkout\Model\Cart;
 use PagBank\PaymentMagento\Gateway\Config\Config as ConfigBase;
 use PagBank\PaymentMagento\Gateway\Config\ConfigCc;
 
@@ -45,7 +44,7 @@ class ConfigProviderCc implements ConfigProviderInterface
     protected $configCc;
 
     /**
-     * @var CartInterface
+     * @var Cart
      */
     protected $cart;
 
@@ -65,11 +64,6 @@ class ConfigProviderCc implements ConfigProviderInterface
     protected $assetSource;
 
     /**
-     * @var SessionManager
-     */
-    protected $session;
-
-    /**
      * @var Escaper
      */
     protected $escaper;
@@ -77,19 +71,17 @@ class ConfigProviderCc implements ConfigProviderInterface
     /**
      * @param ConfigBase     $configBase
      * @param ConfigCc       $configCc
-     * @param CartInterface  $cart
+     * @param Cart           $cart
      * @param CcConfig       $ccConfig
      * @param Source         $assetSource
-     * @param SessionManager $session
      * @param Escaper        $escaper
      */
     public function __construct(
         ConfigBase $configBase,
         ConfigCc $configCc,
-        CartInterface $cart,
+        Cart $cart,
         CcConfig $ccConfig,
         Source $assetSource,
-        SessionManager $session,
         Escaper $escaper
     ) {
         $this->configBase = $configBase;
@@ -97,7 +89,6 @@ class ConfigProviderCc implements ConfigProviderInterface
         $this->cart = $cart;
         $this->ccConfig = $ccConfig;
         $this->assetSource = $assetSource;
-        $this->session = $session;
         $this->escaper = $escaper;
     }
 
@@ -108,7 +99,9 @@ class ConfigProviderCc implements ConfigProviderInterface
      */
     public function getConfig()
     {
-        $storeId = $this->cart->getStoreId();
+        $quote = $this->cart->getQuote(); // Obter a instância de Quote
+        $storeId = $quote->getStoreId(); // Obter o Store ID a partir do Quote
+        // $cartId = $quote->getId(); // Obter o Cart ID a partir do Quote
 
         return [
             'payment' => [
@@ -124,8 +117,11 @@ class ConfigProviderCc implements ConfigProviderInterface
                     'public_key'           => $this->configBase->getMerchantGatewayPublicKey($storeId),
                     'ccVaultCode'          => self::VAULT_CODE,
                     'threeDs'              => [
+                        'enable'        => $this->configCc->hasThreeDsAuth($storeId),
+                        'enable_deb'    => $this->configCc->isActiveDebit($storeId),
+                        'applicable'    => $this->configCc->isThreeDsApplicable($this->cart, $storeId),
+                        'max_try_place' => $this->configCc->getMaxTryPlaceOrder($storeId),
                         'env'           => $this->configCc->getThreeDsEnv($storeId),
-                        'active'        => $this->configCc->hasThreeDsAuth($storeId),
                         'reject'        => $this->configCc->hasRejectNotAuth($storeId),
                         'instruction'   => nl2br(
                             $this->escaper->escapeHtml(

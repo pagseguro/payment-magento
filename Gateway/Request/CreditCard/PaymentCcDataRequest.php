@@ -126,9 +126,10 @@ class PaymentCcDataRequest implements BuilderInterface
     {
         $instruction = [];
         $installment = $payment->getAdditionalInformation('cc_installments') ?: 1;
+        $typeCard = $payment->getAdditionalInformation('card_type_transaction') ?: self::TYPE_VALUE;
 
         $instruction = [
-            self::TYPE              => self::TYPE_VALUE,
+            self::TYPE              => $typeCard,
             self::SOFT_DESCRIPTOR   => $this->config->getSoftDescriptor($storeId),
             self::CAPTURE           => $this->configCc->hasCapture($storeId),
             self::INSTALLMENTS      => $installment,

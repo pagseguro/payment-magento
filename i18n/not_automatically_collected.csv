@@ -16,6 +16,8 @@
 "three_ds_session","3DS Session ID"
 "three_ds_auth","3DS Authentication Type"
 "three_ds_auth_status","3DS Authentication Status"
+"cc_authorization_code","Authorization Code"
+"cc_nsu","NSU"
 [pt_BR]
 "qr_code_image","Imagem do Qr Code"
 "qr_code","Qr Code"
@@ -34,3 +36,5 @@
 "three_ds_session","Id da Sessão 3DS"
 "three_ds_auth","Tipo de Autenticação 3DS"
 "three_ds_auth_status","Status da Autenticação 3DS"
+"cc_authorization_code","Código da Autorização"
+"cc_nsu","NSU"

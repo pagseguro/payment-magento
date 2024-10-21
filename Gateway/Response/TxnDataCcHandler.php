@@ -215,10 +215,15 @@ class TxnDataCcHandler implements HandlerInterface
     public function setAdditionalInfo($payment, $paymentMethod, $cardData)
     {
         $ccType = null;
+        $installment = 1;
+
+        if (isset($paymentMethod[self::RESPONSE_PM_INSTALLMENTS])) {
+            $installment = $paymentMethod[self::RESPONSE_PM_INSTALLMENTS];
+        }
 
         $payment->setAdditionalInformation(
             self::PAYMENT_INFO_CC_INSTALLMENTS,
-            $paymentMethod[self::RESPONSE_PM_INSTALLMENTS]
+            $installment
         );
 
         $ccType = $cardData[self::RESPONSE_PM_CARD_BRAND];

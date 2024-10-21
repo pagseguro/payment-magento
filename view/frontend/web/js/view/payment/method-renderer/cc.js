@@ -36,6 +36,7 @@ define([
             ccForm: 'PagBank_PaymentMagento/payment/cc-form',
             payerForm: 'PagBank_PaymentMagento/payment/payer-form',
             creditCardNumberToken: '',
+            countTryPlaceOrder: 0,
             threeDSecureSession: '',
             threeDSecureAuth: '',
             threeDSecureAuthStatus: '',
@@ -134,7 +135,8 @@ define([
                 'method': this.getCode(),
                 'additional_data': {
                     'cc_number_token': this.creditCardNumberToken(),
-                    'cc_installments': this.creditCardInstallment(),
+                    'cc_installments': this.creditCardInstallment() ? this.creditCardInstallment() : 1,
+                    'card_type_transaction': this.cardTypeTransaction(),
                     'three_ds_session': this.threeDSecureSession(),
                     'three_ds_auth': this.threeDSecureAuth(),
                     'three_ds_auth_status': this.threeDSecureAuthStatus(),
@@ -160,8 +162,48 @@ define([
          * Is vault enabled
          * @returns {Boolean}
          */
-        isVaultEnabled: function () {
+        isVaultEnabled() {
             return this.vaultEnabler.isVaultEnabled();
+        },
+
+        /**
+         * Has 3ds
+         * @returns {Boolean|*}
+         */
+        isEnableDebit() {
+            return window.checkoutConfig.payment[this.getCode()].threeDs.hasOwnProperty('enable_deb') ?
+            window.checkoutConfig.payment[this.getCode()].threeDs.enable_deb
+            : false;
+        },
+
+        /**
+         * Get Max Try Place Order
+         * @returns {Interger}
+         */
+        getMaxTryPlaceOrder() {
+            return window.checkoutConfig.payment[this.getCode()].threeDs.hasOwnProperty('max_try_place') ?
+            window.checkoutConfig.payment[this.getCode()].threeDs.max_try_place
+            : 0;
+        },
+
+        /**
+         * Is Applicable
+         * @returns {Boolean|*}
+         */
+        isApplicable() {
+            return window.checkoutConfig.payment[this.getCode()].threeDs.hasOwnProperty('applicable') ?
+            window.checkoutConfig.payment[this.getCode()].threeDs.applicable
+            : false;
+        },
+
+        /**
+         * Is Active 3ds
+         * @returns {Boolean|*}
+         */
+        isActiveThreeDs() {
+            return window.checkoutConfig.payment[this.getCode()].threeDs.hasOwnProperty('enable') ?
+            window.checkoutConfig.payment[this.getCode()].threeDs.enable
+            : false;
         }
     });
 });
