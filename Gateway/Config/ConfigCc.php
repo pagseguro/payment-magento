@@ -217,6 +217,42 @@ class ConfigCc extends PaymentConfig
     }
 
     /**
+     * Is Active Debit.
+     *
+     * @param int|null $storeId
+     *
+     * @return bool
+     */
+    public function isActiveDebit($storeId = null): bool
+    {
+        $pathPattern = 'payment/%s/%s';
+
+        return (bool) $this->scopeConfig->getValue(
+            sprintf($pathPattern, self::METHOD, 'enable_debit'),
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Is Active Debit.
+     *
+     * @param int|null $storeId
+     *
+     * @return int
+     */
+    public function getMaxTryPlaceOrder($storeId = null): int
+    {
+        $pathPattern = 'payment/%s/%s';
+
+        return (int) $this->scopeConfig->getValue(
+            sprintf($pathPattern, self::METHOD, 'three_ds_max_try_place_order'),
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
      * Get Instruction for 3ds.
      *
      * @param string|null $storeId
@@ -388,5 +424,80 @@ class ConfigCc extends PaymentConfig
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
+    }
+
+    /**
+     * Get the configured minimum order total for 3DS.
+     *
+     * @param int|null $storeId
+     * @return float
+     */
+    public function getThreeDsMinOrderTotal($storeId = null): float
+    {
+        $pathPattern = 'payment/%s/%s';
+
+        return (float) $this->scopeConfig->getValue(
+            sprintf($pathPattern, self::METHOD, 'three_ds_min_order_total'),
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Get the configured SKUs that require 3DS.
+     *
+     * @param int|null $storeId
+     * @return array
+     */
+    public function getThreeDsSkus($storeId = null): array
+    {
+        $pathPattern = 'payment/%s/%s';
+
+        $threeDsSkus = $this->scopeConfig->getValue(
+            sprintf($pathPattern, self::METHOD, 'three_ds_has_sku'),
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+
+        return $threeDsSkus ? explode(',', $threeDsSkus) : [];
+    }
+
+    /**
+     * Is 3ds Applicable.
+     *
+     * @param \Magento\Checkout\Model\Cart $cart
+     * @param int|null $storeId
+     *
+     * @return bool
+     */
+    public function isThreeDsApplicable(\Magento\Checkout\Model\Cart $cart, $storeId = null): bool
+    {
+        $quote = $cart->getQuote();
+
+        if (!$this->hasThreeDsAuth($storeId)) {
+            return false;
+        }
+
+        $threeDsMinOrderTotal = (float) $this->getThreeDsMinOrderTotal($storeId);
+
+        $total = $quote->getGrandTotal();
+
+        if ($total >= $threeDsMinOrderTotal) {
+            return true;
+        }
+
+        $threeDsSkus = $this->getThreeDsSkus($storeId);
+
+        if ($threeDsSkus) {
+            $items = $quote->getAllItems();
+
+            foreach ($items as $item) {
+                if (in_array($item->getSku(), $threeDsSkus, true)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

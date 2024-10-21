@@ -112,7 +112,7 @@ class ThreeDsSession implements ThreeDsSessionInterface
 
         /** @var LaminasClient $client */
         $client = $this->httpClientFactory->create();
-        $url = $this->configBase->getApiUrl($storeId);
+        $url = $this->configBase->getApiSDKUrl($storeId);
         $apiConfigs = $this->configBase->getApiConfigs();
         $headers = $this->configBase->getApiHeaders($storeId);
         $uri = $url.'checkout-sdk/sessions';

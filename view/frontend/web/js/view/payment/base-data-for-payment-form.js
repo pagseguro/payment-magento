@@ -67,21 +67,11 @@ function (
         },
 
         /**
-         * Has 3ds
-         * @returns {Boolean|*}
-         */
-        hasThreeDs() {
-            return window.checkoutConfig.payment[this.paymentCode].threeDs.hasOwnProperty('active') ?
-            window.checkoutConfig.payment[this.paymentCode].threeDs.active
-            : false;
-        },
-
-        /**
          * Get Env
          * @returns {String|*}
          */
         getEnv() {
-            return window.checkoutConfig.payment[this.paymentCode].threeDs.hasOwnProperty('active') ?
+            return window.checkoutConfig.payment[this.paymentCode].threeDs.hasOwnProperty('env') ?
             window.checkoutConfig.payment[this.paymentCode].threeDs.env
             : false;
         },

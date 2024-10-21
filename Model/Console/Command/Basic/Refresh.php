@@ -126,7 +126,7 @@ class Refresh extends AbstractModel
             $this->refreshToken(true, 0, 0);
         }
 
-        if (!$storeIds) {
+        if ($storeIds) {
             $allStores = $this->storeManager->getStores();
 
             foreach ($allStores as $stores) {
@@ -219,7 +219,7 @@ class Refresh extends AbstractModel
      *
      * @return void
      */
-    protected function refreshToken(bool $storeIdIsDefault, int $storeId = 0, int $webSiteId = 0)
+    public function refreshToken(bool $storeIdIsDefault, int $storeId = 0, int $webSiteId = 0)
     {
         $newToken = $this->credential->generateNewoAuth($storeId);
         $newToken = $this->json->unserialize($newToken);
