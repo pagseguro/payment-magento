@@ -14,6 +14,7 @@ namespace PagBank\PaymentMagento\Model\Api;
 
 use Magento\Quote\Model\QuoteIdMaskFactory;
 use PagBank\PaymentMagento\Api\Data\CreditCardBinInterface;
+use PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface;
 use PagBank\PaymentMagento\Api\GuestListInstallmentsManagementInterface;
 use PagBank\PaymentMagento\Api\ListInstallmentsManagementInterface;
 
@@ -47,21 +48,24 @@ class GuestListInstallmentsManagement implements GuestListInstallmentsManagement
     /**
      * Generate List Installments.
      *
-     * @param string                                                  $cartId
-     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface $creditCardBin
+     * @param string                                                        $cartId
+     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface       $creditCardBin
+     * @param \PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface $cardTypeTransaction
      *
      * @return array
      */
     public function generateListInstallments(
         $cartId,
-        CreditCardBinInterface $creditCardBin
+        CreditCardBinInterface $creditCardBin,
+        CardTypeTransactionInterface $cardTypeTransaction = null
     ) {
         /** @var \Magento\Quote\Model\QuoteIdMask */
         $quoteIdMask = $this->quoteIdMaskFactory->create()->load($cartId, 'masked_id');
 
         return $this->cardNumberInterface->generateListInstallments(
             $quoteIdMask->getQuoteId(),
-            $creditCardBin
+            $creditCardBin,
+            $cardTypeTransaction
         );
     }
 }

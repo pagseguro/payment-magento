@@ -12,7 +12,7 @@
 <fieldset data-bind="attr: {class: 'fieldset payment items ccard payment-pagbank field-to-pay' + getCode(), id: 'payment_form_cc_' + getCode()}">
     <!-- ko if: (baseDataForPaymentForm.isShowLegend())-->
     <legend class="legend">
-        <span class="legend-title"><!-- ko i18n: 'Credit Card Information'--><!-- /ko --></span>
+        <span class="legend-title"><!-- ko i18n: 'Card Information'--><!-- /ko --></span>
         <span class="legend-icon">
             <ul class="credit-card-types">
             <!-- ko foreach: {data: getCcAvailableTypesValues(), as: 'item'} -->
@@ -49,6 +49,25 @@
                     </input>
                 </div>
             </div>
+            <!-- ko if: (isEnableDebit())-->
+            <div class="field type">
+                <div class="control pagbank-input-group">
+                    <select  name="payment[card_type_transaction]"
+                            class="select"
+                            data-bind="attr: {autocomplete: 'card-type', id: getCode() + '_card_type_transaction', 'data-container': getCode() + 'card-type-transaction', 'data-validate': JSON.stringify({required:true})},
+                                        enable: isActive($parents),
+                                        options: getCardTypeTransactionValues(),
+                                        optionsValue: 'value',
+                                        optionsText: 'label',
+                                        optionsCaption: $t('Card Type'),
+                                        value: cardTypeTransaction">
+                    </select>
+                    <label data-bind="attr: {for: getCode() + '_type_card'}" class="label">
+                        <span><!-- ko i18n: 'Type Transaction'--><!-- /ko --></span>
+                    </label>
+                </div>
+            </div>
+            <!-- /ko -->
             <div class="fields number-cvv required">
                 <div class="control">
                     <div class="fields group group-2">
@@ -59,6 +78,9 @@
                                                         autocomplete: 'cc-number',
                                                         id: getCode() + '_number',
                                                         title: $t('Credit Card Number'),
+                                                        maxlength: '26',
+                                                        minlength: '8',
+                                                        pattern: '^[0-9\\s]+$',
                                                         placeholder: $t('Credit Card Number'),
                                                         'data-container': getCode() + '-cc-number',
                                                         'data-validate': JSON.stringify({
@@ -98,12 +120,15 @@
                         <!-- ko if: (hasVerification())-->
                         <div class="field cvv required" data-bind="attr: {id: getCode() + '_type_cvv_div'}">
                             <div class="control pagbank-input-group _with-tooltip">
-                                <input type="number"
+                                <input type="tel"
                                     class="input-text cvv"
                                     name="payment[cc_cid]"
                                     value=""
                                     data-bind="attr: {id: getCode() + '_cid',
                                             autocomplete: 'cc-csc',
+                                            maxlength: '4',
+                                            minlength: '3',
+                                            pattern: '^[0-9]+$',
                                             title: $t('CVV - Card Verification Number'),
                                             placeholder: $t('CVV - Card Verification Number'),
                                             'data-container': getCode() + '-cc-cvv',
@@ -177,6 +202,9 @@
                     <input type="text" name="payment[cc_cardholder_name]" class="input-text" value=""
                             data-bind="attr: {
                                             autocomplete: 'cc-name',
+                                            maxlength: '26',
+                                            minlength: '3',
+                                            pattern: '^[a-zA-Z\\s]+$',
                                             id: getCode() + '_cardholder_name',
                                             title: $t('Credit Card Holder Full Name'),
                                             placeholder: $t('Credit Card Holder Full Name'),
@@ -191,6 +219,7 @@
                     </label>
                 </div>
             </div>
+            <!-- ko if: (cardTypeTransaction() !== 'DEBIT_CARD') -->
             <div class="field installments required">
                 <div class="control pagbank-input-group">
                     <select name="payment[cc_installments]"
@@ -208,7 +237,8 @@
                     </label>
                 </div>
             </div>
-            <!-- ko if: (isVaultEnabled())-->
+            <!-- /ko -->
+            <!-- ko if: (isVaultEnabled() && cardTypeTransaction() !== 'DEBIT_CARD')-->
             <div class="field choice vault">
                 <input type="checkbox"
                     name="vault[is_enabled]"

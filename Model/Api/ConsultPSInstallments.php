@@ -26,11 +26,6 @@ use PagBank\PaymentMagento\Gateway\Config\ConfigCc;
 class ConsultPSInstallments
 {
     /**
-     * Credit Card - Block Name.
-     */
-    public const CREDIT_CARD = 'CREDIT_CARD';
-
-    /**
      * @var ConfigBase
      */
     protected $configBase;
@@ -76,10 +71,11 @@ class ConsultPSInstallments
      * @param int|null  $storeId
      * @param string    $creditCardBin
      * @param string    $amount
+     * @param string    $cardTypeTransaction
      *
      * @return array
      */
-    public function getPagBankInstallments($storeId, $creditCardBin, $amount)
+    public function getPagBankInstallments($storeId, $creditCardBin, $amount, $cardTypeTransaction = 'CREDIT_CARD')
     {
         /** @var ZendClient $client */
         $client = $this->httpClientFactory->create();
@@ -91,7 +87,7 @@ class ConsultPSInstallments
         $list = [];
 
         $data = [
-            'payment_methods'               => self::CREDIT_CARD,
+            'payment_methods'               => $cardTypeTransaction,
             'value'                         => $amount,
             'max_installments'              => $this->configCc->getMaxInstallments($storeId),
             'max_installments_no_interest'  => $this->configCc->getInterestFree($storeId),

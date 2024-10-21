@@ -18,6 +18,7 @@ use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CartTotalRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface as QuoteCartInterface;
 use PagBank\PaymentMagento\Api\Data\CreditCardBinInterface;
+use PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface;
 use PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface;
 use PagBank\PaymentMagento\Api\ListInstallmentsManagementInterface;
 use PagBank\PaymentMagento\Gateway\Config\Config as ConfigBase;
@@ -72,8 +73,9 @@ class ListInstallmentsManagement implements ListInstallmentsManagementInterface
     /**
      * Generate List Installments.
      *
-     * @param int                                                     $cartId
-     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface $creditCardBin
+     * @param int                                                           $cartId
+     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface       $creditCardBin
+     * @param \PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface $cardTypeTransaction
      *
      * @throws CouldNotSaveException
      * @throws NoSuchEntityException
@@ -82,7 +84,8 @@ class ListInstallmentsManagement implements ListInstallmentsManagementInterface
      */
     public function generateListInstallments(
         $cartId,
-        CreditCardBinInterface $creditCardBin
+        CreditCardBinInterface $creditCardBin,
+        CardTypeTransactionInterface $cardTypeTransaction = null
     ) {
         $quote = $this->quoteRepository->getActive($cartId);
         if (!$quote->getItemsCount()) {
@@ -92,6 +95,10 @@ class ListInstallmentsManagement implements ListInstallmentsManagementInterface
         $quoteTotal = $this->quoteTotalRepository->get($cartId);
 
         $creditCardBin = $creditCardBin->getCreditCardBin();
+
+        if ($cardTypeTransaction) {
+            $cardTypeTransaction = $cardTypeTransaction->getCardTypeTransaction();
+        }
 
         $storeId = $quote->getData(QuoteCartInterface::KEY_STORE_ID);
 

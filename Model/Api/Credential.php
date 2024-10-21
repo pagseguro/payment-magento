@@ -143,13 +143,13 @@ class Credential
         
         $store = $this->storeManager->getStore('admin');
         $storeCode = '/'.$store->getCode().'/';
-        $redirectUrl = $store->getUrl('pagbank/system_config/oauth', [
+        $redirectUrl = (string) $store->getUrl('pagbank/system_config/oauth', [
             'website'       => $storeId,
             'code_verifier' => $codeVerifier,
         ]);
 
         $search = '/'.preg_quote($storeCode, '/').'/';
-        $redirectUrl = preg_replace($search, '/', $redirectUrl, -1);
+        $redirectUrl = preg_replace($search, '/', $redirectUrl, 0);
 
         $data = [
             'grant_type'    => 'authorization_code',

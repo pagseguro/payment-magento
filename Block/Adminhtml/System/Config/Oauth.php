@@ -247,6 +247,20 @@ class Oauth extends Field
             $appId = Config::APP_ID_SANDBOX;
         }
 
+        if ($this->config->getTypeApp($storeId) === 'd14') {
+            $appId = Config::APP_ID_FOURTEEN_PRODUCTION;
+            if ($this->config->getEnvironmentMode($storeId) === Config::ENVIRONMENT_SANDBOX) {
+                $appId = Config::APP_ID_FOURTEEN_SANDBOX;
+            }
+        }
+
+        if ($this->config->getTypeApp($storeId) === 'd30') {
+            $appId = Config::APP_ID_THIRTY_PRODUCTION;
+            if ($this->config->getEnvironmentMode($storeId) === Config::ENVIRONMENT_SANDBOX) {
+                $appId = Config::APP_ID_THIRTY_SANDBOX;
+            }
+        }
+
         $params = [
             'response_type'         => $responseType,
             'client_id'             => $appId,

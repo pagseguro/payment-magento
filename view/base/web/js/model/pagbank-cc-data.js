@@ -23,6 +23,7 @@ define([], function () {
         creditCardInstallment: null,
         selectedCardType: null,
         creditCardOptionsInstallments: null,
+        cardTypeTransaction: null,
         threeDSecureSession: null,
         threeDSecureAuth: null,
         threeDSecureAuthStatus: null

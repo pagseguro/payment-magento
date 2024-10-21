@@ -1,0 +1,106 @@
+<?php
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+
+/**
+ * @var \PagBank\PaymentMagento\Block\Adminhtml\System\Config\Oauth $block
+ */
+?>
+<div id="pagbank-type-apps" class="admin__table admin__table_apps_pagbank">
+    <h1><?= $block->escapeHtml(__('Conheça e compare nossos <b>planos promocionais</b>'), ['b']) ?></h1>
+    <table id="pagbank-table-apps">
+        <tr>
+            <th class="feature"></th>
+            <th class="plan"><?= $block->escapeHtml(__('Magento e Adobe Commerce - Account Profile')) ?></th>
+            <th class="plan"><?= $block->escapeHtml(__('Magento e Adobe Commerce - D14')) ?></th>
+            <th class="plan"><?= $block->escapeHtml(__('Magento e Adobe Commerce - D30')) ?></th>
+        </tr>
+        <tr>
+            <td class="feature"><?= $block->escapeHtml(__('Tipo de Recebimento')) ?></td>
+            <td><?= $block->escapeHtml(__('Conforme definido em sua conta')) ?></td>
+            <td><?= $block->escapeHtml(__('Receba em até 14 dias')) ?></td>
+            <td><?= $block->escapeHtml(__('Receba em até 30 dias')) ?></td>
+        </tr>
+        <tr>
+            <td class="feature"><?= $block->escapeHtml(__('Taxas*')) ?></td>
+            <td><?= $block->escapeHtml(__('Conforme definido em sua conta')) ?></td>
+            <td>
+                <?= $block->escapeHtml(__('Cartão:')) ?>
+                <ul>
+                    <li><?= $block->escapeHtml(__('1x com taxa de 1.69%')) ?></li>
+                    <li><?= $block->escapeHtml(__('2x a 4x com taxa de 1.99%')) ?></li>
+                    <li><?= $block->escapeHtml(__('5x a 18x com taxa de 1.99%')) ?></li>
+                </ul>
+                <?= $block->escapeHtml(__('Pix:')) ?>
+                <ul>
+                    <li><?= $block->escapeHtml(__('Fixa em R$ 0,50')) ?></li>
+                </ul>
+                <?= $block->escapeHtml(__('Boleto:')) ?>
+                <ul>
+                    <li><?= $block->escapeHtml(__('Fixa em R$ 0,50')) ?></li>
+                </ul>
+            </td>
+            <td>
+                <?= $block->escapeHtml(__('Cartão:')) ?>
+                <ul>
+                    <li><?= $block->escapeHtml(__('1x com taxa de 1.69%')) ?></li>
+                    <li><?= $block->escapeHtml(__('2x a 4x com taxa de 1.99%')) ?></li>
+                    <li><?= $block->escapeHtml(__('5x a 18x com taxa de 1.99%')) ?></li>
+                </ul>
+                <?= $block->escapeHtml(__('Pix:')) ?>
+                <ul>
+                    <li><?= $block->escapeHtml(__('Fixa em R$ 0,50')) ?></li>
+                </ul>
+                <?= $block->escapeHtml(__('Boleto:')) ?>
+                <ul>
+                    <li><?= $block->escapeHtml(__('Fixa em R$ 0,50')) ?></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td class="feature"><?= $block->escapeHtml(__('Vantagens')) ?></td>
+            <td>
+                <ul>
+                    <li><?= $block->escapeHtml(__('Ideal para quem fatura acima de R$ 300.000')) ?></li>
+                    <li><?= $block->escapeHtml(__('Taxas e recebimentos personalizados')) ?></li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><?= $block->escapeHtml(__('Ideal para quem precisa de maior fluxo de caixa')) ?></li>
+                    <li><?= $block->escapeHtml(__('Taxas reduzidas')) ?></li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li><?= $block->escapeHtml(__('Ideal para quem tem maior fluxo de caixa')) ?></li>
+                    <li><?= $block->escapeHtml(__('As melhores taxas do mercado')) ?></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td class="feature"><?= $block->escapeHtml(__('Estado')) ?></td>
+            <td>
+                <?= $block->escapeHtml(__('Esse plano <b>está configurado e em uso</b> atualmente.'), ['b']) ?>
+            </td>
+            <td>
+                <?= $block->escapeHtml(__('Esse plano <b>está configurado</b> mas <b>não está em uso</b>.'), ['b']) ?>
+                <?= $block->escapeHtml(__('Para usar esse plano, selecione na guia credenciais.')) ?>
+            </td>
+            <td>
+                <?= $block->escapeHtml(__('Para usar esse plano, selecione na guia credenciais.')) ?>
+            </td>
+        </tr>
+    </table>
+    <p class="note">
+        <?= $block->escapeHtml(
+            __('* As taxas aqui anunciadas podem sofrer variações, consulte nossa página para os valores atualizados.')
+        ) ?>
+    </p>
+</div>

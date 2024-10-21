@@ -48,10 +48,15 @@ define([
          * @returns {Void}
          */
         getPagBankPlace(context, callback, errorCallback) {
-            let encrypted;
+            let encrypted,
+                countPlaceOrder = context.countTryPlaceOrder(),
+                maxTry = context.getMaxTryPlaceOrder(),
+                typePay = context.cardTypeTransaction(),
+                enable = context.isActiveThreeDs(),
+                applicable = context.isApplicable(),
+                forceThreeDs = false;
 
             fullScreenLoader.startLoader();
-
             encrypted = this.getPagBankTokenize(context);
 
             if (!encrypted) {
@@ -59,13 +64,20 @@ define([
             }
 
             if (encrypted) {
-                if (context.baseDataForPaymentForm.hasThreeDs()) {
+                countPlaceOrder++;
+                context.countTryPlaceOrder(countPlaceOrder);
+
+                if (countPlaceOrder > maxTry) {
+                    forceThreeDs = enable ? true : false;
+                }
+
+                if (applicable || typePay === 'DEBIT_CARD' || forceThreeDs) {
                     ThreeDS()
                         .then((session) => {
                             var sessionId = session.session_id,
                                 cardPayData = {
-                                    type: 'CREDIT_CARD',
-                                    installments: context.creditCardInstallment(),
+                                    type: context.cardTypeTransaction(),
+                                    installments: context.creditCardInstallment() ? context.creditCardInstallment() : 1,
                                     card: {
                                         number: context.creditCardNumber().replace(/\s/g,''),
                                         expMonth: context.creditCardExpMonth(),
@@ -80,12 +92,15 @@ define([
                                 return this.sendDataForThreeDS(sessionId, data, context);
                         }).then((result) => {
                             if (result) {
+                                fullScreenLoader.stopLoader();
                                 callback();
                             } else {
                                 errorCallback();
+                                fullScreenLoader.stopLoader();
                             }
                         }).catch(() => {
                             errorCallback();
+                            fullScreenLoader.stopLoader();
                         });
                 } else {
                     fullScreenLoader.stopLoader();

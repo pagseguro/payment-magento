@@ -57,6 +57,11 @@ class DataAssignCcObserver extends AbstractDataAssignObserver
     /**
      * @const string
      */
+    public const PAYMENT_INFO_TYPE_CARD = 'card_type_transaction';
+
+    /**
+     * @const string
+     */
     public const PAYMENT_INFO_THREE_DS_SESSION = 'three_ds_session';
 
     /**
@@ -86,6 +91,7 @@ class DataAssignCcObserver extends AbstractDataAssignObserver
         self::PAYMENT_INFO_CC_CID,
         self::PAYMENT_INFO_PAYER_TAX_ID,
         self::PAYMENT_INFO_PAYER_PHONE,
+        self::PAYMENT_INFO_TYPE_CARD,
         self::PAYMENT_INFO_THREE_DS_SESSION,
         self::PAYMENT_INFO_THREE_DS_AUTH,
         self::PAYMENT_INFO_THREE_DS_AUTH_STATUS

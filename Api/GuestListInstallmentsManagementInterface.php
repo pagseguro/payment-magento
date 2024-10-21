@@ -22,13 +22,15 @@ interface GuestListInstallmentsManagementInterface
     /**
      * Generate the list installments by credit card.
      *
-     * @param string                                                  $cartId
-     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface $creditCardBin
+     * @param string                                                        $cartId
+     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface       $creditCardBin
+     * @param \PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface $cardTypeTransaction
      *
      * @return mixed
      */
     public function generateListInstallments(
         $cartId,
-        \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface $creditCardBin
+        \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface $creditCardBin,
+        \PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface $cardTypeTransaction = null
     );
 }
