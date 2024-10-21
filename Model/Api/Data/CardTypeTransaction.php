@@ -31,8 +31,8 @@ class CardTypeTransaction extends AbstractSimpleObject implements CardTypeTransa
     /**
      * @inheritdoc
      */
-    public function setCardTypeTransaction($CardTypeTransaction)
+    public function setCardTypeTransaction($cardTypeTransaction)
     {
-        return $this->setData(CardTypeTransactionInterface::PAGBANK_CARD_TYPE_TRANSACTION, $CardTypeTransaction);
+        return $this->setData(CardTypeTransactionInterface::PAGBANK_CARD_TYPE_TRANSACTION, $cardTypeTransaction);
     }
 }

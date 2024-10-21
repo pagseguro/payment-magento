@@ -101,7 +101,7 @@ class ConfigProviderCc implements ConfigProviderInterface
     {
         $quote = $this->cart->getQuote(); // Obter a instância de Quote
         $storeId = $quote->getStoreId(); // Obter o Store ID a partir do Quote
-        $cartId = $quote->getId(); // Obter o Cart ID a partir do Quote
+        // $cartId = $quote->getId(); // Obter o Cart ID a partir do Quote
 
         return [
             'payment' => [

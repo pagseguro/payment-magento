@@ -16,6 +16,9 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 
 /**
  * Class Apps - Type apps.
+ *
+ * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class Apps extends Field
 {
@@ -53,6 +56,9 @@ class Apps extends Field
      * Render the field HTML
      *
      * @param AbstractElement $element
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     protected function _getElementHtml(AbstractElement $element)
     {

@@ -119,8 +119,6 @@ class TxnDetailDataCcHandler implements HandlerInterface
      */
     public function setAdditionalInfo($payment, $paymentResponse)
     {
-        $ccType = null;
-        $installment = 1;
         $data = $paymentResponse[self::RAW_DATA];
 
         if (isset($data[self::RESPONSE_AUTHORIZATION_CODE])) {
