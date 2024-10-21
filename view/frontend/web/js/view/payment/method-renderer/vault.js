@@ -121,9 +121,17 @@ define([
          */
         getListInstallments(creditCardBin) {
             var self = this,
-                deferred = $.Deferred();
+                deferred = $.Deferred(),
+                requestData = {
+                    'creditCardBin': {
+                        'credit_card_bin': creditCardBin
+                    },
+                    'cardTypeTransaction': {
+                        'card_type_transaction': 'CREDIT_CARD'
+                    }
+                };
 
-            ListInstallments(creditCardBin)
+            ListInstallments(requestData)
                 .then((response) => {
                     self.creditCardOptionsInstallments(response);
                 })

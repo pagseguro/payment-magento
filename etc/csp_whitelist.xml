@@ -14,6 +14,13 @@
         <policy id="script-src">
             <values>
             	<value id="assets-pagbank" type="host">*.pagseguro.com.br</value>
+                <value id="assets-sdk-pagbank" type="host">*.pagseguro.com</value>
+            </values>
+        </policy>
+        <policy id="connect-src">
+            <values>
+            	<value id="assets-pagbank" type="host">*.pagseguro.com.br</value>
+                <value id="assets-sdk-pagbank" type="host">*.pagseguro.com</value>
             </values>
         </policy>
     </policies>
