@@ -80,7 +80,6 @@
                                                         title: $t('Credit Card Number'),
                                                         maxlength: '26',
                                                         minlength: '8',
-                                                        pattern: '^[0-9\\s]+$',
                                                         placeholder: $t('Credit Card Number'),
                                                         'data-container': getCode() + '-cc-number',
                                                         'data-validate': JSON.stringify({
@@ -128,7 +127,6 @@
                                             autocomplete: 'cc-csc',
                                             maxlength: '4',
                                             minlength: '3',
-                                            pattern: '^[0-9]+$',
                                             title: $t('CVV - Card Verification Number'),
                                             placeholder: $t('CVV - Card Verification Number'),
                                             'data-container': getCode() + '-cc-cvv',
@@ -204,7 +202,6 @@
                                             autocomplete: 'cc-name',
                                             maxlength: '26',
                                             minlength: '3',
-                                            pattern: '^[a-zA-Z\\s]+$',
                                             id: getCode() + '_cardholder_name',
                                             title: $t('Credit Card Holder Full Name'),
                                             placeholder: $t('Credit Card Holder Full Name'),
