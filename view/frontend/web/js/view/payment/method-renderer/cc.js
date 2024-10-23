@@ -14,7 +14,7 @@ define([
     'jquery',
     'PagBank_PaymentMagento/js/view/payment/cc-form',
     'Magento_Vault/js/view/payment/vault-enabler',
-    'Magento_Checkout/js/model/full-screen-loader',
+    'PagBank_PaymentMagento/js/view/payment/pagbank-place-order',
     'PagBank_PaymentMagento/js/view/payment/payer-form',
     'PagBank_PaymentMagento/js/view/payment/base-data-for-payment-form'
 ], function (
