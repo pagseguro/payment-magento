@@ -1,0 +1,86 @@
+<?php
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+
+/** @var \PagBank\PaymentMagento\Block\Customer\Vault\Cards\CreateForm $block */
+?>
+<form class="form" id="pagbank-vault-form" method="post">
+    <fieldset class="fieldset">
+        <input type="hidden" name="cc_type" id="cc_type" value="" />
+        <input type="hidden" name="encrypted_card" id="encrypted_card" />
+        <div class="field required">
+            <label class="label" for="card_number">
+                <span><?= $block->escapeHtml(__('Card Number')) ?></span>
+            </label>
+            <div class="control">
+                <input type="text" id="card_number" name="card_number" class="input-text" maxlength="23" value="" />
+            </div>
+        </div>
+        <div class="field required">
+            <label class="label" for="security_code">
+                <span><?= $block->escapeHtml(__('Security Code')) ?></span>
+            </label>
+            <div class="control">
+                <input type="text" id="security_code" name="security_code" class="input-text" maxlength="4" value=""/>
+            </div>
+        </div>
+        <div class="field required">
+            <label class="label" for="expiration">
+                <span><?= $block->escapeHtml(__('Expiration Date')) ?></span>
+            </label>
+            <div class="control">
+                <div class="fields group group-2">
+                    <div class="field no-label month">
+                        <div class="control">
+                            <select id="expiration_month" name="expiration_month" class="select month required-entry">
+                                <option value=""><?= $block->escapeHtml(__('Month')) ?></option>
+                                <?php foreach ($block->getCcMonths() as $k => $v): ?>
+                                    <option value="<?= $block->escapeHtml($k) ?>"><?= $block->escapeHtml($v) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field no-label year">
+                        <div class="control">
+                            <select id="expiration_year" name="expiration_year" class="select year required-entry">
+                                <option value=""><?= $block->escapeHtml(__('Year')) ?></option>
+                                <?php foreach ($block->getCcYears() as $k => $v): ?>
+                                    <option value="<?= $block->escapeHtml(substr($k, -2)) ?>"><?= $block->escapeHtml($v) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field required">
+            <label class="label" for="card_holder">
+                <span><?= $block->escapeHtml(__('Card Holder Name')) ?></span>
+            </label>
+            <div class="control">
+                <input type="text" id="card_holder" name="card_holder" class="input-text" value="" />
+            </div>
+        </div>
+        <div class="actions-toolbar">
+            <div class="primary">
+                <button type="submit" class="action submit primary" title="<?= $block->escapeHtmlAttr(__('Save Card')) ?>">
+                    <span><?= $block->escapeHtml(__('Save Card')) ?></span>
+                </button>
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+<script type="text/x-magento-init">
+{
+    "#pagbank-vault-form": {
+        "PagBank_PaymentMagento/js/view/customer/vault/cards/save-card": <?= /* @noEscape */ $block->getJsFormConfig() ?>
+    }
+}
+</script>

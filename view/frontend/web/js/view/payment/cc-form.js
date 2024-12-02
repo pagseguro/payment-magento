@@ -40,7 +40,7 @@ define([
             creditCardNumber: '', //5200000000001096
             creditCardVerificationNumber: '', //123
             creditCardType: '', //MC
-            creditCardExpYear: '', //2024
+            creditCardExpYear: '', //2031
             creditCardExpMonth: '', //10
             creditCardHolderName: '', //Test tres ds
             creditCardInstallment: '',

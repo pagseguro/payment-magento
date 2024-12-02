@@ -39,6 +39,10 @@
         </arguments>
     </type>
 
+    <!-- API - PagBank Create Vault -->
+    <preference for="PagBank\PaymentMagento\Api\Data\PagBankVaultTokenInterface" type="PagBank\PaymentMagento\Model\Api\Data\PagBankVaultToken"/>
+    <preference for="PagBank\PaymentMagento\Api\PagBankVaultManagementInterface" type="PagBank\PaymentMagento\Model\Api\PagBankVaultManagement"/>
+
     <!-- API - 3ds Session -->
     <preference for="PagBank\PaymentMagento\Api\Data\ThreeDsSessionDataInterface" type="PagBank\PaymentMagento\Model\Api\Data\Session" />
     <preference for="PagBank\PaymentMagento\Api\ThreeDsSessionInterface" type="PagBank\PaymentMagento\Model\Api\ThreeDsSession" />
