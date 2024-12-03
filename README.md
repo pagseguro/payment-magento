@@ -22,7 +22,7 @@ Receba e gerencie pagamentos com a pioneira e líder de mercado no Brasil!
 |---------|------------------------------------------|-------------------------------|-------------------------------|
 | Vantagens | - Ideal para quem fatura acima de R$ 300.000 <br>- Taxas e recebimentos personalizados<br>- Solicite sua proposta personalizada [aqui](https://pagseguro.uol.com.br/campanhas/contato/?parceiro=aec) | - Ideal para quem precisa de maior fluxo de caixa <br>- Taxas reduzidas | - Ideal para quem tem maior fluxo de caixa <br>- As melhores taxas do mercado |
 | Tipo de Recebimento | Conforme definido em sua conta | Receba em até 14 dias | Receba em até 30 dias |
-| Taxas* | Conforme definido em sua conta | **Cartão:** <br>- 1x com taxa de 1.69% <br>- 2x a 4x com taxa de 1.99% <br>- 5x a 18x com taxa de 1.99% <br><br>**Pix:** <br>- Fixa em R$ 0,50 <br><br>**Boleto:** <br>- Fixa em R$ 0,50 | **Cartão:** <br>- 1x com taxa de 1.69% <br>- 2x a 4x com taxa de 1.99% <br>- 5x a 18x com taxa de 1.99% <br><br>**Pix:** <br>- Fixa em R$ 0,50 <br><br>**Boleto:** <br>- Fixa em R$ 0,50 |
+| Taxas* | Conforme definido em sua conta |**Cartão:** <br>-Com taxa de 3,97%<br>**Pix:** <br>- Com taxa de 0,99%.<br>-Com recebimento imediato.<br><br>**Boleto:** <br>- Com taxa fixa de R$ 2,99.<br>- Com recebimento em até 2 dias úteis.| **Cartão:** <br>-Com taxa de 3.05%. <br><br>**Pix:** <br>- Com taxa de 0,99%.<br>-Com recebimento imediato.<br><br>**Boleto:** <br>- Com taxa fixa de R$ 2,99.<br>- Com recebimento em até 2 dias úteis. |
 
 \* As taxas aqui anunciadas podem sofrer variações, consulte nossa página para os valores atualizados.
 
