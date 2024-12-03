@@ -63,6 +63,9 @@ Close,Fechar
 "4st line of the street","4ª linha de endereço"
 "by customer form (taxvat - customer account)","pelo formulário de cliente (taxvat - customer account)"
 "by address form (vat_id - checkout)","pelo formulário de endereço (vat_id - checkout)"
+"Set in your Account","Definido em sua Conta"
+"Receive within 14 days","Receba em até 14 dias"
+"Receive within 30 days","Receba em até 30 dias"
 "Cart %1 doesn't contain products","O carrinho %1 não contém produtos"
 "Unable to save interest.","Não foi possível salvar o juros."
 "Refresh Token for Default Store.","Refresh Token para Loja Padrão."
@@ -99,6 +102,31 @@ Link,Link
 "Payer Phone","Telefone do Pagador"
 "Pix Qr Code","Pix Qr Code"
 "Pix Copy and Paste","Pix Cópia e Cola"
+"Know and compare our <b>promotional plans</b>","Conheça e compare nossos <b>planos promocionais</b>"
+"Magento and Adobe Commerce - Account Profile","Magento e Adobe Commerce - Account Profile"
+"Magento and Adobe Commerce - D14","Magento e Adobe Commerce - D14"
+"Magento and Adobe Commerce - D30","Magento e Adobe Commerce - D30"
+Benefits,Vantagens
+"Ideal for those who bill above R$ 200,000","Ideal para quem fatura acima de R$ 200.000"
+"Customized fees and receipts","Taxas e recebimentos personalizados"
+"Request your personalized proposal <a href=""%1"">here</a>","Solicite sua proposta personalizada <a href=""%1"">aqui</a>"
+"Ideal for those who need greater cash flow","Ideal para quem precisa de maior fluxo de caixa"
+"Reduced fees","Taxas reduzidas"
+"Ideal for those who have greater cash flow","Ideal para quem tem maior fluxo de caixa"
+"The best market rates","As melhores taxas do mercado"
+"Receipt Type","Tipo de Recebimento"
+"As defined in your account","Conforme definido em sua conta"
+Fees*,Taxas*
+Card:,Cartão:
+"With 3.97% fee.","Com taxa de 3,97%."
+Pix:,Pix:
+"With 0.99% fee.","Com taxa de 0,99%."
+"With immediate receipt.","Com recebimento imediato."
+"Bank Slip:","Boleto:"
+"With fixed fee of R$ 2.99.","Com taxa fixa de R$ 2,99."
+"With receipt within 2 business days.","Com recebimento em até 2 dias úteis."
+"With 3.05% fee.","Com taxa de 3.05%."
+"* The fees advertised here may vary, please check our page for updated values.","* As taxas aqui anunciadas podem sofrer variações, consulte nossa página para os valores atualizados."
 "The Boleto barcode is","O código de barras do boleto é"
 Copy,Copiar
 Copied,Copiado
