@@ -62,12 +62,12 @@ class Config extends PaymentConfig
     /**
      * @const string
      */
-    public const APP_ID_THIRTY_PRODUCTION = '4875151e-9caa-4019-b6b7-d29852efe7ee';
+    public const APP_ID_THIRTY_PRODUCTION = 'fd0305da-da00-42b6-a9f4-dac498bc05e4';
 
     /**
      * @const string
      */
-    public const APP_ID_FOURTEEN_PRODUCTION = 'fd0305da-da00-42b6-a9f4-dac498bc05e4';
+    public const APP_ID_FOURTEEN_PRODUCTION = '4875151e-9caa-4019-b6b7-d29852efe7ee';
     /**
      * @const string
      */
