@@ -15,6 +15,16 @@ Desenvolvida no padrão Gateway, nosso módulo irá oferecer uma perfeita integr
 
 Receba e gerencie pagamentos com a pioneira e líder de mercado no Brasil!
 
+### Melhores taxas do mercado
+# Conheça e compare nossos planos promocionais
+
+| Recurso | Magento e Adobe Commerce - Account Profile | Magento e Adobe Commerce - D14 | Magento e Adobe Commerce - D30 |
+|---------|------------------------------------------|-------------------------------|-------------------------------|
+| Vantagens | - Ideal para quem fatura acima de R$ 300.000 <br>- Taxas e recebimentos personalizados<br>- Solicite sua proposta personalizada [aqui](https://pagseguro.uol.com.br/campanhas/contato/?parceiro=aec) | - Ideal para quem precisa de maior fluxo de caixa <br>- Taxas reduzidas | - Ideal para quem tem maior fluxo de caixa <br>- As melhores taxas do mercado |
+| Tipo de Recebimento | Conforme definido em sua conta | Receba em até 14 dias | Receba em até 30 dias |
+| Taxas* | Conforme definido em sua conta | **Cartão:** <br>- 1x com taxa de 1.69% <br>- 2x a 4x com taxa de 1.99% <br>- 5x a 18x com taxa de 1.99% <br><br>**Pix:** <br>- Fixa em R$ 0,50 <br><br>**Boleto:** <br>- Fixa em R$ 0,50 | **Cartão:** <br>- 1x com taxa de 1.69% <br>- 2x a 4x com taxa de 1.99% <br>- 5x a 18x com taxa de 1.99% <br><br>**Pix:** <br>- Fixa em R$ 0,50 <br><br>**Boleto:** <br>- Fixa em R$ 0,50 |
+
+\* As taxas aqui anunciadas podem sofrer variações, consulte nossa página para os valores atualizados.
 
 ### Cartão de Crédito, Débito e Cofre (Vault) <img src="view/base/web/images/cc/ae.svg" align="right" width="35"/> <img src="view/base/web/images/cc/au.svg" align="right" width="35"/> <img src="view/base/web/images/cc/dn.svg" align="right" width="35"/> <img src="view/base/web/images/cc/elo.svg" align="right" width="35"/> <img src="view/base/web/images/cc/hc.svg" align="right" width="35"/> <img src="view/base/web/images/cc/mc.svg" align="right" width="35"/> <img src="view/base/web/images/cc/vi.svg" align="right" width="35"/>
 
