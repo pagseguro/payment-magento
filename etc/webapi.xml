@@ -51,4 +51,13 @@
         </data>
     </route>
 
+    <route url="/V1/pagbank/vault/create" method="POST">
+        <service class="PagBank\PaymentMagento\Api\PagBankVaultManagementInterface" method="createVaultToken"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+        <data>
+            <parameter name="customerId" force="true">%customer_id%</parameter>
+        </data>
+    </route>
 </routes>

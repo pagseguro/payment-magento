@@ -12,6 +12,26 @@
 @pagbank-checkout__margin-adjust: 21px;
 
 & when (@media-common =true) {
+    aside {
+        &.modal-sm {
+            &.pagbank-add-new-card  {
+                max-width: 450px;
+                margin: 0 auto;
+                .field {
+                    &.month {
+                        padding-left: 0;
+                    }
+                    &.year {
+                        padding-right: 0;
+                    }
+                }
+            }
+        }
+    }
+
+    .action-add-new-vault {
+        margin-top: 20px;
+    }
 
     .form-pagbank {
         .checkout-payment-method {

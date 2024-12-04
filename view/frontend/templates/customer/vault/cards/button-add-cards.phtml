@@ -1,0 +1,39 @@
+<?php
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+
+/** @var \PagBank\PaymentMagento\Block\Customer\Vault\Cards\CreateForm $block */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<div class="actions-toolbar action-add-new-vault">
+    <div class="primary">
+        <button type="button" class="action primary" id="pagbank-add-card">
+            <span><?= $block->escapeHtml(__('Add New Card')) ?></span>
+        </button>
+    </div>
+</div>
+
+<div id="pagbank-form-container">
+    <div id="pagbank-form-modal">
+        <?= $block->getChildHtml('pagbank.vault.create.form') ?>
+    </div>
+</div>
+
+<?= /* @noEscape */ $secureRenderer->renderStyleAsTag(
+    "display:none",
+    '#pagbank-form-container'
+) ?>
+
+<script type="text/x-magento-init">
+{
+    "#pagbank-add-card": {
+        "PagBank_PaymentMagento/js/view/customer/vault/cards/add-card": {}
+    }
+}
+</script>
