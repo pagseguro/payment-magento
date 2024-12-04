@@ -81,7 +81,7 @@ define([
             focusInvalid: false
         });
 
-        $('#card_number').on('input', () => {
+        $('#card_number').on('input', function() {
             let value = $(this).val().replace(/\D/g, '');
             const cardType = $('#cc_type').val();
 
@@ -94,7 +94,7 @@ define([
             $(this).val(value);
         });
 
-        $('#card_number').on('keyup', () => {
+        $('#card_number').on('keyup', function() {
             const number = $(this).val().replace(/\s/g, '');
             const result = creditCardNumberValidator(number);
 
