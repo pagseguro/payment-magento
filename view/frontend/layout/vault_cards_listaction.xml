@@ -15,6 +15,9 @@
             <referenceBlock name="vault.cards.list">
                 <block class="PagBank\PaymentMagento\Block\Customer\CardRenderer" name="pagbank.card.renderer" template="Magento_Vault::customer_account/credit_card.phtml"/>
             </referenceBlock>
+            <block class="PagBank\PaymentMagento\Block\Customer\Vault\Cards\CreateForm" name="pagbank.vault.btn" template="PagBank_PaymentMagento::customer/vault/cards/button-add-cards.phtml" after="-">
+                <block class="PagBank\PaymentMagento\Block\Customer\Vault\Cards\CreateForm" name="pagbank.vault.create.form" template="PagBank_PaymentMagento::customer/vault/cards/create-form.phtml" />
+            </block>
         </referenceContainer>
     </body>
 </page>

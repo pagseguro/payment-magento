@@ -10,6 +10,7 @@ Production,Produção
 "You are diconnected to PagBank.","Você foi desconectado do PagBank."
 "You are connected to PagBank. =)","Você foi conectado ao PagBank. =)"
 "Unable to get the code, try again. =(","Não foi possível obter o código, tente novamente. =("
+"Card saved successfully.","Cartão salvo com sucesso."
 "You should not be here...","Não é para você estar aqui..."
 "Not apply.","Não Aplicado."
 "PagBank, error when checking order status.","PagBank, erro ao verificar o status do pedido."
@@ -67,6 +68,10 @@ Close,Fechar
 "Receive within 14 days","Receba em até 14 dias"
 "Receive within 30 days","Receba em até 30 dias"
 "Cart %1 doesn't contain products","O carrinho %1 não contém produtos"
+"Invalid card data","Dados do cartão inválidos"
+"Card already exists and is active.","Cartão já existe e está habilitado."
+"PagBank API error: %1","PagBank API erro: %1"
+"Error creating card token: %1","Error creating card token: %1"
 "Unable to save interest.","Não foi possível salvar o juros."
 "Refresh Token for Default Store.","Refresh Token para Loja Padrão."
 "Refresh Token for Web Site Id %1.","Refresh Token para Web Site Id %1."
@@ -127,6 +132,14 @@ Pix:,Pix:
 "With receipt within 2 business days.","Com recebimento em até 2 dias úteis."
 "With 3.05% fee.","Com taxa de 3.05%."
 "* The fees advertised here may vary, please check our page for updated values.","* As taxas aqui anunciadas podem sofrer variações, consulte nossa página para os valores atualizados."
+"Add New Card","Adicionar Novo Cartão"
+"Card Number","Número do Cartão"
+"Security Code","Código de Segurança (CVV)"
+"Expiration Date","Data de Expiração"
+Month,Mês
+Year,Ano
+"Card Holder Name","Nome Impresso no Cartão"
+"Save Card","Salvar Cartão"
 "The Boleto barcode is","O código de barras do boleto é"
 Copy,Copiar
 Copied,Copiado
@@ -156,8 +169,6 @@ Waiting...,Aguardando...
 "Save for later use.","Salvar para uso futuro."
 "A 3-digit number in italics on the back of your credit card.","Um número de 3 dígitos em itálico no verso do seu cartão de crédito."
 "Card Type","Tipo de Cartão"
-Month,Mês
-Year,Ano
 "Information for paying with PagBank","Informações para pagar com PagBank"
 "Payer Information","Informação do Pagador"
 "Payer Tax id","CPF/CNPJ do Pagador"
@@ -178,6 +189,13 @@ expires,expirando
 "Please enter a valid credit card number.","Por favor digite um número de cartão de crédito válido."
 "Please enter a valid credit card verification number.","Insira um número de verificação de cartão de crédito válido (CVV)."
 "Please provide a valid CPF/CNPJ.","Forneça um CPF/CNPJ válido."
+"Please enter a valid card holder name.","Por favor, informe um nome válido."
+"Card has expired. Please use a valid expiration date.","Cartão expirado. Por favor use um cartão dentro da validade."
+Error,Erro
+"Unable to complete the card validation.","Não foi possível validar o cartão."
+"An error occurred while processing the card. Please try again.","Ocorreu um erro ao salvar o cartão. Por favor, tente novamente."
+Success,Sucesso
+"An error occurred while saving the card.","Erro ao salvar o cartão."
 "Credit","Crédito"
 "Debit","Débito"
 "Unable to complete the payment with this card, please verify the information and try again.","Não foi possível concluir o pagamento com este cartão, por favor verifique as informações e tente novamente."

@@ -24,6 +24,7 @@ Principais Recursos:
 
 - Método transparente
 - Autenticação 3DS
+- Salvamento de cartão via api de Zero Dollar
 - AntiFraude aprimorado com revisão manual
 - Captura automatizada ou tardia
 - Reembolso online total ou parcial
