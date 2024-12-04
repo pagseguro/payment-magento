@@ -1,7 +1,7 @@
 /**
  * PagBank Payment Magento Module.
  *
- * Copyright © 2023 PagBank. All rights reserved.
+ * Copyright © 2024 PagBank. All rights reserved.
  *
  * @author    Bruno Elisei <brunoelisei@o2ti.com>
  * @license   See LICENSE for license details.
@@ -20,6 +20,7 @@ define([
     'use strict';
 
     return (config, element) => {
+        // Card holder validation
         $.validator.addMethod(
             'validate-card-holder',
             (value) => {
@@ -31,12 +32,12 @@ define([
         $.validator.addMethod(
             'validate-expiration-date',
             (_value, el) => {
-                const currentDate = new Date(),
-                    currentMonth = currentDate.getMonth() + 1,
-                    currentYear = currentDate.getFullYear() % 100,
-                    $form = $(el).closest('form'),
-                    selectedMonth = parseInt($form.find('#expiration_month').val(), 10),
-                    selectedYear = parseInt($form.find('#expiration_year').val(), 10);
+                const currentDate = new Date();
+                const currentMonth = currentDate.getMonth() + 1;
+                const currentYear = currentDate.getFullYear() % 100;
+                const $form = $(el).closest('form');
+                const selectedMonth = parseInt($form.find('#expiration_month').val(), 10);
+                const selectedYear = parseInt($form.find('#expiration_year').val(), 10);
 
                 if (selectedYear < currentYear) {
                     return false;
@@ -80,7 +81,7 @@ define([
             focusInvalid: false
         });
 
-        $('#card_number').on('input', function () {
+        $('#card_number').on('input', () => {
             let value = $(this).val().replace(/\D/g, '');
             const cardType = $('#cc_type').val();
 
@@ -93,9 +94,9 @@ define([
             $(this).val(value);
         });
 
-        $('#card_number').on('keyup', function () {
-            const number = $(this).val().replace(/\s/g, ''),
-                  result = creditCardNumberValidator(number);
+        $('#card_number').on('keyup', () => {
+            const number = $(this).val().replace(/\s/g, '');
+            const result = creditCardNumberValidator(number);
 
             if (result.card) {
                 $('#cc_type').val(result.card.type);
@@ -104,7 +105,7 @@ define([
             }
         });
 
-        function getPagBankTokenize() {
+        function encryptCardData() {
             if (!$(element).valid()) {
                 return false;
             }
@@ -139,15 +140,16 @@ define([
             }
         }
 
-        $(element).submit(function (e) {
+        $(element).submit((e) => {
             e.preventDefault();
 
-            const encryptedCard = getPagBankTokenize(),
-                  formData = new FormData($(element)[0]);
+            const encryptedCard = encryptCardData();
 
             if (!encryptedCard) {
                 return;
             }
+
+            const formData = new FormData();
 
             formData.append('encrypted_card', encryptedCard);
 
@@ -158,13 +160,13 @@ define([
                 processData: false,
                 contentType: false,
                 showLoader: true,
-                success: function (response) {
+                success: (response) => {
                     if (response.success) {
                         alert({
                             title: $t('Success'),
                             content: response.message,
                             actions: {
-                                always: function () {
+                                always: () => {
                                     location.reload();
                                 }
                             }
@@ -176,7 +178,7 @@ define([
                         });
                     }
                 },
-                error: function () {
+                error: () => {
                     alert({
                         title: $t('Error'),
                         content: $t('An error occurred while saving the card.')
