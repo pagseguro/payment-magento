@@ -9,22 +9,23 @@ Módulo para pagamento em Magento e Adobe Commerce.
 [![Magento Mess Detector](https://github.com/pagseguro/payment-magento/actions/workflows/mess-detector.yml/badge.svg)](https://github.com/pagseguro/payment-magento/actions/workflows/mess-detector.yml)
 [![Run ESLint](https://github.com/pagseguro/payment-magento/actions/workflows/ESLint.yml/badge.svg)](https://github.com/pagseguro/payment-magento/actions/workflows/ESLint.yml)
 
-## Recursos
+## Melhores taxas do mercado
 
-Desenvolvida no padrão Gateway, nosso módulo irá oferecer uma perfeita integração com a sua loja.
-
-Receba e gerencie pagamentos com a pioneira e líder de mercado no Brasil!
-
-### Melhores taxas do mercado
-# Conheça e compare nossos planos promocionais
+Conheça e compare nossos planos promocionais
 
 | Recurso | Magento e Adobe Commerce - Account Profile | Magento e Adobe Commerce - D14 | Magento e Adobe Commerce - D30 |
 |---------|------------------------------------------|-------------------------------|-------------------------------|
 | Vantagens | - Ideal para quem fatura acima de R$ 300.000 <br>- Taxas e recebimentos personalizados<br>- Solicite sua proposta personalizada [aqui](https://pagseguro.uol.com.br/campanhas/contato/?parceiro=aec) | - Ideal para quem precisa de maior fluxo de caixa <br>- Taxas reduzidas | - Ideal para quem tem maior fluxo de caixa <br>- As melhores taxas do mercado |
 | Tipo de Recebimento | Conforme definido em sua conta | Receba em até 14 dias | Receba em até 30 dias |
-| Taxas* | Conforme definido em sua conta |**Cartão:** <br>-Com taxa de 3,97%<br>**Pix:** <br>- Com taxa de 0,99%.<br>-Com recebimento imediato.<br><br>**Boleto:** <br>- Com taxa fixa de R$ 2,99.<br>- Com recebimento em até 2 dias úteis.| **Cartão:** <br>-Com taxa de 3.05%. <br><br>**Pix:** <br>- Com taxa de 0,99%.<br>-Com recebimento imediato.<br><br>**Boleto:** <br>- Com taxa fixa de R$ 2,99.<br>- Com recebimento em até 2 dias úteis. |
+| Taxas* | Conforme definido em sua conta |**Cartão:** <br>-Com taxa de 3,97%<br><br>**Pix:** <br>- Com taxa de 0,99%.<br>-Com recebimento imediato.<br><br>**Boleto:** <br>- Com taxa fixa de R$ 2,99.<br>- Com recebimento em até 2 dias úteis.| **Cartão:** <br>-Com taxa de 3.05%. <br><br>**Pix:** <br>- Com taxa de 0,99%.<br>-Com recebimento imediato.<br><br>**Boleto:** <br>- Com taxa fixa de R$ 2,99.<br>- Com recebimento em até 2 dias úteis. |
 
 \* As taxas aqui anunciadas podem sofrer variações, consulte nossa página para os valores atualizados.
+
+## Recursos
+
+Desenvolvida no padrão Gateway, nosso módulo irá oferecer uma perfeita integração com a sua loja.
+
+Receba e gerencie pagamentos com a pioneira e líder de mercado no Brasil!
 
 ### Cartão de Crédito, Débito e Cofre (Vault) <img src="view/base/web/images/cc/ae.svg" align="right" width="35"/> <img src="view/base/web/images/cc/au.svg" align="right" width="35"/> <img src="view/base/web/images/cc/dn.svg" align="right" width="35"/> <img src="view/base/web/images/cc/elo.svg" align="right" width="35"/> <img src="view/base/web/images/cc/hc.svg" align="right" width="35"/> <img src="view/base/web/images/cc/mc.svg" align="right" width="35"/> <img src="view/base/web/images/cc/vi.svg" align="right" width="35"/>
 
@@ -34,6 +35,7 @@ Principais Recursos:
 
 - Método transparente
 - Autenticação 3DS
+- Salvamento de cartão via api de Zero Dollar
 - AntiFraude aprimorado com revisão manual
 - Captura automatizada ou tardia
 - Reembolso online total ou parcial
