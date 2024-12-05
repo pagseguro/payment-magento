@@ -65,7 +65,7 @@
             </field>
             <group id="three_ds_rules" translate="label comment" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Activation rules</label>
-                <comment>Advanced settings for 3D Secure application.</comment>
+                <comment>Advanced settings for 3D Secure application. Activation will be done if the order meets at least 1 of the rules.</comment>
                 <field id="three_ds_max_try_place_order" translate="label comment tooltip" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Activate after the number of failed attempts</label>
                     <comment><![CDATA[3D Secure authentication will be required if the <b>number of purchase attempts</b> (that fail) exceeds the value registered here.]]></comment>
@@ -85,6 +85,13 @@
                     <comment><![CDATA[You can register multiple SKUs, use commas to separate them. 3D Secure authentication will be required if the <b>order contains the SKU</b>.]]></comment>
                     <tooltip><![CDATA[<p>If you have products that are more sensitive to fraud, you can register these SKUs here.</p>]]></tooltip>
                     <config_path>payment/pagbank_paymentmagento_cc/three_ds_has_sku</config_path>
+                </field>
+                <field id="three_ds_canceled_trans_time" translate="label comment tooltip" type="select" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>If the customer has canceled the order in the last few</label>
+                    <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\Times</source_model>
+                    <comment><![CDATA[Authentication via 3D Secure will be requested if the customer has an <b>order cancelled</b> within the chosen time period.]]></comment>
+                    <tooltip><![CDATA[<p>When verifying that the customer has an order canceled within the chosen time interval, 3ds authentication will be requested.</p>]]></tooltip>
+                    <config_path>payment/pagbank_paymentmagento_cc/three_ds_canceled_trans_time</config_path>
                 </field>
             </group>
         </group>
