@@ -12,10 +12,13 @@ declare(strict_types=1);
 
 namespace PagBank\PaymentMagento\Gateway\Config;
 
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Payment\Gateway\Config\Config as PaymentConfig;
 use Magento\Payment\Model\Method\AbstractMethod;
+use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Store\Model\ScopeInterface;
 
 /**
@@ -94,17 +97,41 @@ class ConfigCc extends PaymentConfig
     protected $json;
 
     /**
-     * @param ScopeConfigInterface $scopeConfig
-     * @param Json                 $json
-     * @param string               $methodCode
+     * @var SearchCriteriaBuilder
+     */
+    protected $searchCriteria;
+
+    /**
+     * @var DateTime
+     */
+    protected $dateTime;
+
+    /**
+     * @var OrderRepositoryInterface
+     */
+    protected $orderRepository;
+
+    /**
+     * @param ScopeConfigInterface      $scopeConfig
+     * @param Json                      $json
+     * @param SearchCriteriaBuilder     $searchCriteria
+     * @param DateTime                  $dateTime
+     * @param OrderRepositoryInterface  $orderRepository
+     * @param string                    $methodCode
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         Json $json,
+        SearchCriteriaBuilder $searchCriteria,
+        DateTime $dateTime,
+        OrderRepositoryInterface $orderRepository,
         $methodCode = self::METHOD
     ) {
         parent::__construct($scopeConfig, $methodCode);
         $this->scopeConfig = $scopeConfig;
+        $this->searchCriteria = $searchCriteria;
+        $this->dateTime = $dateTime;
+        $this->orderRepository = $orderRepository;
         $this->json = $json;
     }
 
@@ -463,6 +490,55 @@ class ConfigCc extends PaymentConfig
     }
 
     /**
+     * Get Canceled Transaction Time.
+     *
+     * @param int|null $storeId
+     * @return string
+     */
+    public function getCanceledTransTime($storeId = null): string
+    {
+        $pathPattern = 'payment/%s/%s';
+
+        return (string) $this->scopeConfig->getValue(
+            sprintf($pathPattern, self::METHOD, 'three_ds_canceled_trans_time'),
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        ) ?: '';
+    }
+
+    /**
+     * Has transaction been cancelled in time.
+     *
+     * @param \Magento\Checkout\Model\Cart $cart
+     * @param int|null $storeId
+     * @return bool
+     */
+    public function hasTransBeenCanceled(\Magento\Checkout\Model\Cart $cart, $storeId = null): bool
+    {
+        $customerEmail = $cart->getQuote()->getCustomerEmail();
+        $time = $this->getCanceledTransTime($storeId);
+
+        if (!$time) {
+            return false;
+        }
+
+        $timeStart = $this->dateTime->gmtDate('Y-m-d H:i:s', strtotime("-{$time} hours"));
+        $timeEnd = $this->dateTime->gmtDate('Y-m-d H:i:s');
+
+        $search = $this->searchCriteria
+            ->addFilter('customer_email', $customerEmail, 'eq')
+            ->addFilter('state', 'canceled', 'eq')
+            ->addFilter('created_at', $timeStart, 'gteq')
+            ->addFilter('created_at', $timeEnd, 'lteq')
+            ->create();
+
+        $orderList = $this->orderRepository->getList($search);
+        $orders = $orderList->getItems();
+
+        return !empty($orders);
+    }
+
+    /**
      * Is 3ds Applicable.
      *
      * @param \Magento\Checkout\Model\Cart $cart
@@ -472,11 +548,11 @@ class ConfigCc extends PaymentConfig
      */
     public function isThreeDsApplicable(\Magento\Checkout\Model\Cart $cart, $storeId = null): bool
     {
-        $quote = $cart->getQuote();
-
         if (!$this->hasThreeDsAuth($storeId)) {
             return false;
         }
+
+        $quote = $cart->getQuote();
 
         $threeDsMinOrderTotal = (float) $this->getThreeDsMinOrderTotal($storeId);
 
@@ -496,6 +572,10 @@ class ConfigCc extends PaymentConfig
                     return true;
                 }
             }
+        }
+
+        if ($this->hasTransBeenCanceled($cart, $storeId)) {
+            return true;
         }
 
         return false;
