@@ -43,7 +43,7 @@ class Update extends AbstractModel
     /**
      * Time due for Boleto.
      */
-    public const TIME_DUE_BOLETO = 2880;
+    public const TIME_DUE_BOLETO = 4320;
 
     /**
      * @var State
