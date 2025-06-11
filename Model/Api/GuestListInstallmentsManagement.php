@@ -57,7 +57,7 @@ class GuestListInstallmentsManagement implements GuestListInstallmentsManagement
     public function generateListInstallments(
         $cartId,
         CreditCardBinInterface $creditCardBin,
-        CardTypeTransactionInterface $cardTypeTransaction = null
+        ?CardTypeTransactionInterface $cardTypeTransaction = null
     ) {
         /** @var \Magento\Quote\Model\QuoteIdMask */
         $quoteIdMask = $this->quoteIdMaskFactory->create()->load($cartId, 'masked_id');
