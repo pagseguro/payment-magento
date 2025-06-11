@@ -85,7 +85,7 @@ class ListInstallmentsManagement implements ListInstallmentsManagementInterface
     public function generateListInstallments(
         $cartId,
         CreditCardBinInterface $creditCardBin,
-        CardTypeTransactionInterface $cardTypeTransaction = null
+        ?CardTypeTransactionInterface $cardTypeTransaction = null
     ) {
         $quote = $this->quoteRepository->getActive($cartId);
         if (!$quote->getItemsCount()) {

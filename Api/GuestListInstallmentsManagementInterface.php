@@ -31,6 +31,6 @@ interface GuestListInstallmentsManagementInterface
     public function generateListInstallments(
         $cartId,
         \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface $creditCardBin,
-        \PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface $cardTypeTransaction = null
+        ?\PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface $cardTypeTransaction = null
     );
 }
