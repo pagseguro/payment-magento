@@ -22,15 +22,19 @@ interface InterestManagementInterface
     /**
      * Generate the list installments by credit card number.
      *
-     * @param int                                                           $cartId
-     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface       $creditCardBin
-     * @param \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface $installmentSelected
+     * @param int                                                               $cartId
+     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface           $creditCardBin
+     * @param \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface     $installmentSelected
+     * @param \PagBank\PaymentMagento\Api\Data\CustomAmountInterface|null       $customAmount
+     * @param \PagBank\PaymentMagento\Api\Data\CardIndexInterface|null          $cardIndex
      *
      * @return \Magento\Quote\Api\Data\TotalsInterface Quote totals data.
      */
     public function generatePagBankInterest(
         $cartId,
         \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface $creditCardBin,
-        \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface $installmentSelected
+        \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface $installmentSelected,
+        ?\PagBank\PaymentMagento\Api\Data\CustomAmountInterface $customAmount = null,
+        ?\PagBank\PaymentMagento\Api\Data\CardIndexInterface $cardIndex = null
     );
 }

@@ -4,10 +4,8 @@ Módulo para pagamento em Magento e Adobe Commerce.
 
 ## Badges
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/cc263cca6df24df090ad/maintainability)](https://codeclimate.com/github/elisei/pagbank-payment-magento/maintainability)
 [![Magento Coding Quality](https://github.com/pagseguro/payment-magento/actions/workflows/magento-coding-quality.yml/badge.svg)](https://github.com/pagseguro/payment-magento/actions/workflows/magento-coding-quality.yml)
 [![Magento Mess Detector](https://github.com/pagseguro/payment-magento/actions/workflows/mess-detector.yml/badge.svg)](https://github.com/pagseguro/payment-magento/actions/workflows/mess-detector.yml)
-[![Run ESLint](https://github.com/pagseguro/payment-magento/actions/workflows/ESLint.yml/badge.svg)](https://github.com/pagseguro/payment-magento/actions/workflows/ESLint.yml)
 
 ## Melhores taxas do mercado
 

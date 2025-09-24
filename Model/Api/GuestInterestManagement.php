@@ -13,7 +13,9 @@ declare(strict_types=1);
 namespace PagBank\PaymentMagento\Model\Api;
 
 use Magento\Quote\Model\QuoteIdMaskFactory;
+use PagBank\PaymentMagento\Api\Data\CardIndexInterface;
 use PagBank\PaymentMagento\Api\Data\CreditCardBinInterface;
+use PagBank\PaymentMagento\Api\Data\CustomAmountInterface;
 use PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface;
 use PagBank\PaymentMagento\Api\GuestInterestManagementInterface;
 use PagBank\PaymentMagento\Api\InterestManagementInterface;
@@ -48,16 +50,20 @@ class GuestInterestManagement implements GuestInterestManagementInterface
     /**
      * Generate List Installments.
      *
-     * @param string                                                        $cartId
-     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface       $creditCardBin
-     * @param \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface $installmentSelected
+     * @param string                                                             $cartId
+     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface           $creditCardBin
+     * @param \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface     $installmentSelected
+     * @param \PagBank\PaymentMagento\Api\Data\CustomAmountInterface|null       $customAmount
+     * @param \PagBank\PaymentMagento\Api\Data\CardIndexInterface|null          $cardIndex
      *
      * @return array
      */
     public function generatePagBankInterest(
         $cartId,
         CreditCardBinInterface $creditCardBin,
-        InstallmentSelectedInterface $installmentSelected
+        InstallmentSelectedInterface $installmentSelected,
+        ?CustomAmountInterface $customAmount = null,
+        ?CardIndexInterface $cardIndex = null
     ) {
         /** @var \Magento\Quote\Model\QuoteIdMask */
         $quoteIdMask = $this->quoteIdMaskFactory->create()->load($cartId, 'masked_id');
@@ -65,7 +71,9 @@ class GuestInterestManagement implements GuestInterestManagementInterface
         return $this->cardNumberInterface->generatePagBankInterest(
             $quoteIdMask->getQuoteId(),
             $creditCardBin,
-            $installmentSelected
+            $installmentSelected,
+            $customAmount,
+            $cardIndex
         );
     }
 }

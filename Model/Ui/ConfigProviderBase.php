@@ -36,6 +36,16 @@ class ConfigProviderBase implements ConfigProviderInterface
     public const METHOD_CODE_CC_VAULT = 'pagbank_paymentmagento_cc_vault';
 
     /*
+     * @var METHOD CODE TWO CC
+     */
+    public const METHOD_CODE_TWO_CC = 'pagbank_paymentmagento_two_cc';
+
+    /*
+     * @var METHOD CODE TWO CC VAULT
+     */
+    public const METHOD_CODE_TWO_CC_VAULT = 'pagbank_paymentmagento_two_cc_vault';
+
+    /*
      * @var METHOD CODE BOLETO
      */
     public const METHOD_CODE_BOLETO = 'pagbank_paymentmagento_boleto';

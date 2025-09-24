@@ -20,6 +20,7 @@ define(
         var config = window.checkoutConfig.payment,
             methodBoleto = 'pagbank_paymentmagento_boleto',
             methodCc = 'pagbank_paymentmagento_cc',
+            methodTwoCc = 'pagbank_paymentmagento_two_cc',
             methodPix = 'pagbank_paymentmagento_pix',
             methodDeepLink = 'pagbank_paymentmagento_deep_link';
 
@@ -37,6 +38,15 @@ define(
                 {
                     type: methodCc,
                     component: 'PagBank_PaymentMagento/js/view/payment/method-renderer/cc'
+                }
+            );
+        }
+
+        if (config[methodTwoCc].isActive) {
+            rendererList.push(
+                {
+                    type: methodTwoCc,
+                    component: 'PagBank_PaymentMagento/js/view/payment/method-renderer/two-cc'
                 }
             );
         }

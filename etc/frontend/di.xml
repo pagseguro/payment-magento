@@ -15,6 +15,7 @@
             <argument name="configProviders" xsi:type="array">
                 <item name="pagbank_paymentmagento_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\ConfigProviderBase</item>
                 <item name="pagbank_paymentmagento_cc_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\ConfigProviderCc</item>
+                <item name="pagbank_paymentmagento_two_cc_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\ConfigProviderTwoCc</item>
                 <item name="pagbank_paymentmagento_cc_vault_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\Vault\ConfigProvider</item>
                 <item name="pagbank_paymentmagento_boleto_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\ConfigProviderBoleto</item>
                 <item name="pagbank_paymentmagento_pix_config_provider" xsi:type="object">PagBank\PaymentMagento\Model\Ui\ConfigProviderPix</item>
@@ -23,6 +24,13 @@
         </arguments>
     </type>
     <type name="PagBank\PaymentMagento\Block\Sales\Info\Cc">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="PagBank\PaymentMagento\Block\Sales\Info\TwoCc">
         <arguments>
             <argument name="data" xsi:type="array">
                 <item xsi:type="string" name="is_secure_mode">1</item>
@@ -54,6 +62,7 @@
         <arguments>
             <argument name="methodCodes" xsi:type="array">
                 <item name="pagbank_paymentmagento_cc" xsi:type="const">PagBank\PaymentMagento\Gateway\Config\ConfigCc::METHOD</item>
+                <item name="pagbank_paymentmagento_two_cc" xsi:type="const">PagBank\PaymentMagento\Gateway\Config\ConfigTwoCc::METHOD</item>
             </argument>
         </arguments>
     </type>
@@ -61,6 +70,7 @@
         <arguments>
             <argument name="tokenUiComponentProviders" xsi:type="array">
                 <item name="pagbank_paymentmagento_cc" xsi:type="object">PagBank\PaymentMagento\Model\Ui\TokenUiComponentProvider</item>
+                <item name="pagbank_paymentmagento_two_cc" xsi:type="object">PagBank\PaymentMagento\Model\Ui\TokenUiComponentProvider</item>
             </argument>
         </arguments>
     </type>

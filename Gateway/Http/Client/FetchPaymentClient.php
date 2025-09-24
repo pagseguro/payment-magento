@@ -45,6 +45,9 @@ class FetchPaymentClient implements ClientInterface
      * @param TransferInterface $transferObject
      *
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function placeRequest(TransferInterface $transferObject)
     {

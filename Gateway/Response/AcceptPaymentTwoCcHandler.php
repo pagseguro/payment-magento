@@ -1,0 +1,142 @@
+<?php
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+
+namespace PagBank\PaymentMagento\Gateway\Response;
+
+use InvalidArgumentException;
+use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
+use Magento\Payment\Gateway\Response\HandlerInterface;
+use Magento\Sales\Model\Order\Payment\Transaction;
+use Magento\Framework\Exception\LocalizedException;
+
+/**
+ * Class Accept Payment Two Cc Handler - Reply Flow for Accept Two Credit Cards.
+ */
+class AcceptPaymentTwoCcHandler implements HandlerInterface
+{
+    /**
+     * Response Pay PagBank Id - Block Name.
+     */
+    public const RESPONSE_PAGBANK_ID = 'id';
+
+    /**
+     * Capture Results - Block Name.
+     */
+    public const CAPTURE_RESULTS = 'capture_results';
+
+    /**
+     * Total Authorized Amount - Block Name.
+     */
+    public const TOTAL_AUTHORIZED_AMOUNT = 'total_authorized_amount';
+
+    /**
+     * Handles.
+     *
+     * @param array $handlingSubject
+     * @param array $response
+     *
+     * @return void
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     */
+    public function handle(array $handlingSubject, array $response)
+    {
+        if (!isset($handlingSubject['payment'])
+            || !$handlingSubject['payment'] instanceof PaymentDataObjectInterface
+        ) {
+            throw new InvalidArgumentException('Payment data object should be provided');
+        }
+
+        if (!$response['RESULT_CODE']) {
+            return;
+        }
+
+        $paymentDO = $handlingSubject['payment'];
+        $payment = $paymentDO->getPayment();
+        $order = $payment->getOrder();
+
+        $amount = $order->getTotalDue();
+        $baseAmount = $order->getBaseTotalDue();
+
+        $captureResults = $response[self::CAPTURE_RESULTS] ?? [];
+
+        if (count($captureResults) !== 2) {
+            throw new InvalidArgumentException('Two capture results expected for two card payment');
+        }
+
+        $allCaptures = true;
+        foreach ($captureResults as $captureResult) {
+            if (!$captureResult['success']) {
+                $allCaptures = false;
+                break;
+            }
+        }
+
+        if ($allCaptures) {
+            foreach ($captureResults as $index => $captureResult) {
+                $paymentId = $captureResult['payment_id'];
+                $captureTransactionId = $paymentId . '-capture';
+                
+                if (!$payment->getTransaction($captureTransactionId)) {
+                    $payment->setTransactionId($captureTransactionId);
+                    $payment->setParentTransactionId($paymentId);
+                    
+                    if ($index === 0) {
+                        $payment->registerAuthorizationNotification($amount);
+                        $payment->registerCaptureNotification($amount);
+                        $payment->setIsTransactionApproved(true);
+                        $payment->setIsTransactionDenied(false);
+                        $payment->setIsInProcess(true);
+                        $payment->setAmountAuthorized($amount);
+                        $payment->setBaseAmountAuthorized($baseAmount);
+                    } else {
+                        $payment->setIsTransactionClosed(true);
+                        $payment->setShouldCloseParentTransaction(true);
+                        
+                        $payment->setTransactionAdditionalInfo(
+                            Transaction::RAW_DETAILS,
+                            [
+                                'card_index' => $index + 1,
+                                'authorized_amount' => $captureResult['authorized_amount'],
+                                'payment_id' => $paymentId,
+                                'capture_data' => $captureResult['data'] ?? []
+                            ]
+                        );
+                        
+                        $payment->addTransaction(Transaction::TYPE_CAPTURE);
+                    }
+                }
+            }
+            
+            $payment->setIsTransactionClosed(true);
+            $payment->setShouldCloseParentTransaction(true);
+
+            $order->addStatusHistoryComment(
+                __('Payment captured successfully for two credit cards.'),
+                false
+            );
+        } else {
+            $payment->setIsTransactionApproved(false);
+            $payment->setIsTransactionDenied(true);
+            $payment->setIsInProcess(false);
+
+            $order->addStatusHistoryComment(
+                __('Failed to capture payment for one or both credit cards.'),
+                false
+            );
+
+            throw new LocalizedException(
+                __('Failed to capture payment for all cards')
+            );
+        }
+    }
+}

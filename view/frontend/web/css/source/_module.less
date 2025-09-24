@@ -11,17 +11,241 @@
 @pagbank-checkout__border-radius: 3px;
 @pagbank-checkout__margin-adjust: 21px;
 
-& when (@media-common =true) {
+//
+//  Common
+//  _____________________________________________
+
+& when (@media-common = true) {
+
+    .actions-toolbar {
+        &.place-order-two-cc {
+            margin-top: @indent__base;
+        }
+    }
+
+    // Two CC Steps Progress Bar
+    .two-cc-steps-progress {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-bottom: @indent__s;
+        padding: @indent__s 0;
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            align-items: center;
+            position: relative;
+            
+            &:last-child {
+                margin-bottom: 0;
+            }
+            
+            .step-number {
+                width: @indent__m;
+                height: @indent__m;
+                margin-right: 0;
+                margin-bottom: @indent__xs;
+                border-radius: 50%;
+                background: @color-gray90;
+                color: @color-gray40;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: @font-weight__semibold;
+                font-size: @font-size__xs;
+                border: 1px solid @border-color__base;
+                transition: all 0.3s ease;
+            }
+            
+            .step-title {
+                font-size: @font-size__xs;
+                color: @text__color__muted;
+                transition: color 0.3s ease;
+            }
+            
+            &.active {
+                .step-number {
+                    background: @color-white;
+                    color: @link__color;
+                    border-color: @link__color;
+                }
+                
+                .step-title {
+                    color: @text__color;
+                    font-weight: @font-weight__semibold;
+                }
+            }
+            
+            &.completed {
+                .step-number {
+                    background: @active__color;
+                    color: @color-white;
+                    border-color: @active__color;
+
+                }
+                
+                .step-title {
+                    text-align: center;
+                    color: @active__color;
+                }
+            }
+        }
+        
+        .step-line {
+            display: block;
+            flex: 0 0 70px;
+            height: 2px;
+            background: @border-color__base;
+            align-self: center;
+            transform: translateY(-(@indent__s));
+            transition: background 0.3s ease;
+            
+            &.completed {
+                background: @active__color;
+            }
+        }
+    }
+    
+    // Step Content
+    .step-content {
+        animation: fadeIn 0.3s ease;
+        
+        .payment-division,
+        .pagbank-payer-first,
+        .pagbank-payer-second {
+            margin-bottom: @indent__m !important;
+        }
+
+        fieldset {
+            &.field-to-pay {
+                .field:last-of-type {
+                    margin: 0 !important;
+                }
+            }
+
+            .form-persona-information {
+                margin: @indent__base @indent__s 0 @indent__s !important;
+            }
+        }
+
+        .pagbank-payer-first,
+        .pagbank-payer-second {
+            .two-fields {
+                display: flex;
+                flex-direction: row;
+            }
+        }
+
+        .payment-slider {
+            padding: @indent__base;
+        }
+
+        .amount {
+            color: @link__color;
+            font-size: @font-size__s;
+            font-weight: @font-weight__regular;
+            margin-left: @indent__xs;
+        }
+        .detail-amount {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+    }
+    
+    // Step Actions
+    .step-actions {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: @indent__base;
+
+        .primary {
+            .lib-button-responsive();
+            .lib-button-l();
+        }
+
+        button.action {
+            &.back {
+                order: 1;
+            }
+            
+            &.continue {
+                order: 2;
+                margin-left: auto;
+            }
+        }
+    }
+
+    // Payment Division Slider
+    .payment-slider {
+        flex-direction: row;
+        justify-content: space-between;
+
+        .control {
+            .input-range {
+                cursor: pointer;
+                width: 100%;
+                margin: 0 0 @indent__m 0;
+            }
+            
+            .payment-amounts {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                gap: @indent__xs;
+                
+                .first-card-amount,
+                .second-card-amount {
+                    flex: 50%;
+                    background: @panel__background-color;
+                    padding: @indent__xs @indent__s;
+                    border: @border-width__base solid @border-color__base;
+                    border-radius: @button__border-radius;
+                    
+                    span {
+                        display: block;
+                        font-size: @font-size__xs;
+                        color: @text__color__muted;
+                        margin-bottom: @indent__xs;
+                    }
+                    
+                    strong {
+                        font-size: @font-size__base;
+                        color: @text__color;
+                    }
+                }
+            }
+        }
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(@indent__xs);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    // Modal for Add New Card
     aside {
         &.modal-sm {
-            &.pagbank-add-new-card  {
-                max-width: 450px;
-                margin: 0 auto;
+            &.pagbank-add-new-card {
+                .modal-inner-wrap {
+                    max-width: 450px;
+                    margin: 0 auto;
+                }
                 .field {
-                    &.month {
-                        padding-left: 0;
-                    }
+                    &.month,
                     &.year {
+                        padding-left: 0;
                         padding-right: 0;
                     }
                 }
@@ -30,9 +254,10 @@
     }
 
     .action-add-new-vault {
-        margin-top: 20px;
+        margin-top: @indent__m;
     }
 
+    // PagBank Forms
     .form-pagbank {
         .checkout-payment-method {
             .payments {
@@ -44,20 +269,25 @@
         }
 
         .credit-card-types {
+            margin: 0;
+            padding: 0;
+            
             .item {
                 display: inline-block;
                 list-style: none;
                 margin: 0 @indent__xs 0 0;
-                text-align: right;
-                vertical-align: top;
+                vertical-align: middle;
 
                 img {
-                    filter: grayscale(0%);
-                    -webkit-filter: grayscale(0%);
+                    -webkit-filter: none;
+                    filter: none;
                     width: 20px;
+                    height: auto;
+                    vertical-align: middle;
                 }
+                
                 &._hidden {
-                    &:extend(.abs-visually-hidden all);
+                    .lib-visually-hidden();
                 }
             }
         }
@@ -66,7 +296,7 @@
             margin: 0 @indent__s;
 
             &._hidden {
-                &:extend(.abs-visually-hidden all);
+                .lib-visually-hidden();
             }
         }
 
@@ -263,7 +493,7 @@
                     .control {
                         &._with-tooltip {
                             input {
-                                height: 34px;
+                                height: 40px;
                                 width: 100%;
                             }
                         }
@@ -276,13 +506,15 @@
                 margin-bottom: @indent__s;
                 max-width: 500px;
     
-                .pix-qrcode {
+                .pix-qrcode,
+                .deep-link-qrcode {
                     max-width: 250px;
+                    height: auto;
                 }
             }
 
             &-deep-link-image {
-                .lib-visually-hidden()
+                .lib-visually-hidden();
             }
         }
 
@@ -300,30 +532,15 @@
 //  Desktop
 //  _____________________________________________
 
-.media-width(@extremum, @break) when (@extremum ='min') and (@break =@screen__m) {
-
-    .form-pagbank {
-        .legend {
-            .credit-card-types {
-                .item {
-                    img {
-                        width: 32px;
-                    }
-                }
-            }
-        }
-    }
-
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
     .pagbank-payment-success-details {
-
         .pagbank-payment {
-
             &-deep-link-image {
-                .lib-visually-hidden-reset()
+                .lib-visually-hidden-reset();
             }
 
             &-deep-link-url {
-                .lib-visually-hidden()
+                .lib-visually-hidden();
             }
         }
     }

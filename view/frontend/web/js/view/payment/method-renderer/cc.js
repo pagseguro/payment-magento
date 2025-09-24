@@ -83,7 +83,7 @@ define([
             self.vaultEnabler.setPaymentCode(self.getVaultCode());
 
             self.active.subscribe(() => {
-                self.creditCardInstallment(0);
+                self.creditCardInstallment(null);
             });
         },
 

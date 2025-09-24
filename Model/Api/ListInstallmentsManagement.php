@@ -17,8 +17,10 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CartTotalRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface as QuoteCartInterface;
-use PagBank\PaymentMagento\Api\Data\CreditCardBinInterface;
+use PagBank\PaymentMagento\Api\Data\CardIndexInterface;
 use PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface;
+use PagBank\PaymentMagento\Api\Data\CreditCardBinInterface;
+use PagBank\PaymentMagento\Api\Data\CustomAmountInterface;
 use PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface;
 use PagBank\PaymentMagento\Api\ListInstallmentsManagementInterface;
 use PagBank\PaymentMagento\Gateway\Config\Config as ConfigBase;
@@ -76,6 +78,8 @@ class ListInstallmentsManagement implements ListInstallmentsManagementInterface
      * @param int                                                           $cartId
      * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface       $creditCardBin
      * @param \PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface $cardTypeTransaction
+     * @param \PagBank\PaymentMagento\Api\Data\CustomAmountInterface|null   $customAmount
+     * @param \PagBank\PaymentMagento\Api\Data\CardIndexInterface|null      $cardIndex
      *
      * @throws CouldNotSaveException
      * @throws NoSuchEntityException
@@ -85,7 +89,9 @@ class ListInstallmentsManagement implements ListInstallmentsManagementInterface
     public function generateListInstallments(
         $cartId,
         CreditCardBinInterface $creditCardBin,
-        CardTypeTransactionInterface $cardTypeTransaction = null
+        CardTypeTransactionInterface $cardTypeTransaction = null,
+        ?CustomAmountInterface $customAmount = null,
+        ?CardIndexInterface $cardIndex = null
     ) {
         $quote = $this->quoteRepository->getActive($cartId);
         if (!$quote->getItemsCount()) {
@@ -93,25 +99,52 @@ class ListInstallmentsManagement implements ListInstallmentsManagementInterface
         }
 
         $quoteTotal = $this->quoteTotalRepository->get($cartId);
-
         $creditCardBin = $creditCardBin->getCreditCardBin();
 
+        $ccTransactionValue = null;
         if ($cardTypeTransaction) {
-            $cardTypeTransaction = $cardTypeTransaction->getCardTypeTransaction();
+            $ccTransactionValue = $cardTypeTransaction->getCardTypeTransaction();
         }
 
         $storeId = $quote->getData(QuoteCartInterface::KEY_STORE_ID);
+        
+        $customAmountValue = null;
+        $cardIndexValue = null;
+        
+        if ($customAmount) {
+            $customAmountValue = $customAmount->getCustomAmount();
+        }
+        
+        if ($cardIndex) {
+            $cardIndexValue = $cardIndex->getCardIndex();
+        }
 
-        $amount = $quoteTotal->getBaseGrandTotal();
         $currentInterest = $quote->getData(InstallmentSelectedInterface::PAGBANK_INTEREST_AMOUNT);
-        $amount -= $currentInterest;
+        $amount = $quoteTotal->getBaseGrandTotal();
+
+        if ($cardIndexValue === 1) {
+            $amount = $customAmountValue;
+            // o problema é que o currentInterest precisa ser zerado no contexto do cartão 1
+            // para zerar o valor do juros no total do pedido
+            // eu tenho que agora passar para o setInterest.
+        }
+
+        if ($cardIndexValue === 2) {
+            $amount -= $customAmountValue;
+            $amount -= $currentInterest;
+        }
+        
+        if ($cardIndexValue === null) {
+            $amount -= $currentInterest;
+        }
 
         $amount = $this->configBase->formatPrice($amount);
 
         $listInstallments = $this->consultInstallments->getPagBankInstallments(
             $storeId,
             $creditCardBin,
-            $amount
+            $amount,
+            $ccTransactionValue
         );
 
         return $listInstallments;

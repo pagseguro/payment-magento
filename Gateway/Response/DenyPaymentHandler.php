@@ -58,17 +58,11 @@ class DenyPaymentHandler implements HandlerInterface
 
         if ($response[self::RESULT_CODE]) {
             $paymentDO = $handlingSubject['payment'];
-
             $payment = $paymentDO->getPayment();
-
             $order = $payment->getOrder();
-
             $amount = $order->getBaseGrandTotal();
-
             $pagbankPayId = $response[self::RESPONSE_PAGBANK_ID];
-
             $paymentResponse = $response[self::RESPONSE_PAYMENT_RESPONSE];
-
             $paymentResponseCode = (int) $paymentResponse[self::RESPONSE_PAYMENT_RESPONSE_CODE];
 
             if ($paymentResponseCode === 20000) {

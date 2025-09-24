@@ -8,30 +8,36 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Add HTTP basic auth credentials
-      run: echo '${{ secrets.AUTH }}' > $GITHUB_WORKSPACE/auth.json
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: opcache gd mysqli curl intl xsl mbstring zip bcmath soap xdebug
+        
+    - name: Create auth.json
+      run: |
+        echo '${{ secrets.AUTH }}' > auth.json
+        chmod 600 auth.json
 
     - name: Get Composer Cache Directory
       id: composer-cache
       run: |
-        echo "::set-output name=dir::$(composer config cache-files-dir)"
+        echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-    - name: Define Composer Cache Directory
+    - name: Cache Composer packages
       uses: actions/cache@v3
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ hashFiles('$GITHUB_WORKSPACE/composer.lock') }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
         restore-keys: |
           ${{ runner.os }}-composer-
 
     - name: Install dependencies
-      uses: php-actions/composer@v6
-      with:
-        php_version: "8.1"
-        php_extensions: opcache gd mysqli curl intl xsl mbstring zip bcmath soap xdebug
+      run: composer install --prefer-dist --no-interaction --no-progress
 
-    - name: Remove auth.json file
-      run: rm -f $GITHUB_WORKSPACE/auth.json
+    - name: Remove auth.json for security
+      if: always()
+      run: rm -f auth.json
 
     - name: Run PHPMD
-      run: $GITHUB_WORKSPACE/vendor/bin/phpmd $GITHUB_WORKSPACE ansi codesize,unusedcode,naming,cleancode,controversial,design --exclude $GITHUB_WORKSPACE/vendor
+      run: vendor/bin/phpmd . ansi codesize,unusedcode,naming,cleancode,controversial,design --exclude vendor
