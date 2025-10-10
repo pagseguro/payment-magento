@@ -73,9 +73,9 @@ class DenyPaymentTwoCcHandler implements HandlerInterface
 
         $allVoidsSuccessful = true;
         $voidTransactionIds = [];
-        $needToCreateVoid = false;
+        $hasProcessedVoid = false;
 
-        foreach ($voidResults as $voidResult) {
+        foreach ($voidResults as $index => $voidResult) {
             if (!$voidResult['success']) {
                 $allVoidsSuccessful = false;
                 continue;
@@ -83,62 +83,56 @@ class DenyPaymentTwoCcHandler implements HandlerInterface
 
             $paymentId = $voidResult['payment_id'];
             $voidTransactionId = $paymentId . '-void';
-            $existingTransaction = $payment->getTransaction($voidTransactionId);
             
-            if (!$existingTransaction) {
-                $needToCreateVoid = true;
-                $voidTransactionIds[] = [
-                    'id' => $voidTransactionId,
-                    'parent_id' => $paymentId,
-                    'index' => $voidResult['index'],
-                    'amount' => $voidResult['voided_amount']
-                ];
+            if ($payment->getTransaction($voidTransactionId)) {
+                continue;
+            }
+            
+            $voidTransactionIds[] = $voidTransactionId;
+            
+            $payment->setTransactionId($voidTransactionId);
+            $payment->setParentTransactionId($paymentId);
+            
+            if (!$hasProcessedVoid) {
+                $payment->setPreparedMessage(__('Order Canceled - Two Credit Cards.'));
+                $payment->setIsTransactionPending(false);
+                $payment->setIsTransactionDenied(true);
+                $payment->setIsInProcess(false);
+                $payment->setIsTransactionClosed(true);
+                $payment->setShouldCloseParentTransaction(true);
+                $payment->setAmountCanceled($amount);
+                $payment->setBaseAmountCanceled($baseAmount);
+                
+                $payment->registerVoidNotification($amount);
+                $hasProcessedVoid = true;
+            } else {
+                $payment->setIsTransactionClosed(true);
+                $payment->setShouldCloseParentTransaction(true);
+                
+                $payment->setTransactionAdditionalInfo(
+                    Transaction::RAW_DETAILS,
+                    [
+                        'card_index' => $index + 1,
+                        'payment_id' => $paymentId,
+                        'void_data' => $voidResult['data'] ?? []
+                    ]
+                );
+                
+                $payment->addTransaction(Transaction::TYPE_VOID);
             }
         }
 
         if ($allVoidsSuccessful) {
-            if ($needToCreateVoid && !empty($voidTransactionIds)) {
-                $firstVoid = reset($voidTransactionIds);
-                $payment->setParentTransactionId($firstVoid['parent_id']);
-                $payment->registerVoidNotification($amount);
-                $secondVoid = end($voidTransactionIds);
-                if (count($voidTransactionIds) === 2 && $secondVoid['id'] !== $firstVoid['id']) {
-                    $payment->setTransactionId($secondVoid['id']);
-                    $payment->setParentTransactionId($secondVoid['parent_id']);
-                    $payment->setIsTransactionClosed(true);
-                    $payment->setShouldCloseParentTransaction(true);
-                    $payment->setTransactionAdditionalInfo(
-                        Transaction::RAW_DETAILS,
-                        [
-                            'card_index' => $secondVoid['index'] + 1,
-                            'voided_amount' => $secondVoid['amount'],
-                            'payment_id' => $secondVoid['parent_id']
-                        ]
-                    );
-                    $payment->addTransaction(Transaction::TYPE_VOID);
-                }
-            }
-            
-            $payment->setIsTransactionApproved(false);
-            $payment->setIsTransactionDenied(true);
-            $payment->setIsInProcess(false);
-            $payment->setIsTransactionClosed(true);
-            $payment->setShouldCloseParentTransaction(true);
-            $payment->setAmountCanceled($amount);
-            $payment->setBaseAmountCanceled($baseAmount);
             $order->addStatusHistoryComment(
                 __('Payment voided successfully for two credit cards.'),
                 false
             );
         } else {
-            $payment->setIsTransactionApproved(false);
-            $payment->setIsTransactionDenied(false);
-            $payment->setIsInProcess(true);
             $order->addStatusHistoryComment(
                 __('Failed to void payment for one or both credit cards.'),
                 false
             );
-
+            
             throw new LocalizedException(
                 __('Failed to void payment for all cards')
             );

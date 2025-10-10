@@ -10,16 +10,14 @@
 
 namespace PagBank\PaymentMagento\Gateway\Response;
 
-use Magento\Framework\Exception\InvalidArgumentException;
-use Magento\Framework\Exception\LocalizedException;
+use InvalidArgumentException;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
-use Magento\Payment\Model\InfoInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 
 /**
- * Fetch Payment Handler - Payment query response flow.
+ * Class Fetch Payment Handler - Reply Flow for Fetch.
  */
 class FetchPaymentHandler implements HandlerInterface
 {
@@ -29,22 +27,17 @@ class FetchPaymentHandler implements HandlerInterface
     public const RESULT_CODE = 'RESULT_CODE';
 
     /**
+     * Response Pay Charges - Block name.
+     */
+    public const RESPONSE_CHARGES = 'charges';
+
+    /**
      * Response Pay PagBank Id - Block Name.
      */
     public const RESPONSE_PAGBANK_ID = 'id';
 
     /**
-     * Response Pay Qr Codes - Block name.
-     */
-    public const RESPONSE_QR_CODES = 'qr_codes';
-
-    /**
-     * Response Pay Charges - Block Name.
-     */
-    public const RESPONSE_CHARGES = 'charges';
-
-    /**
-     * Response Pay Status - Block Name.
+     * Response Pay Status - Block name.
      */
     public const RESPONSE_STATUS = 'status';
 
@@ -54,9 +47,9 @@ class FetchPaymentHandler implements HandlerInterface
     public const RESPONSE_STATUS_PAID = 'PAID';
 
     /**
-     * Response Pay Status Denied - Value.
+     * Response Pay Status Canceled - Value.
      */
-    public const RESPONSE_STATUS_DENIED = 'DENIED';
+    public const RESPONSE_STATUS_CANCELED = 'CANCELED';
 
     /**
      * Response Pay Status Declined - Value.
@@ -64,12 +57,12 @@ class FetchPaymentHandler implements HandlerInterface
     public const RESPONSE_STATUS_DECLINED = 'DECLINED';
 
     /**
-     * Response Pay Status Canceled - Value.
+     * Response Qr Codes - Block name.
      */
-    public const RESPONSE_STATUS_CANCELED = 'CANCELED';
+    public const RESPONSE_QR_CODES = 'qr_codes';
 
     /**
-     * Response Pay Status Waiting - Value.
+     * Response Pay Status Waiting - Block name.
      */
     public const RESPONSE_STATUS_WAITING = 'WAITING';
 
@@ -84,7 +77,7 @@ class FetchPaymentHandler implements HandlerInterface
     protected $invoiceSender;
 
     /**
-     * @var String
+     * @var string
      */
     protected $finalStatus;
 
@@ -115,42 +108,40 @@ class FetchPaymentHandler implements HandlerInterface
             throw new InvalidArgumentException('Payment data object should be provided');
         }
 
-        if ($response[self::RESULT_CODE]) {
-            $paymentDO = $handlingSubject['payment'];
+        if (!$response[self::RESULT_CODE]) {
+            return;
+        }
 
-            $payment = $paymentDO->getPayment();
+        $paymentDO = $handlingSubject['payment'];
+        $payment = $paymentDO->getPayment();
+        $order = $payment->getOrder();
+        $amount = $order->getBaseGrandTotal();
 
-            $order = $payment->getOrder();
+        if (isset($response[self::RESPONSE_CHARGES])) {
+            $charges = $response[self::RESPONSE_CHARGES];
+            $pagbankPayId = $charges[0][self::RESPONSE_PAGBANK_ID];
+            $paymentParentId = $pagbankPayId;
 
-            $amount = $order->getBaseGrandTotal();
+            if (isset($response[self::RESPONSE_QR_CODES])) {
+                $paymentParentId = $response[self::RESPONSE_QR_CODES][0][self::RESPONSE_PAGBANK_ID];
+            }
 
-            if (isset($response[self::RESPONSE_CHARGES])) {
-                $charges = $response[self::RESPONSE_CHARGES];
-                $pagbankPayId = $charges[0][self::RESPONSE_PAGBANK_ID];
-                $paymentParentId = $pagbankPayId;
+            $this->findForPaymentStatus($response, $charges);
 
-                if (isset($response[self::RESPONSE_QR_CODES])) {
-                    $paymentParentId = $response[self::RESPONSE_QR_CODES][0][self::RESPONSE_PAGBANK_ID];
-                }
+            if ($this->finalStatus === 'PAID') {
+                $this->setPaymentPay($payment, $paymentParentId, $pagbankPayId, $amount);
+            }
 
-                $this->findForPaymentStatus($response, $charges);
+            if ($this->finalStatus === 'AUTH') {
+                $this->setPaymentAuth($payment);
+            }
 
-                if ($this->finalStatus === 'PAID') {
-                    $this->setPaymentPay($payment, $paymentParentId, $pagbankPayId, $amount);
-                }
+            if ($this->finalStatus === 'CANCEL') {
+                $this->setPaymentDeny($payment, $paymentParentId, $pagbankPayId, $amount);
+            }
 
-                if ($this->finalStatus === 'AUTH') {
-                    $this->setPaymentAuth($payment);
-                }
-
-                if ($this->finalStatus === 'CANCEL') {
-                    $this->setPaymentDeny($payment, $paymentParentId, $pagbankPayId, $amount);
-                    $order->isPaymentReview(0);
-                }
-
-                if ($this->finalStatus === 'WAITING') {
-                    $this->setPaymentWaiting($payment);
-                }
+            if ($this->finalStatus === 'WAITING') {
+                $this->setPaymentWaiting($payment);
             }
         }
     }
@@ -196,20 +187,28 @@ class FetchPaymentHandler implements HandlerInterface
     }
 
     /**
-     * Set Payment Auth.
+     * Set Payment Waiting.
      *
-     * @param InfoInterface $payment
+     * @param \Magento\Payment\Model\InfoInterface $payment
      *
      * @return void
      */
     public function setPaymentWaiting($payment)
     {
         $order = $payment->getOrder();
+        
+        if ($order->getState() === Order::STATE_PAYMENT_REVIEW 
+            || $order->getState() === Order::STATE_PROCESSING
+        ) {
+            return;
+        }
+        
         $payment->setIsTransactionApproved(false);
         $payment->setIsTransactionDenied(false);
         $payment->setIsTransactionPending(true);
         $payment->setIsInProcess(false);
         $payment->setIsTransactionClosed(false);
+        
         $comment = __('Awaiting payment.');
         $order->addStatusHistoryComment($comment, $payment->getOrder()->getStatus());
         $order->save();
@@ -218,7 +217,7 @@ class FetchPaymentHandler implements HandlerInterface
     /**
      * Set Payment Auth.
      *
-     * @param InfoInterface $payment
+     * @param \Magento\Payment\Model\InfoInterface $payment
      *
      * @return void
      */
@@ -226,71 +225,119 @@ class FetchPaymentHandler implements HandlerInterface
     {
         $order = $payment->getOrder();
 
-        if ($order->getState() !== Order::STATE_PAYMENT_REVIEW) {
-            $payment->setIsTransactionApproved(false);
-            $payment->setIsTransactionDenied(false);
-            $payment->setIsInProcess(false);
-            $order->setStatus('payment_review');
-            $comment = __('Awaiting payment review.');
-            $order->addStatusHistoryComment($comment, $payment->getOrder()->getStatus());
+        if ($order->getState() === Order::STATE_PAYMENT_REVIEW) {
+            return;
         }
+        
+        $payment->setIsTransactionApproved(false);
+        $payment->setIsTransactionDenied(false);
+        $payment->setIsInProcess(false);
+        
+        $order->setState(Order::STATE_PAYMENT_REVIEW)
+              ->setStatus('payment_review');
+        
+        $comment = __('Awaiting payment review.');
+        $order->addStatusHistoryComment($comment);
+        $order->save();
     }
 
     /**
      * Set Payment Pay.
      *
-     * @param InfoInterface $payment
-     * @param string        $paymentParentId
-     * @param string        $pagbankPayId
-     * @param string        $amount
+     * @param \Magento\Payment\Model\InfoInterface $payment
+     * @param string $paymentParentId
+     * @param string $pagbankPayId
+     * @param string $amount
      *
      * @return void
      */
     public function setPaymentPay($payment, $paymentParentId, $pagbankPayId, $amount)
     {
         $order = $payment->getOrder();
-        $payment->setIsInProcess(true);
+        
+        if ($order->getState() !== 'new' && $order->getState() !== 'payment_review') {
+            return;
+        }
+        
+        $captureTransactionId = $pagbankPayId . '-capture';
+        
+        if ($payment->getTransaction($captureTransactionId)) {
+            return;
+        }
+        
+        if ($order->hasInvoices()) {
+            foreach ($order->getInvoiceCollection() as $invoice) {
+                if ($invoice->getState() === \Magento\Sales\Model\Order\Invoice::STATE_PAID) {
+                    return;
+                }
+            }
+        }
+        
+        $payment->setTransactionId($captureTransactionId);
+        $payment->setParentTransactionId($paymentParentId);
         $payment->setIsTransactionApproved(true);
         $payment->setIsTransactionDenied(false);
+        $payment->setIsInProcess(true);
         $payment->setIsTransactionClosed(true);
-        if ($order->getState() === 'new' || $order->getState() === 'payment_review') {
-            $payment->setTransactionId($pagbankPayId.'-capture');
-            $payment->setParentTransactionId($paymentParentId);
-            $payment->registerAuthorizationNotification($amount);
-            $payment->registerCaptureNotification($amount);
-            $payment->setShouldCloseParentTransaction(true);
-            $payment->setAmountAuthorized($amount);
-            $invoice = $payment->getCreatedInvoice();
-            if ($invoice && !$invoice->getEmailSent()) {
+        $payment->setShouldCloseParentTransaction(true);
+        
+        // $payment->registerAuthorizationNotification($amount);
+        $payment->registerCaptureNotification($amount);
+        $payment->setAmountAuthorized($amount);
+        
+        $invoice = $payment->getCreatedInvoice();
+        if ($invoice) {
+            if (!$invoice->getEmailSent()) {
                 $this->invoiceSender->send($invoice, false);
             }
-            $order->save();
+            
+            $order->setState(Order::STATE_PROCESSING)
+                  ->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_PROCESSING))
+                  ->addStatusHistoryComment(__('Payment confirmed by PagBank.'));
         }
+        
+        $order->save();
     }
 
     /**
      * Set Payment Deny.
      *
-     * @param InfoInterface $payment
-     * @param string        $paymentParentId
-     * @param string        $pagbankPayId
-     * @param string        $amount
+     * @param \Magento\Payment\Model\InfoInterface $payment
+     * @param string $paymentParentId
+     * @param string $pagbankPayId
+     * @param string $amount
      *
      * @return void
      */
     public function setPaymentDeny($payment, $paymentParentId, $pagbankPayId, $amount)
     {
-        $payment->setPreparedMessage(__('Order Canceled.'));
-        $payment->setTransactionId($pagbankPayId.'-void');
+        $order = $payment->getOrder();
+        
+        if ($order->getState() === Order::STATE_CANCELED) {
+            return;
+        }
+        
+        $voidTransactionId = $pagbankPayId . '-void';
+        
+        if ($payment->getTransaction($voidTransactionId)) {
+            return;
+        }
+        
+        $payment->setTransactionId($voidTransactionId);
         $payment->setParentTransactionId($paymentParentId);
-        $payment->registerVoidNotification($amount);
+        $payment->setPreparedMessage(__('Order Canceled.'));
         $payment->setIsTransactionApproved(false);
         $payment->setIsTransactionDenied(true);
         $payment->setIsTransactionPending(false);
         $payment->setIsInProcess(false);
         $payment->setIsTransactionClosed(true);
         $payment->setShouldCloseParentTransaction(true);
+        
+        $payment->registerVoidNotification($amount);
         $payment->setAmountCanceled($amount);
         $payment->setBaseAmountCanceled($amount);
+        
+        $order->registerCancellation(__('Payment denied by PagBank.'), false);
+        $order->save();
     }
 }

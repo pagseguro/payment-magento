@@ -10,16 +10,14 @@
 
 namespace PagBank\PaymentMagento\Gateway\Response;
 
-use Magento\Framework\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
-use Magento\Payment\Model\InfoInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
-use PagBank\PaymentMagento\Gateway\Config\Config;
 
 /**
- * Fetch Two Card Payment Handler - Payment query response flow for two card payments.
+ * Class Fetch Two Card Payment Handler - Reply Flow for Fetch Two Cards.
  */
 class FetchTwoCardPaymentHandler implements HandlerInterface
 {
@@ -29,22 +27,17 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
     public const RESULT_CODE = 'RESULT_CODE';
 
     /**
+     * Response Pay Charges - Block name.
+     */
+    public const RESPONSE_CHARGES = 'charges';
+
+    /**
      * Response Pay PagBank Id - Block Name.
      */
     public const RESPONSE_PAGBANK_ID = 'id';
 
     /**
-     * Response Pay Charges - Block Name.
-     */
-    public const RESPONSE_CHARGES = 'charges';
-
-    /**
-     * Response Charge Id - Block Name.
-     */
-    public const RESPONSE_CHARGE_ID = 'id';
-
-    /**
-     * Response Pay Status - Block Name.
+     * Response Pay Status - Block name.
      */
     public const RESPONSE_STATUS = 'status';
 
@@ -54,9 +47,9 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
     public const RESPONSE_STATUS_PAID = 'PAID';
 
     /**
-     * Response Pay Status Denied - Value.
+     * Response Pay Status Canceled - Value.
      */
-    public const RESPONSE_STATUS_DENIED = 'DENIED';
+    public const RESPONSE_STATUS_CANCELED = 'CANCELED';
 
     /**
      * Response Pay Status Declined - Value.
@@ -64,12 +57,7 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
     public const RESPONSE_STATUS_DECLINED = 'DECLINED';
 
     /**
-     * Response Pay Status Canceled - Value.
-     */
-    public const RESPONSE_STATUS_CANCELED = 'CANCELED';
-
-    /**
-     * Response Pay Status Waiting - Value.
+     * Response Pay Status Waiting - Block name.
      */
     public const RESPONSE_STATUS_WAITING = 'WAITING';
 
@@ -79,35 +67,23 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
     public const RESPONSE_AUTHORIZED = 'AUTHORIZED';
 
     /**
-     * Response Amount - Block name.
-     */
-    public const RESPONSE_AMOUNT = 'amount';
-
-    /**
-     * Response Amount Value - Block name.
-     */
-    public const RESPONSE_AMOUNT_VALUE = 'value';
-
-    /**
      * @var InvoiceSender
      */
     protected $invoiceSender;
 
     /**
-     * @var Config
+     * @var string
      */
-    protected $config;
+    protected $finalStatus;
 
     /**
      * @param InvoiceSender $invoiceSender
-     * @param Config        $config
      */
     public function __construct(
-        InvoiceSender $invoiceSender,
-        Config $config
+        InvoiceSender $invoiceSender
     ) {
         $this->invoiceSender = $invoiceSender;
-        $this->config = $config;
+        $this->finalStatus = null;
     }
 
     /**
@@ -115,11 +91,9 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
      *
      * @param array $handlingSubject
      * @param array $response
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @return void
-     *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function handle(array $handlingSubject, array $response)
     {
@@ -129,237 +103,269 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
             throw new InvalidArgumentException('Payment data object should be provided');
         }
 
-        if (!$response[self::RESULT_CODE] || !isset($response[self::RESPONSE_CHARGES])) {
-            return;
-        }
-
-        $charges = $response[self::RESPONSE_CHARGES];
-        if (count($charges) !== 2) {
+        if (!$response[self::RESULT_CODE]) {
             return;
         }
 
         $paymentDO = $handlingSubject['payment'];
         $payment = $paymentDO->getPayment();
         $order = $payment->getOrder();
-        $finalStatus = $this->determineFinalStatus($charges);
 
-        switch ($finalStatus) {
-            case self::RESPONSE_STATUS_PAID:
-                $this->processPaymentPaid($payment, $charges, $order->getBaseGrandTotal());
-                break;
-            case self::RESPONSE_AUTHORIZED:
-                $this->processPaymentAuthorized($payment);
-                break;
-            case self::RESPONSE_STATUS_WAITING:
-                $this->processPaymentWaiting($payment, $charges);
-                break;
-            case self::RESPONSE_STATUS_CANCELED:
-            case self::RESPONSE_STATUS_DENIED:
-            case self::RESPONSE_STATUS_DECLINED:
-                $this->processPaymentDenied($payment, $charges, $order->getBaseGrandTotal());
-                break;
+        if (!isset($response[self::RESPONSE_CHARGES])) {
+            return;
+        }
+
+        $charges = $response[self::RESPONSE_CHARGES];
+        
+        if (count($charges) !== 2) {
+            return;
+        }
+
+        $this->findForPaymentStatus($charges);
+
+        if ($this->finalStatus === 'PAID') {
+            $this->processPaymentPaid($payment, $charges);
+        }
+
+        if ($this->finalStatus === 'AUTH') {
+            $this->processPaymentAuthorized($payment);
+        }
+
+        if ($this->finalStatus === 'CANCEL') {
+            $this->processPaymentCanceled($payment, $charges);
+        }
+
+        if ($this->finalStatus === 'WAITING') {
+            $this->processPaymentWaiting($payment);
         }
     }
 
     /**
-     * Determine final status from synchronized charges.
+     * Find for Payment Status.
      *
      * @param array $charges
-     * @return string
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function determineFinalStatus(array $charges): string
+    protected function findForPaymentStatus($charges)
     {
-        $firstStatus = $charges[0][self::RESPONSE_STATUS] ?? '';
-        $secondStatus = $charges[1][self::RESPONSE_STATUS] ?? '';
+        $statusPriority = [
+            self::RESPONSE_STATUS_PAID => 4,
+            self::RESPONSE_AUTHORIZED => 3,
+            self::RESPONSE_STATUS_WAITING => 2,
+            self::RESPONSE_STATUS_CANCELED => 1,
+            self::RESPONSE_STATUS_DECLINED => 1,
+        ];
 
-        // After sync, both charges should have same or compatible status
-        if ($firstStatus === $secondStatus) {
-            return $firstStatus;
+        $highestPriority = 0;
+        $this->finalStatus = null;
+
+        foreach ($charges as $charge) {
+            $status = $charge[self::RESPONSE_STATUS];
+            $priority = $statusPriority[$status] ?? 0;
+
+            if ($priority > $highestPriority) {
+                $highestPriority = $priority;
+                
+                switch ($status) {
+                    case self::RESPONSE_STATUS_PAID:
+                        $this->finalStatus = 'PAID';
+                        break;
+                    case self::RESPONSE_AUTHORIZED:
+                        $this->finalStatus = 'AUTH';
+                        break;
+                    case self::RESPONSE_STATUS_WAITING:
+                        $this->finalStatus = 'WAITING';
+                        break;
+                    case self::RESPONSE_STATUS_CANCELED:
+                    case self::RESPONSE_STATUS_DECLINED:
+                        $this->finalStatus = 'CANCEL';
+                        break;
+                }
+            }
         }
-
-        // If mixed AUTH and WAITING, return WAITING
-        if (($firstStatus === self::RESPONSE_AUTHORIZED && $secondStatus === self::RESPONSE_STATUS_WAITING) ||
-            ($firstStatus === self::RESPONSE_STATUS_WAITING && $secondStatus === self::RESPONSE_AUTHORIZED)) {
-            return self::RESPONSE_STATUS_WAITING;
-        }
-
-        // Default to first charge status
-        return $firstStatus;
     }
 
     /**
      * Process payment paid.
      *
-     * @param InfoInterface $payment
-     * @param array         $charges
-     * @param float         $amount
+     * @param \Magento\Payment\Model\InfoInterface $payment
+     * @param array $charges
      * @return void
-     * 
-     * @SuppressWarnings(PHPMD.ElseExpression)
      */
-    protected function processPaymentPaid(InfoInterface $payment, array $charges, float $amount): void
+    protected function processPaymentPaid($payment, $charges)
     {
         $order = $payment->getOrder();
-        $baseAmount = $order->getBaseGrandTotal();
         
-        if ($order->getState() === Order::STATE_NEW || $order->getState() === Order::STATE_PAYMENT_REVIEW) {
-            // Process each charge
-            foreach ($charges as $index => $charge) {
-                $chargeId = $charge[self::RESPONSE_CHARGE_ID] ?? '';
-                if (!$chargeId) {
-                    continue;
-                }
-                
-                $transactionId = $chargeId . '-capture';
-                
-                // Check if transaction already exists
-                if (!$payment->getTransaction($transactionId)) {
-                    // Set transaction for this charge
-                    $payment->setTransactionId($transactionId);
-                    $payment->setParentTransactionId($chargeId);
-                    
-                    // Register notifications for first charge only to avoid duplication
-                    if ($index === 0) {
-                        $payment->registerAuthorizationNotification($amount);
-                        $payment->registerCaptureNotification($amount);
-                        $payment->setIsTransactionApproved(true);
-                        $payment->setIsTransactionDenied(false);
-                        $payment->setIsInProcess(true);
-                        $payment->setAmountAuthorized($amount);
-                        $payment->setBaseAmountAuthorized($baseAmount);
-                    } else {
-                        // Add transaction manually for second charge
-                        $payment->setIsTransactionClosed(true);
-                        $payment->setShouldCloseParentTransaction(true);
-                        $payment->addTransaction(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_CAPTURE);
-                    }
+        if ($order->getState() !== 'new' && $order->getState() !== 'payment_review') {
+            return;
+        }
+        
+        if ($order->hasInvoices()) {
+            foreach ($order->getInvoiceCollection() as $invoice) {
+                if ($invoice->getState() === \Magento\Sales\Model\Order\Invoice::STATE_PAID) {
+                    return;
                 }
             }
+        }
+        
+        $amount = $order->getBaseGrandTotal();
+        $baseAmount = $order->getBaseGrandTotal();
+        $hasProcessedFirst = false;
+        
+        foreach ($charges as $index => $charge) {
+            $chargeId = $charge[self::RESPONSE_PAGBANK_ID] ?? '';
+            if (!$chargeId) {
+                continue;
+            }
             
-            // Set final transaction states
-            $payment->setIsTransactionClosed(true);
-            $payment->setShouldCloseParentTransaction(true);
+            $transactionId = $chargeId . '-capture';
             
-            $invoice = $payment->getCreatedInvoice();
-            if ($invoice && !$invoice->getEmailSent()) {
+            if ($payment->getTransaction($transactionId)) {
+                continue;
+            }
+            
+            $payment->setTransactionId($transactionId);
+            $payment->setParentTransactionId($chargeId);
+            
+            if (!$hasProcessedFirst) {
+                $payment->setIsTransactionApproved(true);
+                $payment->setIsTransactionDenied(false);
+                $payment->setIsInProcess(true);
+                
+                // $payment->registerAuthorizationNotification($amount);
+                $payment->registerCaptureNotification($amount);
+                $payment->setAmountAuthorized($amount);
+                $payment->setBaseAmountAuthorized($baseAmount);
+                
+                $hasProcessedFirst = true;
+            } else {
+                $payment->setIsTransactionClosed(true);
+                $payment->setShouldCloseParentTransaction(true);
+                $payment->addTransaction(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_CAPTURE);
+            }
+        }
+        
+        $payment->setIsTransactionClosed(true);
+        $payment->setShouldCloseParentTransaction(true);
+        
+        $invoice = $payment->getCreatedInvoice();
+        if ($invoice) {
+            if (!$invoice->getEmailSent()) {
                 $this->invoiceSender->send($invoice, false);
             }
             
-            $comment = __('Payment confirmed for two credit cards.');
-            $order->addStatusHistoryComment($comment);
-            $order->save();
+            $order->setState(Order::STATE_PROCESSING)
+                  ->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_PROCESSING))
+                  ->addStatusHistoryComment(__('Payment confirmed for two credit cards.'));
         }
+        
+        $order->save();
     }
 
     /**
      * Process payment authorized.
      *
-     * @param InfoInterface $payment
+     * @param \Magento\Payment\Model\InfoInterface $payment
      * @return void
      */
-    protected function processPaymentAuthorized(InfoInterface $payment): void
+    protected function processPaymentAuthorized($payment)
     {
         $order = $payment->getOrder();
         
-        if ($order->getState() !== Order::STATE_PAYMENT_REVIEW) {
-
-            $order->setState(Order::STATE_PAYMENT_REVIEW)
-                  ->setStatus('payment_review');
-            
-            $comment = __('Payment authorized for two credit cards. Awaiting capture.');
-            $order->addStatusHistoryComment($comment);
-            $order->save();
+        if ($order->getState() === Order::STATE_PAYMENT_REVIEW) {
+            return;
         }
-    }
 
-    /**
-     * Process payment waiting.
-     *
-     * @param InfoInterface $payment
-     * @param array         $charges
-     * @return void
-     */
-    protected function processPaymentWaiting(InfoInterface $payment, array $charges): void
-    {
-        $order = $payment->getOrder();
+        $order->setState(Order::STATE_PAYMENT_REVIEW)
+              ->setStatus('payment_review');
         
-        // Process each charge
-        foreach ($charges as $charge) {
-            $chargeId = $charge[self::RESPONSE_CHARGE_ID] ?? '';
-            if (!$chargeId) {
-                continue;
-            }
-            
-            if (!$payment->getTransaction($chargeId)) {
-                $payment->setTransactionId($chargeId);
-                $payment->setIsTransactionPending(true);
-                $payment->setIsTransactionClosed(false);
-                $payment->addTransaction(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_ORDER);
-            }
-        }
-        
-        $order->setState(Order::STATE_PENDING_PAYMENT)
-              ->setStatus('pending_payment');
-        
-        $comment = __('Awaiting payment confirmation for two credit cards.');
+        $comment = __('Payment authorized for two credit cards. Awaiting capture.');
         $order->addStatusHistoryComment($comment);
         $order->save();
     }
 
     /**
-     * Process payment denied.
+     * Process payment waiting.
      *
-     * @param InfoInterface $payment
-     * @param array         $charges
-     * @param float         $amount
+     * @param \Magento\Payment\Model\InfoInterface $payment
      * @return void
-     *
-     * @SuppressWarnings(PHPMD.ElseExpression)
      */
-    protected function processPaymentDenied(InfoInterface $payment, array $charges, float $amount): void
+    protected function processPaymentWaiting($payment)
     {
         $order = $payment->getOrder();
-        $baseAmount = $order->getBaseGrandTotal();
         
-        // Process each charge
+        if ($order->getState() === Order::STATE_PAYMENT_REVIEW 
+            || $order->getState() === Order::STATE_PROCESSING
+        ) {
+            return;
+        }
+        
+        $payment->setIsTransactionApproved(false);
+        $payment->setIsTransactionDenied(false);
+        $payment->setIsTransactionPending(true);
+        $payment->setIsInProcess(false);
+        $payment->setIsTransactionClosed(false);
+        
+        $comment = __('Awaiting payment for two credit cards.');
+        $order->addStatusHistoryComment($comment, $payment->getOrder()->getStatus());
+        $order->save();
+    }
+
+    /**
+     * Process payment canceled.
+     *
+     * @param \Magento\Payment\Model\InfoInterface $payment
+     * @param array $charges
+     * @return void
+     */
+    protected function processPaymentCanceled($payment, $charges)
+    {
+        $order = $payment->getOrder();
+        
+        if ($order->getState() === Order::STATE_CANCELED) {
+            return;
+        }
+        
+        $amount = $order->getBaseGrandTotal();
+        $hasProcessedFirst = false;
+        
         foreach ($charges as $index => $charge) {
-            $chargeId = $charge[self::RESPONSE_CHARGE_ID] ?? '';
+            $chargeId = $charge[self::RESPONSE_PAGBANK_ID] ?? '';
             if (!$chargeId) {
                 continue;
             }
             
-            $transactionId = $chargeId . '-void';
+            $voidTransactionId = $chargeId . '-void';
             
-            // Check if transaction already exists
-            if (!$payment->getTransaction($transactionId)) {
-                $payment->setTransactionId($transactionId);
-                $payment->setParentTransactionId($chargeId);
-
-                // Register void for first charge only to avoid duplication
-                if ($index === 0) {
-                    $payment->registerVoidNotification($amount);
-                    $payment->setIsTransactionApproved(false);
-                    $payment->setIsTransactionDenied(true);
-                    $payment->setIsInProcess(false);
-                    $payment->setAmountCanceled($amount);
-                    $payment->setBaseAmountCanceled($baseAmount);
-                } else {
-                    // Add transaction manually for second charge
-                    $payment->setIsTransactionClosed(true);
-                    $payment->setShouldCloseParentTransaction(true);
-                    $payment->addTransaction(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_VOID);
-                }
+            if ($payment->getTransaction($voidTransactionId)) {
+                continue;
+            }
+            
+            $payment->setTransactionId($voidTransactionId);
+            $payment->setParentTransactionId($chargeId);
+            
+            if (!$hasProcessedFirst) {
+                $payment->setPreparedMessage(__('Order Canceled - Two Cards.'));
+                $payment->setIsTransactionApproved(false);
+                $payment->setIsTransactionDenied(true);
+                $payment->setIsTransactionPending(false);
+                $payment->setIsInProcess(false);
+                $payment->setIsTransactionClosed(true);
+                $payment->setShouldCloseParentTransaction(true);
+                
+                $payment->registerVoidNotification($amount);
+                $payment->setAmountCanceled($amount);
+                $payment->setBaseAmountCanceled($amount);
+                
+                $hasProcessedFirst = true;
+            } else {
+                $payment->setIsTransactionClosed(true);
+                $payment->setShouldCloseParentTransaction(true);
+                $payment->addTransaction(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_VOID);
             }
         }
         
-        // Set final transaction states
-        $payment->setIsTransactionClosed(true);
-        $payment->setShouldCloseParentTransaction(true);
-        
-        $order->cancel();
-        
-        $comment = __('Payment denied for two credit cards.');
-        $order->addStatusHistoryComment($comment);
+        $order->registerCancellation(__('Payment denied by PagBank for two credit cards.'), false);
         $order->save();
     }
 }

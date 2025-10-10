@@ -122,7 +122,7 @@ Este é o processo de autenticação 3DS, um processo seguro, como você pode ve
                 <group>pagbank_group</group>
                 <model>PagBankTwoCcFacade</model>
                 <order_status>pending</order_status>
-                <payment_action>authorize_capture</payment_action>
+                <payment_action>authorize</payment_action>
                 <currency>BRL</currency>
                 <is_gateway>1</is_gateway>
                 <can_initialize>1</can_initialize>
@@ -141,10 +141,10 @@ Este é o processo de autenticação 3DS, um processo seguro, como você pode ve
                 <can_fetch_transaction_info>1</can_fetch_transaction_info>
                 <can_fetch_transaction_information>1</can_fetch_transaction_information>
                 <paymentInfoKeys>first_cc_installments,first_cc_type,first_cc_number,first_cc_exp_month,first_cc_exp_year,first_cc_cardholder_name,first_payer_tax_id,first_payer_phone,first_three_ds_session,first_three_ds_auth,first_three_ds_auth_status,first_cc_authorization_code,first_cc_nsu,first_cc_amount,second_cc_installments,second_cc_type,second_cc_number,second_cc_exp_month,second_cc_exp_year,second_cc_cardholder_name,second_payer_tax_id,second_payer_phone,second_three_ds_session,second_three_ds_auth,second_three_ds_auth_status,second_cc_authorization_code,second_cc_nsu,second_cc_amount</paymentInfoKeys>
-<privateInfoKeys>first_three_ds_session,first_three_ds_auth,first_three_ds_auth_status,first_cc_authorization_code,first_cc_nsu,second_three_ds_session,second_three_ds_auth,second_three_ds_auth_status,second_cc_authorization_code,second_cc_nsu</privateInfoKeys>
+                <privateInfoKeys>first_three_ds_session,first_three_ds_auth,first_three_ds_auth_status,first_cc_authorization_code,first_cc_nsu,second_three_ds_session,second_three_ds_auth,second_three_ds_auth_status,second_cc_authorization_code,second_cc_nsu</privateInfoKeys>
                 <cctypes_mapper><![CDATA[{"AMEX":"AE","ELO":"ELO","MASTERCARD":"MC","VISA":"VI","HIPERCARD":"HC","AURA":"AU","DINNERS":"DN"}]]></cctypes_mapper>
                 <active>1</active>
-                <title>Dois Cartões</title>
+                <title>Pague com 2 Cartões</title>
                 <cvv_enabled>1</cvv_enabled>
                 <cctypes>HC,ELO,AE,VI,MC,DN,AU</cctypes>
                 <max_installment>18</max_installment>

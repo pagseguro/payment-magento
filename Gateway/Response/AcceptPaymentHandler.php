@@ -13,6 +13,7 @@ namespace PagBank\PaymentMagento\Gateway\Response;
 use InvalidArgumentException;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use Magento\Sales\Model\Order;
 
 /**
  * Class Accept Payment Handler - Reply Flow for Accept Cc.
@@ -40,30 +41,42 @@ class AcceptPaymentHandler implements HandlerInterface
             throw new InvalidArgumentException('Payment data object should be provided');
         }
 
-        if ($response['RESULT_CODE']) {
-            $paymentDO = $handlingSubject['payment'];
-
-            $payment = $paymentDO->getPayment();
-
-            $order = $payment->getOrder();
-
-            $amount = $order->getTotalDue();
-
-            $baseAmount = $order->getBaseTotalDue();
-
-            $pagbankPayId = $response[self::RESPONSE_PAGBANK_ID];
-
-            $payment->setParentTransactionId($pagbankPayId);
-            $payment->registerAuthorizationNotification($amount);
-            $payment->registerCaptureNotification($amount);
-            $payment->setIsTransactionApproved(true);
-            $payment->setIsTransactionDenied(false);
-            $payment->setIsInProcess(true);
-            $payment->setIsTransactionClosed(true);
-            $payment->setShouldCloseParentTransaction(true);
-            $payment->setAmountAuthorized($amount);
-            $payment->setBaseAmountAuthorized($baseAmount);
-            $payment->setShouldCloseParentTransaction(true);
+        if (!$response['RESULT_CODE']) {
+            return;
         }
+
+        $paymentDO = $handlingSubject['payment'];
+        $payment = $paymentDO->getPayment();
+        $order = $payment->getOrder();
+
+        $amount = $order->getTotalDue();
+        $baseAmount = $order->getBaseTotalDue();
+        $pagbankPayId = $response[self::RESPONSE_PAGBANK_ID];
+        $captureTransactionId = $pagbankPayId . '-capture';
+
+        if ($payment->getTransaction($captureTransactionId)) {
+            return;
+        }
+
+        if ($order->hasInvoices()) {
+            foreach ($order->getInvoiceCollection() as $invoice) {
+                if ($invoice->getState() === \Magento\Sales\Model\Order\Invoice::STATE_PAID) {
+                    return;
+                }
+            }
+        }
+
+        $payment->setTransactionId($captureTransactionId);
+        $payment->setParentTransactionId($pagbankPayId);
+        $payment->setIsTransactionApproved(true);
+        $payment->setIsTransactionDenied(false);
+        $payment->setIsInProcess(true);
+        $payment->setIsTransactionClosed(true);
+        $payment->setShouldCloseParentTransaction(true);
+        
+        // $payment->registerAuthorizationNotification($amount);
+        $payment->registerCaptureNotification($amount);
+        $payment->setAmountAuthorized($amount);
+        $payment->setBaseAmountAuthorized($baseAmount);
     }
 }

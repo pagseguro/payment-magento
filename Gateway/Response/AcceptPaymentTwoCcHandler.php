@@ -73,6 +73,14 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
             throw new InvalidArgumentException('Two capture results expected for two card payment');
         }
 
+        if ($order->hasInvoices()) {
+            foreach ($order->getInvoiceCollection() as $invoice) {
+                if ($invoice->getState() === \Magento\Sales\Model\Order\Invoice::STATE_PAID) {
+                    return;
+                }
+            }
+        }
+
         $allCaptures = true;
         foreach ($captureResults as $captureResult) {
             if (!$captureResult['success']) {
@@ -82,38 +90,45 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
         }
 
         if ($allCaptures) {
+            $hasProcessedFirstCard = false;
+            
             foreach ($captureResults as $index => $captureResult) {
                 $paymentId = $captureResult['payment_id'];
                 $captureTransactionId = $paymentId . '-capture';
                 
-                if (!$payment->getTransaction($captureTransactionId)) {
-                    $payment->setTransactionId($captureTransactionId);
-                    $payment->setParentTransactionId($paymentId);
+                if ($payment->getTransaction($captureTransactionId)) {
+                    continue;
+                }
+                
+                $payment->setTransactionId($captureTransactionId);
+                $payment->setParentTransactionId($paymentId);
+                
+                if (!$hasProcessedFirstCard) {
+                    $payment->setIsTransactionApproved(true);
+                    $payment->setIsTransactionDenied(false);
+                    $payment->setIsInProcess(true);
                     
-                    if ($index === 0) {
-                        $payment->registerAuthorizationNotification($amount);
-                        $payment->registerCaptureNotification($amount);
-                        $payment->setIsTransactionApproved(true);
-                        $payment->setIsTransactionDenied(false);
-                        $payment->setIsInProcess(true);
-                        $payment->setAmountAuthorized($amount);
-                        $payment->setBaseAmountAuthorized($baseAmount);
-                    } else {
-                        $payment->setIsTransactionClosed(true);
-                        $payment->setShouldCloseParentTransaction(true);
-                        
-                        $payment->setTransactionAdditionalInfo(
-                            Transaction::RAW_DETAILS,
-                            [
-                                'card_index' => $index + 1,
-                                'authorized_amount' => $captureResult['authorized_amount'],
-                                'payment_id' => $paymentId,
-                                'capture_data' => $captureResult['data'] ?? []
-                            ]
-                        );
-                        
-                        $payment->addTransaction(Transaction::TYPE_CAPTURE);
-                    }
+                    // $payment->registerAuthorizationNotification($amount);
+                    $payment->registerCaptureNotification($amount);
+                    $payment->setAmountAuthorized($amount);
+                    $payment->setBaseAmountAuthorized($baseAmount);
+                    
+                    $hasProcessedFirstCard = true;
+                } else {
+                    $payment->setIsTransactionClosed(true);
+                    $payment->setShouldCloseParentTransaction(true);
+                    
+                    $payment->setTransactionAdditionalInfo(
+                        Transaction::RAW_DETAILS,
+                        [
+                            'card_index' => $index + 1,
+                            'authorized_amount' => $captureResult['authorized_amount'] ?? 0,
+                            'payment_id' => $paymentId,
+                            'capture_data' => $captureResult['data'] ?? []
+                        ]
+                    );
+                    
+                    $payment->addTransaction(Transaction::TYPE_CAPTURE);
                 }
             }
             

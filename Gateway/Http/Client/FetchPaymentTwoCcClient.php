@@ -12,8 +12,10 @@ declare(strict_types=1);
 
 namespace PagBank\PaymentMagento\Gateway\Http\Client;
 
+use Magento\Framework\Lock\LockManagerInterface;
 use Magento\Payment\Gateway\Http\ClientInterface;
 use Magento\Payment\Gateway\Http\TransferInterface;
+use Magento\Payment\Model\Method\Logger;
 
 /**
  * Class Fetch Payment Client - Fetch Transaction in PagBank applying the status.
@@ -31,12 +33,28 @@ class FetchPaymentTwoCcClient implements ClientInterface
     protected $api;
 
     /**
+     * @var LockManagerInterface
+     */
+    private $lockManager;
+
+    /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * @param ApiClient $api
+     * @param LockManagerInterface $lockManager
+     * @param Logger $logger
      */
     public function __construct(
-        ApiClient $api
+        ApiClient $api,
+        LockManagerInterface $lockManager,
+        Logger $logger
     ) {
         $this->api = $api;
+        $this->lockManager = $lockManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -53,25 +71,41 @@ class FetchPaymentTwoCcClient implements ClientInterface
         $paymentId = $request['payment_id'];
         $path = 'orders/'.$paymentId;
 
-        $data = $this->api->sendGetRequest($transferObject, $path);
+        try {
+            $data = $this->api->sendGetRequest($transferObject, $path);
 
-        if (!is_array($data) || !isset($data['charges']) || count($data['charges']) !== 2) {
-            return $response;
-        }
+            if (!is_array($data) || !isset($data['charges']) || count($data['charges']) !== 2) {
+                return $response;
+            }
 
-        // Sync charge statuses
-        $this->synchronizeCharges($data['charges'], $transferObject);
-        
-        // Re-fetch order after synchronization
-        $data = $this->api->sendGetRequest($transferObject, $path);
+            // Sync charge statuses
+            $this->synchronizeCharges($data['charges'], $transferObject);
+            
+            // Re-fetch order after synchronization
+            $data = $this->api->sendGetRequest($transferObject, $path);
 
-        if (is_array($data)) {
-            $response = array_merge(
-                [
-                    self::RESULT_CODE  => (isset($data['id'])) ? 1 : 0,
-                ],
-                $data
-            );
+            if (is_array($data)) {
+                $response = array_merge(
+                    [
+                        self::RESULT_CODE  => (isset($data['id'])) ? 1 : 0,
+                    ],
+                    $data
+                );
+            }
+        } finally {
+            // Libera o lock após todos os fetches, se existir
+            if (isset($request['order_id'])) {
+                $orderId = $request['order_id'];
+                $lockName = 'pagbank_order_' . $orderId;
+                
+                $this->lockManager->unlock($lockName);
+                
+                $this->logger->debug([
+                    'message' => 'Lock released after API fetch (two cc)',
+                    'lock_name' => $lockName,
+                    'order_id' => $orderId,
+                ]);
+            }
         }
 
         return $response;
