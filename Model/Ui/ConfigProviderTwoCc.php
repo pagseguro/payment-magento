@@ -173,14 +173,14 @@ class ConfigProviderTwoCc implements ConfigProviderInterface
     public function getLogo()
     {
         $logo = [];
-        $asset = $this->ccConfig->createAsset('PagBank_PaymentMagento::images/cc/logo.svg');
+        $asset = $this->ccConfig->createAsset('PagBank_PaymentMagento::images/two-cc/logo.svg');
         $placeholder = $this->assetSource->findSource($asset);
         if ($placeholder) {
             $logo = [
                 'url'    => $asset->getUrl(),
                 'width'  => '48px',
                 'height' => '32px',
-                'title'  => __('Cartão de Crédito - PagBank'),
+                'title'  => __('Pague com 2 cartões - PagBank'),
             ];
         }
 

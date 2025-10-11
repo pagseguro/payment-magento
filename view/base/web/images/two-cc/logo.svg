@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="72 0.5 59 39" width="59" height="39" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background rounded rectangle -->
+  <rect x="72.543" y="0.982" width="57.915" height="38.036" rx="3.5" fill="#f4f7f9" stroke="#D4D4D4" style=""/>
+  
+  <!-- First card (full view - properly aligned) -->
+  <g transform="translate(76, 12)" fill="none" stroke="#434343" stroke-width="1">
+    <rect x="0" y="0" width="19" height="15" rx="2" fill="#f4f7f9"/>
+    <!-- Card stripe -->
+    <rect x="0" y="3.2" width="19" height="2.2" fill="#434343"/>
+    <!-- Card chip representation -->
+    <rect x="3" y="7.5" width="5" height="1.4" fill="#434343"/>
+  </g>
+  
+  <!-- Plus sign (centered between cards) -->
+  <g transform="translate(102, 19.5)">
+    <circle cx="0" cy="0" r="4" fill="#434343" stroke="#434343" stroke-width="1"/>
+    <line x1="-2" y1="0" x2="2" y2="0" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="0" y1="-2" x2="0" y2="2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Second card (properly spaced) -->
+  <g transform="translate(109, 12)" fill="none" stroke="#434343" stroke-width="1">
+    <rect x="0" y="0" width="19" height="15" rx="2" fill="#f4f7f9"/>
+    <!-- Card stripe -->
+    <rect x="0" y="3.2" width="19" height="2.2" fill="#434343"/>
+    <!-- Card chip representation -->
+    <rect x="3" y="7.5" width="5" height="1.4" fill="#434343"/>
+  </g>
+</svg>
