@@ -50,18 +50,18 @@ class GuestListInstallmentsManagement implements GuestListInstallmentsManagement
     /**
      * Generate List Installments.
      *
-     * @param string                                                           $cartId
-     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface        $creditCardBin
-     * @param \PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface  $cardTypeTransaction
-     * @param \PagBank\PaymentMagento\Api\Data\CustomAmountInterface|null    $customAmount
-     * @param \PagBank\PaymentMagento\Api\Data\CardIndexInterface|null       $cardIndex
+     * @param string                                                                $cartId
+     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface               $creditCardBin
+     * @param \PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface|null    $cardTypeTransaction
+     * @param \PagBank\PaymentMagento\Api\Data\CustomAmountInterface|null           $customAmount
+     * @param \PagBank\PaymentMagento\Api\Data\CardIndexInterface|null              $cardIndex
      *
      * @return array
      */
     public function generateListInstallments(
         $cartId,
         CreditCardBinInterface $creditCardBin,
-        CardTypeTransactionInterface $cardTypeTransaction = null,
+        ?CardTypeTransactionInterface $cardTypeTransaction = null,
         ?CustomAmountInterface $customAmount = null,
         ?CardIndexInterface $cardIndex = null
     ) {

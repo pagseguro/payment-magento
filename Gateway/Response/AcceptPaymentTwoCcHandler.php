@@ -152,7 +152,6 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
                     __('Failed to capture payment for one or both credit cards.'),
                     false
                 );
-
                 throw new LocalizedException(
                     __('Failed to capture payment for all cards')
                 );

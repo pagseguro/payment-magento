@@ -75,11 +75,11 @@ class ListInstallmentsManagement implements ListInstallmentsManagementInterface
     /**
      * Generate List Installments.
      *
-     * @param int                                                           $cartId
-     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface       $creditCardBin
-     * @param \PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface $cardTypeTransaction
-     * @param \PagBank\PaymentMagento\Api\Data\CustomAmountInterface|null   $customAmount
-     * @param \PagBank\PaymentMagento\Api\Data\CardIndexInterface|null      $cardIndex
+     * @param int                                                                   $cartId
+     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface               $creditCardBin
+     * @param \PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface|null    $cardTypeTransaction
+     * @param \PagBank\PaymentMagento\Api\Data\CustomAmountInterface|null           $customAmount
+     * @param \PagBank\PaymentMagento\Api\Data\CardIndexInterface|null              $cardIndex
      *
      * @throws CouldNotSaveException
      * @throws NoSuchEntityException
@@ -89,7 +89,7 @@ class ListInstallmentsManagement implements ListInstallmentsManagementInterface
     public function generateListInstallments(
         $cartId,
         CreditCardBinInterface $creditCardBin,
-        CardTypeTransactionInterface $cardTypeTransaction = null,
+        ?CardTypeTransactionInterface $cardTypeTransaction = null,
         ?CustomAmountInterface $customAmount = null,
         ?CardIndexInterface $cardIndex = null
     ) {
@@ -124,9 +124,6 @@ class ListInstallmentsManagement implements ListInstallmentsManagementInterface
 
         if ($cardIndexValue === 1) {
             $amount = $customAmountValue;
-            // o problema é que o currentInterest precisa ser zerado no contexto do cartão 1
-            // para zerar o valor do juros no total do pedido
-            // eu tenho que agora passar para o setInterest.
         }
 
         if ($cardIndexValue === 2) {
