@@ -142,7 +142,6 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
                 
                 $payment->setIsTransactionClosed(true);
                 $payment->setShouldCloseParentTransaction(true);
-
                 $order->addStatusHistoryComment(
                     __('Payment captured successfully for two credit cards.'),
                     false
@@ -151,7 +150,6 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
                 $payment->setIsTransactionApproved(false);
                 $payment->setIsTransactionDenied(true);
                 $payment->setIsInProcess(false);
-
                 $order->addStatusHistoryComment(
                     __('Failed to capture payment for one or both credit cards.'),
                     false
