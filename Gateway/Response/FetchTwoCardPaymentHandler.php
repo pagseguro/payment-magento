@@ -211,8 +211,8 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
         $amount = $order->getBaseGrandTotal();
         $baseAmount = $order->getBaseGrandTotal();
         $hasProcessedFirst = false;
-        
-        foreach ($charges as $_index => $charge) {
+
+        foreach ($charges as $charge) {
             $chargeId = $charge[self::RESPONSE_PAGBANK_ID] ?? '';
             if (!$chargeId) {
                 continue;
@@ -331,7 +331,7 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
         $amount = $order->getBaseGrandTotal();
         $hasProcessedFirst = false;
         
-        foreach ($charges as $_index => $charge) {
+        foreach ($charges as $charge) {
             $chargeId = $charge[self::RESPONSE_PAGBANK_ID] ?? '';
             if (!$chargeId) {
                 continue;

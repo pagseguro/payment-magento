@@ -16,6 +16,7 @@ use Magento\Payment\Gateway\Http\ClientInterface;
 use Magento\Payment\Gateway\Http\TransferInterface;
 use PagBank\PaymentMagento\Gateway\Request\TwoCreditCard\AuthTransactionIdTwoCcRequest;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Lock\LockManagerInterface;
 
 /**
  * Class Accept Payment Two Cc Client - Returns capture for two card payments.
@@ -58,17 +59,30 @@ class AcceptPaymentTwoCcClient implements ClientInterface
     public const CAPTURE_RESULTS = 'capture_results';
 
     /**
+     * Lock timeout in seconds.
+     */
+    private const LOCK_TIMEOUT = 360;
+
+    /**
      * @var ApiClient
      */
     protected $api;
 
     /**
+     * @var LockManagerInterface
+     */
+    private $lockManager;
+
+    /**
      * @param ApiClient $api
+     * @param LockManagerInterface $lockManager
      */
     public function __construct(
-        ApiClient $api
+        ApiClient $api,
+        LockManagerInterface $lockManager
     ) {
         $this->api = $api;
+        $this->lockManager = $lockManager;
     }
 
     /**
@@ -94,7 +108,6 @@ class AcceptPaymentTwoCcClient implements ClientInterface
 
         $request = $transferObject->getBody();
         
-        // Get both payment IDs from the request
         $paymentIds = $request[AuthTransactionIdTwoCcRequest::PAGBANK_PAYMENT_IDS] ?? [];
         $transactionAmounts = $request[AuthTransactionIdTwoCcRequest::TRANSACTION_AMOUNTS] ?? [];
         
@@ -104,72 +117,80 @@ class AcceptPaymentTwoCcClient implements ClientInterface
             );
         }
 
-        $allSuccess = true;
-        
-        // Capture each payment
-        foreach ($paymentIds as $index => $paymentId) {
-            $path = 'charges/' . $paymentId . '/capture';
+        $lockName = 'pagbank_accept_order_' . implode('_', $paymentIds);
+
+        if (!$this->lockManager->lock($lockName, self::LOCK_TIMEOUT)) {
+            return [
+                self::RESULT_CODE => 0,
+                self::CAPTURE_RESULTS => [],
+                'error' => __('Could not acquire lock for order processing')
+            ];
+        }
+
+        try {
+            $allSuccess = true;
             
-            // Build capture request with specific amount for this transaction
-            $captureRequest = [];
-            if (isset($transactionAmounts[$paymentId])) {
-                $captureRequest[AuthTransactionIdTwoCcRequest::AMOUNT] = $transactionAmounts[$paymentId];
+            foreach ($paymentIds as $index => $paymentId) {
+                $path = 'charges/' . $paymentId . '/capture';
+                
+                $captureRequest = [];
+                if (isset($transactionAmounts[$paymentId])) {
+                    $captureRequest[AuthTransactionIdTwoCcRequest::AMOUNT] = $transactionAmounts[$paymentId];
+                }
+                
+                $data = $this->api->sendPostRequest($transferObject, $path, $captureRequest);
+                
+                $captureResult = [
+                    'payment_id' => $paymentId,
+                    'index' => $index,
+                    'success' => false,
+                    'data' => $data,
+                    'authorized_amount' => 0
+                ];
+                
+                if (isset($data[self::RESPONSE_STATUS]) &&
+                    $data[self::RESPONSE_STATUS] === self::RESPONSE_STATUS_CONFIRMED
+                ) {
+                    $captureResult['success'] = true;
+                    
+                    if (isset($data[self::RESPONSE_AMOUNT][self::RESPONSE_AMOUNT_VALUE])) {
+                        $authorizedAmount = $data[self::RESPONSE_AMOUNT][self::RESPONSE_AMOUNT_VALUE] / 100;
+                        $captureResult['authorized_amount'] = $authorizedAmount;
+                        $totalAuthAmount += $authorizedAmount;
+                    } elseif (isset($transactionAmounts[$paymentId][AuthTransactionIdTwoCcRequest::AMOUNT_VALUE])) {
+                        $authorizedAmount = $transactionAmounts[$paymentId][AuthTransactionIdTwoCcRequest::AMOUNT_VALUE] / 100;
+                        $captureResult['authorized_amount'] = $authorizedAmount;
+                        $totalAuthAmount += $authorizedAmount;
+                    }
+                } else {
+                    $allSuccess = false;
+                }
+                
+                $captureResults[] = $captureResult;
             }
             
-            $data = $this->api->sendPostRequest($transferObject, $path, $captureRequest);
+            if ($allSuccess) {
+                $status = 1;
+            }
             
-            $captureResult = [
-                'payment_id' => $paymentId,
-                'index' => $index,
-                'success' => false,
-                'data' => $data,
-                'authorized_amount' => 0
+            $response = [
+                self::RESULT_CODE => $status,
+                self::CAPTURE_RESULTS => $captureResults,
+                'total_authorized_amount' => $totalAuthAmount,
+                'lock_name' => $lockName
             ];
             
-            if (isset($data[self::RESPONSE_STATUS]) &&
-                $data[self::RESPONSE_STATUS] === self::RESPONSE_STATUS_CONFIRMED
-            ) {
-                $captureResult['success'] = true;
-                
-                // Get the actual authorized amount from response
-                if (isset($data[self::RESPONSE_AMOUNT][self::RESPONSE_AMOUNT_VALUE])) {
-                    // Value from PagBank comes in cents
-                    $authorizedAmount = $data[self::RESPONSE_AMOUNT][self::RESPONSE_AMOUNT_VALUE] / 100;
-                    $captureResult['authorized_amount'] = $authorizedAmount;
-                    $totalAuthAmount += $authorizedAmount;
-                } elseif (isset($transactionAmounts[$paymentId][AuthTransactionIdTwoCcRequest::AMOUNT_VALUE])) {
-                    // Fallback to the requested amount if response doesn't include it
-                    $authorizedAmount = $transactionAmounts[$paymentId][AuthTransactionIdTwoCcRequest::AMOUNT_VALUE] / 100;
-                    $captureResult['authorized_amount'] = $authorizedAmount;
-                    $totalAuthAmount += $authorizedAmount;
+            if ($allSuccess && !empty($captureResults)) {
+                $lastCapture = end($captureResults);
+                if (is_array($lastCapture['data'])) {
+                    $response = array_merge($response, $lastCapture['data']);
                 }
-            } else {
-                $allSuccess = false;
             }
             
-            $captureResults[] = $captureResult;
+            return $response;
+        } catch (\Exception $e) {
+            $this->lockManager->unlock($lockName);
+            throw $e;
         }
-        
-        // Set overall status based on all captures
-        if ($allSuccess) {
-            $status = 1;
-        }
-        
-        // Build response
-        $response = [
-            self::RESULT_CODE => $status,
-            self::CAPTURE_RESULTS => $captureResults,
-            'total_authorized_amount' => $totalAuthAmount
-        ];
-        
-        // If both captures were successful, merge the last capture data
-        if ($allSuccess && !empty($captureResults)) {
-            $lastCapture = end($captureResults);
-            if (is_array($lastCapture['data'])) {
-                $response = array_merge($response, $lastCapture['data']);
-            }
-        }
-        
-        return $response;
     }
 }

@@ -15,6 +15,7 @@ use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Lock\LockManagerInterface;
 
 /**
  * Class Accept Payment Two Cc Handler - Reply Flow for Accept Two Credit Cards.
@@ -37,6 +38,20 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
     public const TOTAL_AUTHORIZED_AMOUNT = 'total_authorized_amount';
 
     /**
+     * @var LockManagerInterface
+     */
+    private $lockManager;
+
+    /**
+     * @param LockManagerInterface $lockManager
+     */
+    public function __construct(
+        LockManagerInterface $lockManager
+    ) {
+        $this->lockManager = $lockManager;
+    }
+
+    /**
      * Handles.
      *
      * @param array $handlingSubject
@@ -56,95 +71,100 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
             throw new InvalidArgumentException('Payment data object should be provided');
         }
 
-        if (!$response['RESULT_CODE']) {
-            return;
-        }
-
-        $paymentDO = $handlingSubject['payment'];
-        $payment = $paymentDO->getPayment();
-        $order = $payment->getOrder();
-
-        $amount = $order->getTotalDue();
-        $baseAmount = $order->getBaseTotalDue();
-
-        $captureResults = $response[self::CAPTURE_RESULTS] ?? [];
-
-        if (count($captureResults) !== 2) {
-            throw new InvalidArgumentException('Two capture results expected for two card payment');
-        }
-
-        if ($order->hasInvoices()) {
-            return;
-        }
-
-        $allCaptures = true;
-        foreach ($captureResults as $captureResult) {
-            if (!$captureResult['success']) {
-                $allCaptures = false;
-                break;
+        try {
+            if (!$response['RESULT_CODE']) {
+                return;
             }
-        }
 
-        if ($allCaptures) {
-            $hasProcFirstCard = false;
-            
-            foreach ($captureResults as $index => $captureResult) {
-                $paymentId = $captureResult['payment_id'];
-                $captureTransactionId = $paymentId . '-capture';
-                
-                if ($payment->getTransaction($captureTransactionId)) {
-                    continue;
+            $paymentDO = $handlingSubject['payment'];
+            $payment = $paymentDO->getPayment();
+            $order = $payment->getOrder();
+
+            $amount = $order->getTotalDue();
+            $baseAmount = $order->getBaseTotalDue();
+
+            $captureResults = $response[self::CAPTURE_RESULTS] ?? [];
+
+            if (count($captureResults) !== 2) {
+                throw new InvalidArgumentException('Two capture results expected for two card payment');
+            }
+
+            if ($order->hasInvoices()) {
+                return;
+            }
+
+            $allCaptures = true;
+            foreach ($captureResults as $captureResult) {
+                if (!$captureResult['success']) {
+                    $allCaptures = false;
+                    break;
                 }
+            }
+
+            if ($allCaptures) {
+                $hasProcFirstCard = false;
                 
-                $payment->setTransactionId($captureTransactionId);
-                $payment->setParentTransactionId($paymentId);
-                
-                if (!$hasProcFirstCard) {
-                    $payment->setIsTransactionApproved(true);
-                    $payment->setIsTransactionDenied(false);
-                    $payment->setIsInProcess(true);
-                    // $payment->registerAuthorizationNotification($amount);
-                    $payment->registerCaptureNotification($amount);
-                    $payment->setAmountAuthorized($amount);
-                    $payment->setBaseAmountAuthorized($baseAmount);
+                foreach ($captureResults as $index => $captureResult) {
+                    $paymentId = $captureResult['payment_id'];
+                    $captureTransactionId = $paymentId . '-capture';
                     
-                    $hasProcFirstCard = true;
-                } else {
-                    $payment->setIsTransactionClosed(true);
-                    $payment->setShouldCloseParentTransaction(true);
-                    $payment->setTransactionAdditionalInfo(
-                        Transaction::RAW_DETAILS,
-                        [
-                            'card_index' => $index + 1,
-                            'authorized_amount' => $captureResult['authorized_amount'] ?? 0,
-                            'payment_id' => $paymentId,
-                            'capture_data' => $captureResult['data'] ?? []
-                        ]
-                    );
-                    $payment->addTransaction(Transaction::TYPE_CAPTURE);
+                    if ($payment->getTransaction($captureTransactionId)) {
+                        continue;
+                    }
+                    
+                    $payment->setTransactionId($captureTransactionId);
+                    $payment->setParentTransactionId($paymentId);
+                    
+                    if (!$hasProcFirstCard) {
+                        $payment->setIsTransactionApproved(true);
+                        $payment->setIsTransactionDenied(false);
+                        $payment->setIsInProcess(true);
+                        $payment->registerCaptureNotification($amount);
+                        $payment->setAmountAuthorized($amount);
+                        $payment->setBaseAmountAuthorized($baseAmount);
+                        
+                        $hasProcFirstCard = true;
+                    } else {
+                        $payment->setIsTransactionClosed(true);
+                        $payment->setShouldCloseParentTransaction(true);
+                        $payment->setTransactionAdditionalInfo(
+                            Transaction::RAW_DETAILS,
+                            [
+                                'card_index' => $index + 1,
+                                'authorized_amount' => $captureResult['authorized_amount'] ?? 0,
+                                'payment_id' => $paymentId,
+                                'capture_data' => $captureResult['data'] ?? []
+                            ]
+                        );
+                        $payment->addTransaction(Transaction::TYPE_CAPTURE);
+                    }
                 }
+                
+                $payment->setIsTransactionClosed(true);
+                $payment->setShouldCloseParentTransaction(true);
+
+                $order->addStatusHistoryComment(
+                    __('Payment captured successfully for two credit cards.'),
+                    false
+                );
+            } else {
+                $payment->setIsTransactionApproved(false);
+                $payment->setIsTransactionDenied(true);
+                $payment->setIsInProcess(false);
+
+                $order->addStatusHistoryComment(
+                    __('Failed to capture payment for one or both credit cards.'),
+                    false
+                );
+
+                throw new LocalizedException(
+                    __('Failed to capture payment for all cards')
+                );
             }
-            
-            $payment->setIsTransactionClosed(true);
-            $payment->setShouldCloseParentTransaction(true);
-
-            $order->addStatusHistoryComment(
-                __('Payment captured successfully for two credit cards.'),
-                false
-            );
-        } else {
-            $payment->setIsTransactionApproved(false);
-            $payment->setIsTransactionDenied(true);
-            $payment->setIsInProcess(false);
-
-            $order->addStatusHistoryComment(
-                __('Failed to capture payment for one or both credit cards.'),
-                false
-            );
-
-            throw new LocalizedException(
-                __('Failed to capture payment for all cards')
-            );
+        } finally {
+            if (isset($response['lock_name']) && $response['lock_name']) {
+                $this->lockManager->unlock($response['lock_name']);
+            }
         }
     }
 }
