@@ -79,10 +79,8 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
             $paymentDO = $handlingSubject['payment'];
             $payment = $paymentDO->getPayment();
             $order = $payment->getOrder();
-
             $amount = $order->getTotalDue();
             $baseAmount = $order->getBaseTotalDue();
-
             $captureResults = $response[self::CAPTURE_RESULTS] ?? [];
 
             if (count($captureResults) !== 2) {
