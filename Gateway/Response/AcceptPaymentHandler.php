@@ -59,11 +59,7 @@ class AcceptPaymentHandler implements HandlerInterface
         }
 
         if ($order->hasInvoices()) {
-            foreach ($order->getInvoiceCollection() as $invoice) {
-                if ($invoice->getState() === \Magento\Sales\Model\Order\Invoice::STATE_PAID) {
-                    return;
-                }
-            }
+            return;
         }
 
         $payment->setTransactionId($captureTransactionId);

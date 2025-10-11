@@ -92,6 +92,7 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
      * @param array $handlingSubject
      * @param array $response
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return void
      */
@@ -109,7 +110,6 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
 
         $paymentDO = $handlingSubject['payment'];
         $payment = $paymentDO->getPayment();
-        $order = $payment->getOrder();
 
         if (!isset($response[self::RESPONSE_CHARGES])) {
             return;
@@ -190,6 +190,10 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
      *
      * @param \Magento\Payment\Model\InfoInterface $payment
      * @param array $charges
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * @return void
      */
     protected function processPaymentPaid($payment, $charges)
@@ -201,18 +205,14 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
         }
         
         if ($order->hasInvoices()) {
-            foreach ($order->getInvoiceCollection() as $invoice) {
-                if ($invoice->getState() === \Magento\Sales\Model\Order\Invoice::STATE_PAID) {
-                    return;
-                }
-            }
+            return;
         }
         
         $amount = $order->getBaseGrandTotal();
         $baseAmount = $order->getBaseGrandTotal();
         $hasProcessedFirst = false;
         
-        foreach ($charges as $index => $charge) {
+        foreach ($charges as $_index => $charge) {
             $chargeId = $charge[self::RESPONSE_PAGBANK_ID] ?? '';
             if (!$chargeId) {
                 continue;
@@ -316,6 +316,8 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
      *
      * @param \Magento\Payment\Model\InfoInterface $payment
      * @param array $charges
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     * 
      * @return void
      */
     protected function processPaymentCanceled($payment, $charges)
@@ -329,7 +331,7 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
         $amount = $order->getBaseGrandTotal();
         $hasProcessedFirst = false;
         
-        foreach ($charges as $index => $charge) {
+        foreach ($charges as $_index => $charge) {
             $chargeId = $charge[self::RESPONSE_PAGBANK_ID] ?? '';
             if (!$chargeId) {
                 continue;

@@ -150,8 +150,8 @@ Este é o processo de autenticação 3DS, um processo seguro, como você pode ve
                 <max_installment>18</max_installment>
                 <interest_free>1</interest_free>
                 <min_value_installment>5.00</min_value_installment>
-                <get_tax_id>0</get_tax_id>
-                <get_phone>0</get_phone>
+                <get_tax_id>1</get_tax_id>
+                <get_phone>1</get_phone>
                 <min_order_total>1</min_order_total>
                 <max_order_total>200000</max_order_total>
                 <allowspecific>1</allowspecific>

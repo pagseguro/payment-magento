@@ -74,11 +74,7 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
         }
 
         if ($order->hasInvoices()) {
-            foreach ($order->getInvoiceCollection() as $invoice) {
-                if ($invoice->getState() === \Magento\Sales\Model\Order\Invoice::STATE_PAID) {
-                    return;
-                }
-            }
+            return;
         }
 
         $allCaptures = true;
@@ -90,7 +86,7 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
         }
 
         if ($allCaptures) {
-            $hasProcessedFirstCard = false;
+            $hasProcFirstCard = false;
             
             foreach ($captureResults as $index => $captureResult) {
                 $paymentId = $captureResult['payment_id'];
@@ -103,21 +99,19 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
                 $payment->setTransactionId($captureTransactionId);
                 $payment->setParentTransactionId($paymentId);
                 
-                if (!$hasProcessedFirstCard) {
+                if (!$hasProcFirstCard) {
                     $payment->setIsTransactionApproved(true);
                     $payment->setIsTransactionDenied(false);
                     $payment->setIsInProcess(true);
-                    
                     // $payment->registerAuthorizationNotification($amount);
                     $payment->registerCaptureNotification($amount);
                     $payment->setAmountAuthorized($amount);
                     $payment->setBaseAmountAuthorized($baseAmount);
                     
-                    $hasProcessedFirstCard = true;
+                    $hasProcFirstCard = true;
                 } else {
                     $payment->setIsTransactionClosed(true);
                     $payment->setShouldCloseParentTransaction(true);
-                    
                     $payment->setTransactionAdditionalInfo(
                         Transaction::RAW_DETAILS,
                         [
@@ -127,7 +121,6 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
                             'capture_data' => $captureResult['data'] ?? []
                         ]
                     );
-                    
                     $payment->addTransaction(Transaction::TYPE_CAPTURE);
                 }
             }
