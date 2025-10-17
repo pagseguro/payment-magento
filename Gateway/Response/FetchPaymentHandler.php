@@ -269,29 +269,24 @@ class FetchPaymentHandler implements HandlerInterface
             return;
         }
         
-        $payment->setTransactionId($captureTransactionId);
-        $payment->setParentTransactionId($paymentParentId);
+        $order = $payment->getOrder();
+
+        $payment->setIsInProcess(true);
         $payment->setIsTransactionApproved(true);
         $payment->setIsTransactionDenied(false);
-        $payment->setIsInProcess(true);
         $payment->setIsTransactionClosed(true);
-        $payment->setShouldCloseParentTransaction(true);
-        
-        // $payment->registerAuthorizationNotification($amount);
+        $payment->setTransactionId($pagbankPayId.'-capture');
+        $payment->setParentTransactionId($paymentParentId);
+        $payment->registerAuthorizationNotification($amount);
         $payment->registerCaptureNotification($amount);
+        $payment->setShouldCloseParentTransaction(true);
         $payment->setAmountAuthorized($amount);
-        
         $invoice = $payment->getCreatedInvoice();
-        if ($invoice) {
-            if (!$invoice->getEmailSent()) {
-                $this->invoiceSender->send($invoice, false);
-            }
-            
-            $order->setState(Order::STATE_PROCESSING)
-                  ->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_PROCESSING))
-                  ->addStatusHistoryComment(__('Payment confirmed by PagBank.'));
+
+        if ($invoice && !$invoice->getEmailSent()) {
+            $this->invoiceSender->send($invoice, false);
         }
-        
+
         $order->save();
     }
 

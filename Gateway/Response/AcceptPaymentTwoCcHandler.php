@@ -13,6 +13,7 @@ namespace PagBank\PaymentMagento\Gateway\Response;
 use InvalidArgumentException;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Lock\LockManagerInterface;
@@ -105,11 +106,9 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
                 foreach ($captureResults as $index => $captureResult) {
                     $paymentId = $captureResult['payment_id'];
                     $captureTransactionId = $paymentId . '-capture';
-                    
                     if ($payment->getTransaction($captureTransactionId)) {
                         continue;
                     }
-                    
                     $payment->setTransactionId($captureTransactionId);
                     $payment->setParentTransactionId($paymentId);
                     
@@ -120,7 +119,6 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
                         $payment->registerCaptureNotification($amount);
                         $payment->setAmountAuthorized($amount);
                         $payment->setBaseAmountAuthorized($baseAmount);
-                        
                         $hasProcFirstCard = true;
                     } else {
                         $payment->setIsTransactionClosed(true);
@@ -137,13 +135,15 @@ class AcceptPaymentTwoCcHandler implements HandlerInterface
                         $payment->addTransaction(Transaction::TYPE_CAPTURE);
                     }
                 }
-                
                 $payment->setIsTransactionClosed(true);
                 $payment->setShouldCloseParentTransaction(true);
-                $order->addStatusHistoryComment(
-                    __('Payment captured successfully for two credit cards.'),
-                    false
-                );
+                $invoice = $payment->getCreatedInvoice();
+                if ($invoice) {
+                    $order->setState(Order::STATE_PROCESSING)
+                        ->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_PROCESSING))
+                        ->addStatusHistoryComment(__('Payment confirmed by PagBank.'));
+                }
+                $order->save();
             } else {
                 $payment->setIsTransactionApproved(false);
                 $payment->setIsTransactionDenied(true);

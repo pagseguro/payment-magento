@@ -232,7 +232,7 @@ class FetchTwoCardPaymentHandler implements HandlerInterface
                 $payment->setIsTransactionDenied(false);
                 $payment->setIsInProcess(true);
                 
-                // $payment->registerAuthorizationNotification($amount);
+                $payment->registerAuthorizationNotification($amount);
                 $payment->registerCaptureNotification($amount);
                 $payment->setAmountAuthorized($amount);
                 $payment->setBaseAmountAuthorized($baseAmount);

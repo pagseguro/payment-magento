@@ -78,17 +78,18 @@ class AcceptPaymentHandler implements HandlerInterface
                 return;
             }
 
-            $payment->setTransactionId($captureTransactionId);
             $payment->setParentTransactionId($pagbankPayId);
+            $payment->registerAuthorizationNotification($amount);
+            $payment->registerCaptureNotification($amount);
             $payment->setIsTransactionApproved(true);
             $payment->setIsTransactionDenied(false);
             $payment->setIsInProcess(true);
             $payment->setIsTransactionClosed(true);
             $payment->setShouldCloseParentTransaction(true);
-            
-            $payment->registerCaptureNotification($amount);
             $payment->setAmountAuthorized($amount);
             $payment->setBaseAmountAuthorized($baseAmount);
+            $payment->setShouldCloseParentTransaction(true);
+
         } finally {
             if (isset($response['lock_name']) && $response['lock_name']) {
                 $this->lockManager->unlock($response['lock_name']);
