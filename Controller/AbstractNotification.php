@@ -16,6 +16,7 @@ use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Lock\LockManagerInterface;
 use Magento\Framework\Notification\NotifierInterface as NotifierPool;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\View\Result\PageFactory;
@@ -96,6 +97,11 @@ abstract class AbstractNotification extends Action
     protected $invoice;
 
     /**
+     * @var LockManagerInterface
+     */
+    protected $lockManager;
+
+    /**
      * @param Config                         $config
      * @param Context                        $context
      * @param Json                           $json
@@ -109,6 +115,7 @@ abstract class AbstractNotification extends Action
      * @param CreditmemoFactory              $creditMemoFactory
      * @param CreditmemoService              $creditMemoService
      * @param Invoice                        $invoice
+     * @param LockManagerInterface           $lockManager
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -125,7 +132,8 @@ abstract class AbstractNotification extends Action
         NotifierPool $notifierPool,
         CreditmemoFactory $creditMemoFactory,
         CreditmemoService $creditMemoService,
-        Invoice $invoice
+        Invoice $invoice,
+        LockManagerInterface $lockManager
     ) {
         parent::__construct($context);
         $this->config = $config;
@@ -140,6 +148,7 @@ abstract class AbstractNotification extends Action
         $this->creditMemoFactory = $creditMemoFactory;
         $this->creditMemoService = $creditMemoService;
         $this->invoice = $invoice;
+        $this->lockManager = $lockManager;
     }
 
     /**
@@ -213,6 +222,29 @@ abstract class AbstractNotification extends Action
                 'isInvalid' => true,
                 'code'      => 406,
                 'msg'       => __('Not Apply.'),
+            ];
+
+            return $result;
+        }
+
+        if ($order->hasInvoices()) {
+            $result = [
+                'isInvalid' => true,
+                'code'      => 406,
+                'msg'       => __('Order already has invoice.'),
+            ];
+
+            return $result;
+        }
+
+        $exclude = $this->config->getAddtionalValue('exclude_fetch_cron');
+        $excludeStatuses = explode(',', $exclude);
+        
+        if (in_array($order->getStatus(), $excludeStatuses)) {
+            $result = [
+                'isInvalid' => true,
+                'code'      => 406,
+                'msg'       => __('Order status is excluded.'),
             ];
 
             return $result;

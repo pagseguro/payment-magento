@@ -15,7 +15,6 @@ use Magento\Framework\App\CsrfAwareActionInterface;
 use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Magento\Framework\Lock\LockManagerInterface;
 use PagBank\PaymentMagento\Controller\AbstractNotification;
 
 /**
@@ -26,66 +25,9 @@ use PagBank\PaymentMagento\Controller\AbstractNotification;
 class All extends AbstractNotification implements CsrfAwareActionInterface
 {
     /**
-     * @var LockManagerInterface
-     */
-    private $lockManager;
-
-    /**
      * @var int
      */
     private $lockTimeout = 360;
-
-    /**
-     * @param \PagBank\PaymentMagento\Gateway\Config\Config $config
-     * @param \Magento\Framework\App\Action\Context $context
-     * @param \Magento\Framework\Serialize\Serializer\Json $json
-     * @param \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteria
-     * @param \Magento\Sales\Api\TransactionRepositoryInterface $transaction
-     * @param \Magento\Sales\Model\OrderRepository $orderRepository
-     * @param \Magento\Framework\View\Result\PageFactory $pageFactory
-     * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
-     * @param \Magento\Payment\Model\Method\Logger $logger
-     * @param \Magento\Framework\Notification\NotifierInterface $notifierPool
-     * @param \Magento\Sales\Model\Order\CreditmemoFactory $creditMemoFactory
-     * @param \Magento\Sales\Model\Service\CreditmemoService $creditMemoService
-     * @param \Magento\Sales\Model\Order\Invoice $invoice
-     * @param LockManagerInterface $lockManager
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     */
-    public function __construct(
-        \PagBank\PaymentMagento\Gateway\Config\Config $config,
-        \Magento\Framework\App\Action\Context $context,
-        \Magento\Framework\Serialize\Serializer\Json $json,
-        \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteria,
-        \Magento\Sales\Api\TransactionRepositoryInterface $transaction,
-        \Magento\Sales\Model\OrderRepository $orderRepository,
-        \Magento\Framework\View\Result\PageFactory $pageFactory,
-        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \Magento\Payment\Model\Method\Logger $logger,
-        \Magento\Framework\Notification\NotifierInterface $notifierPool,
-        \Magento\Sales\Model\Order\CreditmemoFactory $creditMemoFactory,
-        \Magento\Sales\Model\Service\CreditmemoService $creditMemoService,
-        \Magento\Sales\Model\Order\Invoice $invoice,
-        LockManagerInterface $lockManager
-    ) {
-        parent::__construct(
-            $config,
-            $context,
-            $json,
-            $searchCriteria,
-            $transaction,
-            $orderRepository,
-            $pageFactory,
-            $resultJsonFactory,
-            $logger,
-            $notifierPool,
-            $creditMemoFactory,
-            $creditMemoService,
-            $invoice
-        );
-        $this->lockManager = $lockManager;
-    }
 
     /**
      * Create Csrf Validation Exception.
@@ -179,6 +121,7 @@ class All extends AbstractNotification implements CsrfAwareActionInterface
             ->create();
 
         try {
+            /** @var TransactionRepositoryInterface $transaction */
             $transaction = $this->transaction->getList($searchCriteria)->getFirstItem();
         } catch (Exception $exc) {
             return $this->createResult(
