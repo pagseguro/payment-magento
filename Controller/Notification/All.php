@@ -170,7 +170,7 @@ class All extends AbstractNotification implements CsrfAwareActionInterface
         } catch (Exception $exc) {
             $this->lockManager->unlock($lockName);
             
-            $this->logger->critical([
+            $this->logger->debug([
                 'message' => 'Error during webhook processing',
                 'exception' => $exc->getMessage(),
                 'order_id' => $orderId,

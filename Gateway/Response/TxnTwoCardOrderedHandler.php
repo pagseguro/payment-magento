@@ -117,8 +117,8 @@ class TxnTwoCardOrderedHandler implements HandlerInterface
         $payment->setAmountAuthorized($totalAuthorized);
         $payment->setBaseAmountAuthorized($baseTotalAuthorized);
 
-        $order->setState(Order::STATE_NEW);
-        $order->setStatus('pending');
+        $order->setState(Order::STATE_NEW)
+            ->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_NEW));
         $comment = __('Awaiting payment.');
         $order->setCustomerNote($comment);
     }

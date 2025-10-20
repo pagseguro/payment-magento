@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PagBank Payment Magento Module.
  *
@@ -67,7 +68,7 @@ class FetchPaymentClient implements ClientInterface
 
         $paymentId = $request['payment_id'];
 
-        $path = 'orders/'.$paymentId;
+        $path = 'orders/' . $paymentId;
 
         try {
             $data = $this->api->sendGetRequest($transferObject, $path);
@@ -86,7 +87,6 @@ class FetchPaymentClient implements ClientInterface
                 $lockName = 'pagbank_order_' . $orderId;
 
                 $this->lockManager->unlock($lockName);
-
             }
         }
 

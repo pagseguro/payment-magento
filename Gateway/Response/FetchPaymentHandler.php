@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PagBank Payment Magento Module.
  *
@@ -10,7 +11,7 @@
 
 namespace PagBank\PaymentMagento\Gateway\Response;
 
-use InvalidArgumentException;
+use Magento\Framework\Exception\InvalidArgumentException;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
 use Magento\Sales\Model\Order;
@@ -102,7 +103,8 @@ class FetchPaymentHandler implements HandlerInterface
      */
     public function handle(array $handlingSubject, array $response)
     {
-        if (!isset($handlingSubject['payment'])
+        if (
+            !isset($handlingSubject['payment'])
             || !$handlingSubject['payment'] instanceof PaymentDataObjectInterface
         ) {
             throw new InvalidArgumentException('Payment data object should be provided');
@@ -196,19 +198,20 @@ class FetchPaymentHandler implements HandlerInterface
     public function setPaymentWaiting($payment)
     {
         $order = $payment->getOrder();
-        
-        if ($order->getState() === Order::STATE_PAYMENT_REVIEW 
+
+        if (
+            $order->getState() === Order::STATE_PAYMENT_REVIEW
             || $order->getState() === Order::STATE_PROCESSING
         ) {
             return;
         }
-        
+
         $payment->setIsTransactionApproved(false);
         $payment->setIsTransactionDenied(false);
         $payment->setIsTransactionPending(true);
         $payment->setIsInProcess(false);
         $payment->setIsTransactionClosed(false);
-        
+
         $comment = __('Awaiting payment.');
         $order->addStatusHistoryComment($comment, $payment->getOrder()->getStatus());
         $order->save();
@@ -228,14 +231,14 @@ class FetchPaymentHandler implements HandlerInterface
         if ($order->getState() === Order::STATE_PAYMENT_REVIEW) {
             return;
         }
-        
+
         $payment->setIsTransactionApproved(false);
         $payment->setIsTransactionDenied(false);
         $payment->setIsInProcess(false);
-        
+
         $order->setState(Order::STATE_PAYMENT_REVIEW)
-              ->setStatus('payment_review');
-        
+            ->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_PAYMENT_REVIEW));
+
         $comment = __('Awaiting payment review.');
         $order->addStatusHistoryComment($comment);
         $order->save();
@@ -254,28 +257,28 @@ class FetchPaymentHandler implements HandlerInterface
     public function setPaymentPay($payment, $paymentParentId, $pagbankPayId, $amount)
     {
         $order = $payment->getOrder();
-        
+
         if ($order->getState() !== 'new' && $order->getState() !== 'payment_review') {
             return;
         }
-        
+
         $captureTransactionId = $pagbankPayId . '-capture';
-        
+
         if ($payment->getTransaction($captureTransactionId)) {
             return;
         }
-        
+
         if ($order->hasInvoices()) {
             return;
         }
-        
+
         $order = $payment->getOrder();
 
         $payment->setIsInProcess(true);
         $payment->setIsTransactionApproved(true);
         $payment->setIsTransactionDenied(false);
         $payment->setIsTransactionClosed(true);
-        $payment->setTransactionId($pagbankPayId.'-capture');
+        $payment->setTransactionId($pagbankPayId . '-capture');
         $payment->setParentTransactionId($paymentParentId);
         $payment->registerAuthorizationNotification($amount);
         $payment->registerCaptureNotification($amount);
@@ -303,17 +306,17 @@ class FetchPaymentHandler implements HandlerInterface
     public function setPaymentDeny($payment, $paymentParentId, $pagbankPayId, $amount)
     {
         $order = $payment->getOrder();
-        
+
         if ($order->getState() === Order::STATE_CANCELED) {
             return;
         }
-        
+
         $voidTransactionId = $pagbankPayId . '-void';
-        
+
         if ($payment->getTransaction($voidTransactionId)) {
             return;
         }
-        
+
         $payment->setTransactionId($voidTransactionId);
         $payment->setParentTransactionId($paymentParentId);
         $payment->setPreparedMessage(__('Order Canceled.'));
@@ -323,12 +326,13 @@ class FetchPaymentHandler implements HandlerInterface
         $payment->setIsInProcess(false);
         $payment->setIsTransactionClosed(true);
         $payment->setShouldCloseParentTransaction(true);
-        
+
         $payment->registerVoidNotification($amount);
         $payment->setAmountCanceled($amount);
         $payment->setBaseAmountCanceled($amount);
-        
+
         $order->registerCancellation(__('Payment denied by PagBank.'), false);
+        $order->isPaymentReview(false);
         $order->save();
     }
 }
