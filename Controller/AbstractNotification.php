@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PagBank Payment Magento Module.
  *
@@ -209,6 +210,8 @@ abstract class AbstractNotification extends Action
      * @param OrderRepository $order
      *
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function filterInvalidNotification($order)
     {
@@ -248,7 +251,7 @@ abstract class AbstractNotification extends Action
 
         $exclude = $this->config->getAddtionalValue('exclude_fetch_cron');
         $excludeStatuses = explode(',', $exclude);
-        
+
         if (in_array($order->getStatus(), $excludeStatuses)) {
             $result = [
                 'isInvalid' => true,
@@ -271,7 +274,7 @@ abstract class AbstractNotification extends Action
             try {
                 $methodInstance = $this->paymentHelper->getMethodInstance($paymentMethod);
                 $paymentAction = $methodInstance->getConfigData('payment_action', $order->getStoreId());
-                
+
                 if ($paymentAction === 'authorize') {
                     $result = [
                         'isInvalid' => true,
