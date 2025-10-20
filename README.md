@@ -42,6 +42,21 @@ Principais Recursos:
 - Informação ao cliente do juros cobrados com atualização do total do pedido
 - Consolidação de status (cancelamento e confirmação de pagamento automática)
 
+### 2 Cartões <img src="view/base/web/images/two-cc/logo.svg" align="right" width="35"/>
+
+Receba com pedidos que usem 2 cartões de crédito.
+
+Principais Recursos:
+
+- Método transparente
+- Autenticação 3DS
+- AntiFraude aprimorado com revisão manual
+- Captura automatizada ou tardia
+- Negação de Pagamento diretamente no checkout
+- Personalização de regras para juros e parcelamento
+- Informação ao cliente do juros cobrados com atualização do total do pedido
+- Consolidação de status (cancelamento e confirmação de pagamento automática)
+
 
 ### Pix <img src="view/base/web/images/pix/logo.svg" align="right" width="35"/>
 
