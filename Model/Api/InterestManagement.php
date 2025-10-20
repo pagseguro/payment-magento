@@ -17,7 +17,9 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\CartTotalRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface as QuoteCartInterface;
+use PagBank\PaymentMagento\Api\Data\CardIndexInterface;
 use PagBank\PaymentMagento\Api\Data\CreditCardBinInterface;
+use PagBank\PaymentMagento\Api\Data\CustomAmountInterface;
 use PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface;
 use PagBank\PaymentMagento\Api\InterestManagementInterface;
 use PagBank\PaymentMagento\Gateway\Config\Config as ConfigBase;
@@ -55,7 +57,7 @@ class InterestManagement implements InterestManagementInterface
     protected $consultInstallments;
 
     /**
-     * ListInstallmentsManagement constructor.
+     * Constructor.
      *
      * @param CartRepositoryInterface      $quoteRepository
      * @param CartTotalRepositoryInterface $quoteTotalRepository
@@ -77,21 +79,31 @@ class InterestManagement implements InterestManagementInterface
     /**
      * Generate List Installments.
      *
-     * @param int                                                           $cartId
-     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface       $creditCardBin
-     * @param \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface $installmentSelected
+     * @param int                                                               $cartId
+     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface           $creditCardBin
+     * @param \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface     $installmentSelected
+     * @param \PagBank\PaymentMagento\Api\Data\CustomAmountInterface|null       $customAmount
+     * @param \PagBank\PaymentMagento\Api\Data\CardIndexInterface|null          $cardIndex
      *
      * @throws CouldNotSaveException
      * @throws NoSuchEntityException
      *
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     public function generatePagBankInterest(
         $cartId,
         CreditCardBinInterface $creditCardBin,
-        InstallmentSelectedInterface $installmentSelected
+        InstallmentSelectedInterface $installmentSelected,
+        ?CustomAmountInterface $customAmount = null,
+        ?CardIndexInterface $cardIndex = null
     ) {
         $interest = 0;
+        $cardIndexValue = null;
+
         $quote = $this->quoteRepository->getActive($cartId);
         if (!$quote->getItemsCount()) {
             throw new NoSuchEntityException(__('Cart %1 doesn\'t contain products', $cartId));
@@ -107,7 +119,44 @@ class InterestManagement implements InterestManagementInterface
 
         $amount = $quoteTotal->getBaseGrandTotal();
         $currentInterest = $quote->getData(InstallmentSelectedInterface::PAGBANK_INTEREST_AMOUNT);
-        $amount -= $currentInterest;
+        
+        if ($installmentSelected === 0) {
+
+            if (!$cardIndex) {
+                $quote->setData(InstallmentSelectedInterface::PAGBANK_INTEREST_AMOUNT, 0);
+                $quote->setData(InstallmentSelectedInterface::BASE_PAGBANK_INTEREST_AMOUNT, 0);
+                $this->quoteRepository->save($quote);
+                return $this->quoteTotalRepository->get($cartId);
+            }
+
+            if ($cardIndex !== null) {
+                $cardIndexValue = $cardIndex->getCardIndex();
+                if ($cardIndexValue === 1) {
+                    $quote->setData(InstallmentSelectedInterface::PAGBANK_INTEREST_AMOUNT, 0);
+                    $quote->setData(InstallmentSelectedInterface::BASE_PAGBANK_INTEREST_AMOUNT, 0);
+                    $this->quoteRepository->save($quote);
+                    return $this->quoteTotalRepository->get($cartId);
+                }
+            }
+        }
+
+        if ($cardIndex !== null) {
+            $cardIndexValue = $cardIndex->getCardIndex();
+            if ($cardIndexValue === 1) {
+                $customAmountValue = $customAmount->getCustomAmount();
+                $amount = $customAmountValue;
+            }
+
+            if ($cardIndexValue === 2) {
+                $customAmountValue = $customAmount->getCustomAmount();
+                $amount -= $customAmountValue;
+                $amount -= $currentInterest;
+            }
+        } else {
+            $amount -= $currentInterest;
+        }
+
+
         $amount = $this->configBase->formatPrice($amount);
 
         if ($creditCardBin) {
@@ -128,6 +177,10 @@ class InterestManagement implements InterestManagementInterface
         $interest = $interest / 100;
 
         try {
+            if ($cardIndexValue === 2) {
+                $interest += $currentInterest;
+            }
+
             $quote->setData(InstallmentSelectedInterface::PAGBANK_INTEREST_AMOUNT, $interest);
             $quote->setData(InstallmentSelectedInterface::BASE_PAGBANK_INTEREST_AMOUNT, $interest);
             $this->quoteRepository->save($quote);

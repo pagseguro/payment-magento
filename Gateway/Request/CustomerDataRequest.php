@@ -172,6 +172,10 @@ class CustomerDataRequest implements BuilderInterface
             $phone = $payment->getAdditionalInformation('payer_phone');
         }
 
+        if ($payment->getAdditionalInformation('first_payer_phone')) {
+            $phone = $payment->getAdditionalInformation('first_payer_phone');
+        }
+
         if (!$phone) {
             $phone = $billingAddress->getTelephone();
         }
@@ -193,6 +197,10 @@ class CustomerDataRequest implements BuilderInterface
 
         if ($payment->getAdditionalInformation('payer_tax_id')) {
             $taxId = $payment->getAdditionalInformation('payer_tax_id');
+        }
+
+        if ($payment->getAdditionalInformation('first_payer_tax_id')) {
+            $taxId = $payment->getAdditionalInformation('first_payer_tax_id');
         }
 
         if (!$taxId) {

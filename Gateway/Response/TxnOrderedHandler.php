@@ -131,8 +131,8 @@ class TxnOrderedHandler implements HandlerInterface
         $this->createTransactionAuth($payment, $pagbankOrderId, $pagbankPayId);
 
         $order = $payment->getOrder();
-        $order->setState(Order::STATE_NEW);
-        $order->setStatus('pending');
+        $order->setState(Order::STATE_NEW)
+            ->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_NEW));
         $comment = __('Awaiting payment.');
         $order->setCustomerNote($comment);
     }

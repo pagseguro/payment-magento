@@ -13,8 +13,10 @@ declare(strict_types=1);
 namespace PagBank\PaymentMagento\Model\Api;
 
 use Magento\Quote\Model\QuoteIdMaskFactory;
-use PagBank\PaymentMagento\Api\Data\CreditCardBinInterface;
+use PagBank\PaymentMagento\Api\Data\CardIndexInterface;
 use PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface;
+use PagBank\PaymentMagento\Api\Data\CreditCardBinInterface;
+use PagBank\PaymentMagento\Api\Data\CustomAmountInterface;
 use PagBank\PaymentMagento\Api\GuestListInstallmentsManagementInterface;
 use PagBank\PaymentMagento\Api\ListInstallmentsManagementInterface;
 
@@ -48,16 +50,20 @@ class GuestListInstallmentsManagement implements GuestListInstallmentsManagement
     /**
      * Generate List Installments.
      *
-     * @param string                                                        $cartId
-     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface       $creditCardBin
-     * @param \PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface $cardTypeTransaction
+     * @param string                                                                $cartId
+     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface               $creditCardBin
+     * @param \PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface|null    $cardTypeTransaction
+     * @param \PagBank\PaymentMagento\Api\Data\CustomAmountInterface|null           $customAmount
+     * @param \PagBank\PaymentMagento\Api\Data\CardIndexInterface|null              $cardIndex
      *
      * @return array
      */
     public function generateListInstallments(
         $cartId,
         CreditCardBinInterface $creditCardBin,
-        CardTypeTransactionInterface $cardTypeTransaction = null
+        ?CardTypeTransactionInterface $cardTypeTransaction = null,
+        ?CustomAmountInterface $customAmount = null,
+        ?CardIndexInterface $cardIndex = null
     ) {
         /** @var \Magento\Quote\Model\QuoteIdMask */
         $quoteIdMask = $this->quoteIdMaskFactory->create()->load($cartId, 'masked_id');
@@ -65,7 +71,9 @@ class GuestListInstallmentsManagement implements GuestListInstallmentsManagement
         return $this->cardNumberInterface->generateListInstallments(
             $quoteIdMask->getQuoteId(),
             $creditCardBin,
-            $cardTypeTransaction
+            $cardTypeTransaction,
+            $customAmount,
+            $cardIndex
         );
     }
 }

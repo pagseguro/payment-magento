@@ -40,7 +40,6 @@ define([
         'AU': [new RegExp('^((5078))\\d*$'), new RegExp('^[0-9]{3}$'), true]
     };
 
-
     $.each({
 
         'validate-card-type-math-pagbank': [
@@ -85,15 +84,33 @@ define([
                     i,
                     l;
 
+                if (!number || number === '') {
+                    return false;
+                }
+
                 if (!creditCardNumberValidator(number).isValid) {
                     return false;
                 }
 
                 cardInfo = creditCardNumberValidator(number).card;
 
+                if (!cardInfo || !allowedTypes || !Array.isArray(allowedTypes)) {
+                    return false;
+                }
+
                 for (i = 0, l = allowedTypes.length; i < l; i++) {
-                    if (cardInfo.title == allowedTypes[i].type) { //eslint-disable-line eqeqeq
-                        return true;
+                    if (allowedTypes[i] && allowedTypes[i].type && Array.isArray(allowedTypes[i].type)) {
+                        // Se allowedTypes[i].type é um array, verifica cada item
+                        for (var j = 0; j < allowedTypes[i].type.length; j++) {
+                            if (cardInfo.title === allowedTypes[i].type[j]) {
+                                return true;
+                            }
+                        }
+                    } else if (allowedTypes[i] && allowedTypes[i].type && typeof allowedTypes[i].type === 'string') {
+                        // Se allowedTypes[i].type é uma string
+                        if (cardInfo.title === allowedTypes[i].type) {
+                            return true;
+                        }
                     }
                 }
 
@@ -120,10 +137,35 @@ define([
              * Validate cvv
              *
              * @param {String} cvv - card verification value
+             * @param {*} element - element being validated
              * @return {Boolean}
              */
-            (cvv) => {
-                var maxLength = creditCardData.creditCard ? creditCardData.creditCard.code.size : 3;
+            (cvv, element) => {
+                var maxLength = 3,
+                    paymentMethod,
+                    creditCardDataToUse = creditCardData;
+
+                try {
+                    // Tenta determinar qual modelo de dados usar baseado no contexto
+                    paymentMethod = $(element).closest('fieldset').find('input[name="payment[method]"]').val() ||
+                                  $(element).closest('form').find('input[name="payment[method]"]:checked').val();
+                    
+                    if (paymentMethod === 'pagbank_paymentmagento_two_cc') {
+                        try {
+                            creditCardDataToUse = require('PagBank_PaymentMagento/js/model/pagbank-two-cc-data');
+                        } catch (e) {
+                            // Se não conseguir carregar o modelo específico, usa o padrão
+                            creditCardDataToUse = creditCardData;
+                        }
+                    }
+                } catch (e) {
+                    // Em caso de erro, usa o modelo padrão
+                    creditCardDataToUse = creditCardData;
+                }
+
+                if (creditCardDataToUse && creditCardDataToUse.creditCard && creditCardDataToUse.creditCard.code) {
+                    maxLength = creditCardDataToUse.creditCard.code.size;
+                }
 
                 return cvvValidator(cvv, maxLength).isValid;
             },

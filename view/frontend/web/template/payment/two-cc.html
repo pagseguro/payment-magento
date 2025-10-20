@@ -1,0 +1,179 @@
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<div class="payment-method form-pagbank" css="_active: isActive()" data-bind="attr: {id: 'payment_form_' + getCode()}">
+    <div class="payment-method-title field choice">
+        <input type="radio"
+               name="payment[method]"
+               class="radio"
+               attr="id: getCode()"
+               ko-value="getCode()"
+               ko-checked="isChecked"
+               click="selectPaymentMethod"
+               visible="isRadioButtonVisible()">
+        </input>
+        <label attr="for: getCode()" class="label">
+            <img data-bind="attr: {
+                'src': baseDataForPaymentForm.getLogo().url,
+                'width': baseDataForPaymentForm.getLogo().width,
+                'height': baseDataForPaymentForm.getLogo().height,
+                'alt': baseDataForPaymentForm.getLogo().title,
+                'class': 'payment-icon'
+                }">
+            </img>
+            <span class="payment-method-label-description" data-bind="text: baseDataForPaymentForm.getTitle()"></span>
+        </label>
+    </div>
+    <div class="payment-method-content">
+        <each args="getRegion('messages')" render=""></each>
+        
+        <!-- Steps Progress Bar -->
+        <div class="two-cc-steps-progress" data-bind="visible: isActive()">
+            <div class="step" data-bind="css: {active: currentStep() >= 1, completed: currentStep() > 1}">
+                <span class="step-number">1</span>
+                <span class="step-sub-title"><!-- ko i18n: 'Division' --><!-- /ko --></span>
+            </div>
+            <div class="step-line" data-bind="css: {completed: currentStep() > 1}"></div>
+            <div class="step" data-bind="css: {active: currentStep() >= 2, completed: currentStep() > 2}">
+                <span class="step-number">2</span>
+                <span class="step-sub-title"><!-- ko i18n: '1º Card' --><!-- /ko --></span>
+            </div>
+            <div class="step-line" data-bind="css: {completed: currentStep() > 2}"></div>
+            <div class="step" data-bind="css: {active: currentStep() >= 3, completed: currentStep() > 3}">
+                <span class="step-number">3</span>
+                <span class="step-sub-title"><!-- ko i18n: '2º Card' --><!-- /ko --></span>
+            </div>
+        </div>
+        
+        <form class="form" id="pagbank-form-two-cc" method="post" afterRender="initFormElement">
+            
+            <!-- STEP 1: Payment Division -->
+            <div class="step-content" data-bind="visible: currentStep() == 1">
+                <fieldset class="fieldset payment items ccard payment-pagbank field-to-pay payment-division" data-bind="attr: {id: 'payment_division_' + getCode()}">
+                    <legend class="legend">
+                        <span><!-- ko i18n: 'Payment Division' --><!-- /ko --></span>
+                    </legend>
+                    <div class="data payment-slider">
+                        <label class="label" for="payment-amount-slider">
+                            <span><!-- ko i18n: 'Adjust payment amount for each card' --><!-- /ko --></span>
+                        </label>
+                        <div class="control">
+                            <input type="range" 
+                                id="payment-amount-slider"
+                                class="input-range"
+                                min="10"
+                                max="90"
+                                step="1"
+                                data-bind="value: paymentDivisionValue, attr: {min: minScale, max: maxScale}">
+                            <div class="payment-amounts">
+                                <div class="first-card-amount">
+                                    <span><!-- ko i18n: 'First Card:' --><!-- /ko --></span>
+                                    <strong data-bind="text: getFormartFirstAmount()"></strong>
+                                </div>
+                                <div class="second-card-amount">
+                                    <span><!-- ko i18n: 'Second Card:' --><!-- /ko --></span>
+                                    <strong data-bind="text: getFormartSecondaryAmount()"></strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="step-actions">
+                    <button type="button" 
+                            class="action primary continue"
+                            data-bind="click: goToStep2">
+                        <span><!-- ko i18n: 'Continue to 1ª Card' --><!-- /ko --></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 2: Firts Card -->
+            <div class="step-content" data-bind="visible: currentStep() == 2">
+                <fieldset class="fieldset first-card" data-bind="attr: {id: 'payment_form_first_cc'}">
+                    <legend class="legend">
+                        <span><!-- ko i18n: 'First Credit Card' --><!-- /ko --></span>
+                        <span class="amount" data-bind="text: '(' + getFormartFirstAmount() + ')'"></span>
+                    </legend>
+                    <div class="detail-amount">
+                        <div class="detail-text">
+                            <span><!-- ko i18n: 'You will pay' --><!-- /ko --></span>
+                            <strong data-bind="text: getFormartFirstAmount()"></strong>
+                        </div>
+                        <div class="detail-btn">
+                            <button type="button" 
+                                    class="action back"
+                                    data-bind="click: goToStep1">
+                                <span><!-- ko i18n: 'Edit Division' --><!-- /ko --></span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- ko if: firstCard() -->
+                    <div data-bind="template: {name: firstCard().getTemplate(), data: firstCard()}"></div>
+                    <!-- /ko -->
+                </fieldset>
+
+                <div class="step-actions">
+                    <button type="button" 
+                            class="action primary continue"
+                            data-bind="click: tokenizeFirstCardAndContinue">
+                        <span><!-- ko i18n: 'Continue to 2º Card' --><!-- /ko --></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Second Card -->
+            <div class="step-content" data-bind="visible: currentStep() == 3">
+                <div class="detail-amount">
+                    <div class="detail-text">
+                        <span><!-- ko i18n: 'You will pay' --><!-- /ko --></span>
+                        <strong data-bind="text: getFormartSecondaryAmount()"></strong>
+                    </div>
+                    <div class="detail-btn">
+                        <button type="button" 
+                                class="action back"
+                                data-bind="click: goToStep1">
+                            <span><!-- ko i18n: 'Edit Division' --><!-- /ko --></span>
+                        </button>
+                    </div>
+                </div>
+                <fieldset class="fieldset second-card" data-bind="attr: {id: 'payment_form_second_cc'}">
+                    <legend class="legend">
+                        <span><!-- ko i18n: 'Second Credit Card' --><!-- /ko --></span>
+                        <span class="amount" data-bind="text: '(' + getFormartSecondaryAmount() + ')'"></span>
+                    </legend>
+                    <!-- ko if: secondCard() -->
+                    <div data-bind="template: {name: secondCard().getTemplate(), data: secondCard()}"></div>
+                    <!-- /ko -->
+                </fieldset>
+            </div>
+        </form>
+        
+        <div class="payment-method-billing-address" data-bind="visible: currentStep() == 4">
+            <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+        <div class="checkout-agreements-block" data-bind="visible: currentStep() == 3">
+            <each args="$parent.getRegion('before-place-order')" render=""></each>
+        </div>
+        <div class="actions-toolbar place-order-two-cc" data-bind="visible: currentStep() == 3">
+            <div class="primary">
+                <button class="action primary checkout"
+                        type="submit"
+                        click="beforePlaceOrder"
+                        css="disabled: !isPlaceOrderActionAllowed()"
+                        attr="title: $t('Place Order')">
+                    <span translate="'Place Order'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

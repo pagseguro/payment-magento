@@ -4,10 +4,8 @@ Módulo para pagamento em Magento e Adobe Commerce.
 
 ## Badges
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/cc263cca6df24df090ad/maintainability)](https://codeclimate.com/github/elisei/pagbank-payment-magento/maintainability)
 [![Magento Coding Quality](https://github.com/pagseguro/payment-magento/actions/workflows/magento-coding-quality.yml/badge.svg)](https://github.com/pagseguro/payment-magento/actions/workflows/magento-coding-quality.yml)
 [![Magento Mess Detector](https://github.com/pagseguro/payment-magento/actions/workflows/mess-detector.yml/badge.svg)](https://github.com/pagseguro/payment-magento/actions/workflows/mess-detector.yml)
-[![Run ESLint](https://github.com/pagseguro/payment-magento/actions/workflows/ESLint.yml/badge.svg)](https://github.com/pagseguro/payment-magento/actions/workflows/ESLint.yml)
 
 ## Melhores taxas do mercado
 
@@ -39,6 +37,21 @@ Principais Recursos:
 - AntiFraude aprimorado com revisão manual
 - Captura automatizada ou tardia
 - Reembolso online total ou parcial
+- Negação de Pagamento diretamente no checkout
+- Personalização de regras para juros e parcelamento
+- Informação ao cliente do juros cobrados com atualização do total do pedido
+- Consolidação de status (cancelamento e confirmação de pagamento automática)
+
+### 2 Cartões <img src="view/base/web/images/two-cc/logo.svg" align="right" width="35"/>
+
+Receba com pedidos que usem 2 cartões de crédito.
+
+Principais Recursos:
+
+- Método transparente
+- Autenticação 3DS
+- AntiFraude aprimorado com revisão manual
+- Captura automatizada ou tardia
 - Negação de Pagamento diretamente no checkout
 - Personalização de regras para juros e parcelamento
 - Informação ao cliente do juros cobrados com atualização do total do pedido

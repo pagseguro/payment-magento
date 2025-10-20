@@ -40,11 +40,10 @@ body:
     attributes:
       label: What version of php?
       options:
-        - PHP 7.2
-        - PHP 7.3
-        - PHP 7.4
         - PHP 8.1
         - PHP 8.2
+        - PHP 8.3
+        - PHP 8.4
     validations:
       required: true
   - type: textarea

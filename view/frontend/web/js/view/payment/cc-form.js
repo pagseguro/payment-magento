@@ -82,6 +82,11 @@ define([
                 number;
 
             self._super();
+
+            $(document).on('pagbank:refresh-installments', function() {
+                self.creditCardInstallment(null);
+            });
+
             self.creditCardNumber.subscribe((value) => {
                 var result;
 

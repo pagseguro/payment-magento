@@ -13,6 +13,8 @@ namespace PagBank\PaymentMagento\Gateway\Response;
 use InvalidArgumentException;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use Magento\Sales\Model\Order;
+use Magento\Framework\Lock\LockManagerInterface;
 
 /**
  * Class Accept Payment Handler - Reply Flow for Accept Cc.
@@ -23,6 +25,20 @@ class AcceptPaymentHandler implements HandlerInterface
      * Response Pay PagBank Id - Block Name.
      */
     public const RESPONSE_PAGBANK_ID = 'id';
+
+    /**
+     * @var LockManagerInterface
+     */
+    private $lockManager;
+
+    /**
+     * @param LockManagerInterface $lockManager
+     */
+    public function __construct(
+        LockManagerInterface $lockManager
+    ) {
+        $this->lockManager = $lockManager;
+    }
 
     /**
      * Handles.
@@ -40,19 +56,30 @@ class AcceptPaymentHandler implements HandlerInterface
             throw new InvalidArgumentException('Payment data object should be provided');
         }
 
-        if ($response['RESULT_CODE']) {
+        try {
+            if (!$response['RESULT_CODE']) {
+                return;
+            }
+
             $paymentDO = $handlingSubject['payment'];
-
             $payment = $paymentDO->getPayment();
-
             $order = $payment->getOrder();
 
             $amount = $order->getTotalDue();
-
             $baseAmount = $order->getBaseTotalDue();
-
             $pagbankPayId = $response[self::RESPONSE_PAGBANK_ID];
+            $captureTransactionId = $pagbankPayId . '-capture';
 
+            if ($payment->getTransaction($captureTransactionId)) {
+                return;
+            }
+
+            if ($order->hasInvoices()) {
+                return;
+            }
+
+            $payment->setAmountAuthorized($amount);
+            $payment->setBaseAmountAuthorized($baseAmount);
             $payment->setParentTransactionId($pagbankPayId);
             $payment->registerAuthorizationNotification($amount);
             $payment->registerCaptureNotification($amount);
@@ -61,9 +88,12 @@ class AcceptPaymentHandler implements HandlerInterface
             $payment->setIsInProcess(true);
             $payment->setIsTransactionClosed(true);
             $payment->setShouldCloseParentTransaction(true);
-            $payment->setAmountAuthorized($amount);
-            $payment->setBaseAmountAuthorized($baseAmount);
-            $payment->setShouldCloseParentTransaction(true);
+
+
+        } finally {
+            if (isset($response['lock_name']) && $response['lock_name']) {
+                $this->lockManager->unlock($response['lock_name']);
+            }
         }
     }
 }

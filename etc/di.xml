@@ -50,6 +50,8 @@
     <!-- API - List Installments -->
     <preference for="PagBank\PaymentMagento\Api\Data\CreditCardBinInterface" type="PagBank\PaymentMagento\Model\Api\Data\CreditCardBin" />
     <preference for="PagBank\PaymentMagento\Api\Data\CardTypeTransactionInterface" type="PagBank\PaymentMagento\Model\Api\Data\CardTypeTransaction" />
+    <preference for="PagBank\PaymentMagento\Api\Data\CustomAmountInterface" type="PagBank\PaymentMagento\Model\Api\Data\CustomAmount" />
+    <preference for="PagBank\PaymentMagento\Api\Data\CardIndexInterface" type="PagBank\PaymentMagento\Model\Api\Data\CardIndex" />
     <preference for="PagBank\PaymentMagento\Api\ListInstallmentsManagementInterface" type="PagBank\PaymentMagento\Model\Api\ListInstallmentsManagement" />
     <preference for="PagBank\PaymentMagento\Api\GuestListInstallmentsManagementInterface" type="PagBank\PaymentMagento\Model\Api\GuestListInstallmentsManagement" />
 
@@ -587,6 +589,268 @@
         </arguments>
     </virtualType>
 
+    <!-- TwoCc - Facade -->
+    <virtualType name="PagBankTwoCcFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">PagBank\PaymentMagento\Model\Ui\ConfigProviderTwoCc::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">PagBank\PaymentMagento\Block\Sales\Form\TwoCreditCard</argument>
+            <argument name="infoBlockType" xsi:type="string">PagBank\PaymentMagento\Block\Sales\Info\TwoCreditCard</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PagBankTwoCcValueHandlerPool</argument>
+            <argument name="validatorPool" xsi:type="object">PagBankTwoCcValidatorPool</argument>
+            <argument name="commandPool" xsi:type="object">PagBankTwoCcCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+
+    <!-- TwoCc - Configuration reader -->
+    <virtualType name="PagBankTwoCcConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\PagBank\PaymentMagento\Model\Ui\ConfigProviderTwoCc::CODE</argument>
+        </arguments>
+    </virtualType>
+
+
+    <!-- TwoCc - Block Info -->
+    <type name="PagBank\PaymentMagento\Block\Sales\Info\TwoCreditCard">
+        <arguments>
+            <argument name="config" xsi:type="object">PagBankTwoCcConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- TwoCc - Commands infrastructure -->
+    <virtualType name="PagBankTwoCcCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="initialize" xsi:type="string">PagBankOrderedTwoCcCommand</item>
+                <item name="authorize" xsi:type="string">PagBankOrderedTwoCcCommand</item>
+                <item name="capture" xsi:type="string">PagBankOrderedTwoCcCommand</item>
+                <item name="refund" xsi:type="string">PagBankTwoCcRefundCommand</item>
+                <item name="cancel" xsi:type="string">PagBankTwoCreditCardDenyCommand</item>
+                <item name="void" xsi:type="string">PagBankTwoCreditCardDenyCommand</item>
+                <item name="accept_payment" xsi:type="string">PagBankAcceptTwoCcPaymentCommand</item>
+                <item name="fetch_transaction_information" xsi:type="string">PagBankTwoCcFetchCommand</item>
+                <item name="deny_payment" xsi:type="string">PagBankTwoCreditCardDenyCommand</item>
+                <item name="vault_initialize" xsi:type="string">PagBankCcVaultAuthorizeCommand</item>
+                <item name="vault_fetch_transaction_information" xsi:type="string">PagBankBaseFetchCommand</item>
+                <item name="vault_authorize" xsi:type="string">PagBankCcVaultAuthorizeCommand</item>
+                <item name="vault_sale" xsi:type="string">PagBankCcVaultCaptureCommand</item>
+                <item name="vault_capture" xsi:type="string">PagBankCcVaultCaptureCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc - Request -->
+    <virtualType name="PagBankTwoCcAuthorizationRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="storeId" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\MetadataRequest</item>
+                <item name="referenceId"  xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ReferenceIdRequest</item>
+                <item name="description" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\DescriptionDataRequest</item>
+                <item name="amount" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\AmountDataRequest</item>
+                <item name="customer" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\CustomerDataRequest</item>
+                <item name="items"  xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ItemsDataRequest</item>
+                <item name="shippingAddress" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ShippingsDataRequest</item>
+                <item name="billingAddress" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\BillingAddressDataRequest</item>
+                <item name="notificationUrl" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\NotificationUrlDataRequest</item>
+                <!-- Specific to the obj charges. -->
+                <item name="charges" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\ChargesDataRequest</item>
+                <item name="chargesAmount" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\Common\AmountDataRequest</item>
+                <!-- Specific to the payment method. -->
+                <item name="dualCharges" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\TwoCreditCard\DualChargesDataRequest</item>
+                <!-- 3ds. -->
+                <item name="threeDs" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\TwoCreditCard\ThreeDsAuthTwoDataRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc - Commands Authorize -->
+    <virtualType name="PagBankAuthorizeTwoCcCommand" type="PagBank\PaymentMagento\Gateway\Command\PaymentCommand">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PagBankTwoCcCommandPool</argument>
+            <argument name="requestBuilder" xsi:type="object">PagBankTwoCcAuthorizationRequest</argument>
+            <argument name="handler" xsi:type="object">TwoCcTransactionOrderedHandler</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\CreateOrderTwoCcClient</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc - Ordered Commands -->
+    <virtualType name="PagBankOrderedTwoCcCommand" type="PagBank\PaymentMagento\Gateway\Command\PaymentCommand">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PagBankTwoCcCommandPool</argument>
+            <argument name="requestBuilder" xsi:type="object">PagBankTwoCcAuthorizationRequest</argument>
+            <argument name="handler" xsi:type="object">TwoCcTransactionOrderedHandler</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\CreateOrderTwoCcClient</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+    
+    <!-- TwoCc - Ordered Payment Response handlers -->
+    <virtualType name="TwoCcTransactionOrderedHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="extOrdId" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\ExtOrdIdHandler</item>
+                <item name="transaction" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\TxnTwoCardOrderedHandler</item>
+                <item name="txnDataTwoCc" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\TxnDataTwoCcHandler</item>
+                <item name="txnDetailDataTwoCc" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\TxnDetailDataTwoCcHandler</item>
+                <item name="vaultBuilder" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\VaultDetailsHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc - Accept Payment Command -->
+    <virtualType name="PagBankAcceptTwoCcPaymentCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PagBankAcceptTwoCcPaymentRequest</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\AcceptPaymentTwoCcClient</argument>
+            <argument name="handler" xsi:type="object">PagBankAcceptTwoCcHandlerComposite</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc - Accept Payment Request -->
+    <virtualType name="PagBankAcceptTwoCcPaymentRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="storeId" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\MetadataRequest</item>
+                <item name="transaction" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\TwoCreditCard\AuthTransactionIdTwoCcRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc - Accept Payment handlers -->
+    <virtualType name="PagBankAcceptTwoCcHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="accept" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\AcceptPaymentTwoCcHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc -  Deny Command -->
+    <virtualType name="PagBankTwoCreditCardDenyCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PagBankTwoCreditCardDenyRequest</argument>
+            <argument name="handler" xsi:type="object">PagBankTwoCreditCardDenyHandler</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\DenyPaymentTwoCcClient</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc -  Deny Request -->
+    <virtualType name="PagBankTwoCreditCardDenyRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="storeId" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\MetadataRequest</item>
+                <item name="transaction" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\TwoCreditCard\AuthTransactionIdTwoCcRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc -  Deny Response Handler -->
+    <virtualType name="PagBankTwoCreditCardDenyHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="deny" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\DenyPaymentTwoCcHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc -  Refund Command -->
+    <virtualType name="PagBankTwoCcRefundCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PagBankTwoCcRefundRequest</argument>
+            <argument name="handler" xsi:type="object">PagBankTwoCcdRefundHandler</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\RefundPaymentTwoCcClient</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc -  Refund Request -->
+    <virtualType name="PagBankTwoCcRefundRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="storeId" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\MetadataRequest</item>
+                <item name="transaction" xsi:type="string">PagBank\PaymentMagento\Gateway\Request\TwoCreditCard\AuthTransactionIdTwoCcRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc -  Refund Response Handler -->
+    <virtualType name="PagBankTwoCcdRefundHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="refund" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\RefundPaymentTwoCcHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc - Validators -->
+    <virtualType name="PagBankTwoCcValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PagBankTwoCcCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc - Country Validator -->
+    <virtualType name="PagBankTwoCcCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PagBank\PaymentMagento\Gateway\Config\ConfigTwoCc</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc - Value handlers infrastructure -->
+    <virtualType name="PagBankTwoCcValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PagBankTwoCcConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PagBankTwoCcConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PagBankTwoCcConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- TwoCc - Command Manager -->
+    <virtualType name="PagBankTwoCcCommandManager" type="Magento\Payment\Gateway\Command\CommandManager">
+        <arguments>
+            <argument name="commandPool" xsi:type="object">PagBankTwoCcCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+
+    <!-- Two Cc - Fetch - Command -->
+    <virtualType name="PagBankTwoCcFetchCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">PagBankBaseFetchRequest</argument>
+            <argument name="transferFactory" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">PagBank\PaymentMagento\Gateway\Http\Client\FetchPaymentTwoCcClient</argument>
+            <argument name="handler" xsi:type="object">PagBankTwoCcFetchResponseHandlerComposite</argument>
+            <argument name="validator" xsi:type="object">PagBankTransactionValidator</argument>
+            <argument name="errorMessageMapper" xsi:type="object">PagBankVirtualErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Base - Fetch - Response handlers -->
+    <virtualType name="PagBankTwoCcFetchResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="fetch" xsi:type="string">PagBank\PaymentMagento\Gateway\Response\FetchTwoCardPaymentHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
     <!-- Base - Fetch - Command -->
     <virtualType name="PagBankBaseFetchCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
         <arguments>
@@ -867,6 +1131,12 @@
     </type>
 
     <type name="PagBank\PaymentMagento\Model\Api\Credential">
+        <arguments>
+            <argument name="config" xsi:type="object">PagBankBaseConfig</argument>
+        </arguments>
+    </type>
+
+    <type name="PaymentMagento\Gateway\Response\FetchTwoCardPaymentHandler">
         <arguments>
             <argument name="config" xsi:type="object">PagBankBaseConfig</argument>
         </arguments>

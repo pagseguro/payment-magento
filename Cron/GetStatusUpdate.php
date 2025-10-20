@@ -10,6 +10,7 @@
 
 namespace PagBank\PaymentMagento\Cron;
 
+use Magento\Framework\Lock\LockManagerInterface;
 use Magento\Framework\Notification\NotifierInterface;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Sales\Model\Order;
@@ -73,26 +74,39 @@ class GetStatusUpdate
     protected $collectionFactory;
 
     /**
+     * @var LockManagerInterface
+     */
+    private $lockManager;
+
+    /**
+     * @var int
+     */
+    private $lockTimeout = 60;
+
+    /**
      * Constructor.
      *
-     * @param Logger            $logger
-     * @param Config            $config
+     * @param Logger $logger
+     * @param Config $config
      * @param NotifierInterface $notifierInterface
-     * @param Update            $update
+     * @param Update $update
      * @param CollectionFactory $collectionFactory
+     * @param LockManagerInterface $lockManager
      */
     public function __construct(
         Logger $logger,
         Config $config,
         NotifierInterface $notifierInterface,
         Update $update,
-        CollectionFactory $collectionFactory
+        CollectionFactory $collectionFactory,
+        LockManagerInterface $lockManager
     ) {
         $this->logger = $logger;
         $this->config = $config;
         $this->notifierInterface = $notifierInterface;
         $this->update = $update;
         $this->collectionFactory = $collectionFactory;
+        $this->lockManager = $lockManager;
     }
 
     /**
@@ -130,6 +144,35 @@ class GetStatusUpdate
     }
 
     /**
+     * Process Order Update.
+     *
+     * @param Order $order
+     * @return void
+     */
+    private function processOrderUpdate($order)
+    {
+        $orderId = $order->getId();
+        $incrementId = $order->getIncrementId();
+        $lockName = 'pagbank_order_' . $orderId;
+
+        if (!$this->lockManager->lock($lockName, $this->lockTimeout)) {
+            $this->logger->debug([
+                'message' => 'Cron skipped order - already being processed',
+                'order_id' => $orderId,
+                'order_increment_id' => $incrementId,
+            ]);
+            return;
+        }
+
+        try {
+            $this->update->getUpdate($incrementId);
+        } catch (\Throwable $th) {
+            $this->lockManager->unlock($lockName);
+            $this->errorNotificationManager($order);
+        }
+    }
+
+    /**
      * Find Pix.
      *
      * @return void
@@ -139,14 +182,7 @@ class GetStatusUpdate
         $orders = $this->getFilterdOrders(self::PAYMENT_METHOD_PIX);
 
         foreach ($orders as $order) {
-            $incrementId = $order->getIncrementId();
-
-            try {
-                $this->update->getUpdate($incrementId);
-            } catch (\Throwable $th) {
-                $this->errorNotificationManager($order);
-                continue;
-            }
+            $this->processOrderUpdate($order);
         }
     }
 
@@ -160,14 +196,7 @@ class GetStatusUpdate
         $orders = $this->getFilterdOrders(self::PAYMENT_METHOD_DEEP_LINK);
 
         foreach ($orders as $order) {
-            $incrementId = $order->getIncrementId();
-
-            try {
-                $this->update->getUpdate($incrementId);
-            } catch (\Throwable $th) {
-                $this->errorNotificationManager($order);
-                continue;
-            }
+            $this->processOrderUpdate($order);
         }
     }
 
@@ -181,14 +210,7 @@ class GetStatusUpdate
         $orders = $this->getFilterdOrders(self::PAYMENT_METHOD_BOLETO);
 
         foreach ($orders as $order) {
-            $incrementId = $order->getIncrementId();
-
-            try {
-                $this->update->getUpdate($incrementId);
-            } catch (\Throwable $th) {
-                $this->errorNotificationManager($order);
-                continue;
-            }
+            $this->processOrderUpdate($order);
         }
     }
 
@@ -202,14 +224,7 @@ class GetStatusUpdate
         $orders = $this->getFilterdOrders(self::PAYMENT_METHOD_CC);
 
         foreach ($orders as $order) {
-            $incrementId = $order->getIncrementId();
-
-            try {
-                $this->update->getUpdate($incrementId);
-            } catch (\Throwable $th) {
-                $this->errorNotificationManager($order);
-                continue;
-            }
+            $this->processOrderUpdate($order);
         }
     }
 
@@ -223,14 +238,7 @@ class GetStatusUpdate
         $orders = $this->getFilterdOrders(self::PAYMENT_METHOD_VAULT);
 
         foreach ($orders as $order) {
-            $incrementId = $order->getIncrementId();
-
-            try {
-                $this->update->getUpdate($incrementId);
-            } catch (\Throwable $th) {
-                $this->errorNotificationManager($order);
-                continue;
-            }
+            $this->processOrderUpdate($order);
         }
     }
 

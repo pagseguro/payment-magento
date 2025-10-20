@@ -118,6 +118,57 @@ Este é o processo de autenticação 3DS, um processo seguro, como você pode ve
                 <active>1</active>
                 <title>Stored Cards (PagBank)</title>
             </pagbank_paymentmagento_cc_vault>
+            <pagbank_paymentmagento_two_cc>
+                <group>pagbank_group</group>
+                <model>PagBankTwoCcFacade</model>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <currency>BRL</currency>
+                <is_gateway>1</is_gateway>
+                <can_initialize>1</can_initialize>
+                <can_use_internal>0</can_use_internal>
+                <can_use_checkout>1</can_use_checkout>
+                <can_capture>1</can_capture>
+                <can_capture_partial>0</can_capture_partial>
+                <can_refund_partial_per_invoice>0</can_refund_partial_per_invoice>
+                <can_refund>1</can_refund>
+                <can_authorize>1</can_authorize>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_review_payment>1</can_review_payment>
+                <can_deny_payment>1</can_deny_payment>
+                <can_accept_payment>1</can_accept_payment>
+                <can_fetch_transaction_info>1</can_fetch_transaction_info>
+                <can_fetch_transaction_information>1</can_fetch_transaction_information>
+                <paymentInfoKeys>first_cc_installments,first_cc_type,first_cc_number,first_cc_exp_month,first_cc_exp_year,first_cc_cardholder_name,first_payer_tax_id,first_payer_phone,first_three_ds_session,first_three_ds_auth,first_three_ds_auth_status,first_cc_authorization_code,first_cc_nsu,first_cc_amount,second_cc_installments,second_cc_type,second_cc_number,second_cc_exp_month,second_cc_exp_year,second_cc_cardholder_name,second_payer_tax_id,second_payer_phone,second_three_ds_session,second_three_ds_auth,second_three_ds_auth_status,second_cc_authorization_code,second_cc_nsu,second_cc_amount</paymentInfoKeys>
+                <privateInfoKeys>first_three_ds_session,first_three_ds_auth,first_three_ds_auth_status,first_cc_authorization_code,first_cc_nsu,second_three_ds_session,second_three_ds_auth,second_three_ds_auth_status,second_cc_authorization_code,second_cc_nsu</privateInfoKeys>
+                <cctypes_mapper><![CDATA[{"AMEX":"AE","ELO":"ELO","MASTERCARD":"MC","VISA":"VI","HIPERCARD":"HC","AURA":"AU","DINNERS":"DN"}]]></cctypes_mapper>
+                <active>1</active>
+                <title>Pague com 2 Cartões</title>
+                <cvv_enabled>1</cvv_enabled>
+                <cctypes>HC,ELO,AE,VI,MC,DN,AU</cctypes>
+                <max_installment>18</max_installment>
+                <interest_free>1</interest_free>
+                <min_value_installment>5.00</min_value_installment>
+                <get_tax_id>1</get_tax_id>
+                <get_phone>1</get_phone>
+                <min_order_total>1</min_order_total>
+                <max_order_total>200000</max_order_total>
+                <allowspecific>1</allowspecific>
+                <specificcountry>BR</specificcountry>
+                <sort_order>10</sort_order>
+                <use_three_ds>0</use_three_ds>
+                <reject_not_auth>1</reject_not_auth>
+                <three_ds_min_order_total>0</three_ds_min_order_total>
+                <three_ds_max_try_place_order>3</three_ds_max_try_place_order>
+                <instruction_three_ds><![CDATA[O emissor do seu cartão <b>%1</b> solicita a confirmação dos seus dados junto ao seu banco.
+
+Para isso, uma nova tela será aberta, onde você precisará seguir as instruções passo a passo fornecidas pelo banco emissor do seu cartão.
+
+Você autenticará suas informações diretamente com <b>%2</b>.
+
+Este é o processo de autenticação 3DS, um processo seguro, como você pode verificar diretamente com o seu banco.]]></instruction_three_ds>
+            </pagbank_paymentmagento_two_cc>
             <pagbank_paymentmagento_pix>
                 <group>pagbank_group</group>
                 <model>PagBankPixFacade</model>

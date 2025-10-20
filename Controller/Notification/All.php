@@ -25,6 +25,11 @@ use PagBank\PaymentMagento\Controller\AbstractNotification;
 class All extends AbstractNotification implements CsrfAwareActionInterface
 {
     /**
+     * @var int
+     */
+    private $lockTimeout = 360;
+
+    /**
      * Create Csrf Validation Exception.
      *
      * @param RequestInterface $request
@@ -74,7 +79,6 @@ class All extends AbstractNotification implements CsrfAwareActionInterface
         try {
             $psData = $this->json->unserialize($response);
         } catch (Exception $exc) {
-            /** @var ResultInterface $result */
             return $this->createResult(
                 205,
                 [
@@ -92,7 +96,7 @@ class All extends AbstractNotification implements CsrfAwareActionInterface
                     'message' => __('Not apply.'),
                 ]
             );
-        };
+        }
 
         $psPaymentId = $psData['id'];
 
@@ -112,7 +116,6 @@ class All extends AbstractNotification implements CsrfAwareActionInterface
      */
     public function initProcess($psPaymentId)
     {
-        $result = [];
         $searchCriteria = $this->searchCriteria->addFilter('txn_id', $psPaymentId)
             ->addFilter('txn_type', 'order')
             ->create();
@@ -121,47 +124,78 @@ class All extends AbstractNotification implements CsrfAwareActionInterface
             /** @var TransactionRepositoryInterface $transaction */
             $transaction = $this->transaction->getList($searchCriteria)->getFirstItem();
         } catch (Exception $exc) {
-            /** @var ResultInterface $result */
-            $result = $this->createResult(
+            return $this->createResult(
                 500,
                 [
                     'error'   => 500,
                     'message' => $exc->getMessage(),
                 ]
             );
-
-            return $result;
         }
 
-        if ($transaction->getOrderId()) {
-            /** Order $order */
-            $order = $this->getOrderData($transaction->getOrderId());
+        if (!$transaction->getOrderId()) {
+            return $this->createResult(200, []);
+        }
+
+        $orderId = $transaction->getOrderId();
+        $lockName = 'pagbank_order_' . $orderId;
+
+        if (!$this->lockManager->lock($lockName, $this->lockTimeout)) {
+            $this->logger->debug([
+                'message' => 'Order is already being processed',
+                'order_id' => $orderId,
+                'payment_id' => $psPaymentId,
+            ]);
+
+            return $this->createResult(
+                409,
+                [
+                    'error'   => 409,
+                    'message' => __('Order is already being processed.'),
+                ]
+            );
+        }
+
+        try {
+            $order = $this->getOrderData($orderId);
+
+            if ($order instanceof ResultInterface) {
+                $this->lockManager->unlock($lockName);
+                return $order;
+            }
 
             $process = $this->processNotification($order);
 
-            /** @var ResultInterface $result */
-            $result = $this->createResult($process['code'], $process['msg']);
-
-            return $result;
+            return $this->createResult($process['code'], $process['msg']);
+        } catch (Exception $exc) {
+            $this->lockManager->unlock($lockName);
+            
+            $this->logger->debug([
+                'message' => 'Error during webhook processing',
+                'exception' => $exc->getMessage(),
+                'order_id' => $orderId,
+                'payment_id' => $psPaymentId,
+            ]);
+            
+            return $this->createResult(
+                500,
+                [
+                    'error'   => 500,
+                    'message' => $exc->getMessage(),
+                ]
+            );
         }
-
-        /** @var ResultInterface $result */
-        $result = $this->createResult(200, []);
-
-        return $result;
     }
 
     /**
      * Process Notification.
      *
-     * @param OrderRepository $order
+     * @param \Magento\Sales\Model\OrderRepository $order
      *
      * @return array
      */
     public function processNotification($order)
     {
-        $result = [];
-
         $isNotApplicable = $this->filterInvalidNotification($order);
 
         if ($isNotApplicable['isInvalid']) {

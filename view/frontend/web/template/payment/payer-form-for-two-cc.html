@@ -1,0 +1,68 @@
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<!-- ko if: hasTaxIdCapture() || hasPhoneCapture() || hasNameCapture() -->
+<fieldset data-bind="attr: {class: 'fieldset payment items pagbank-payer-data pagbank-payer-' + getCardIdentifier(), id: 'payment_form_payer_' + getCardIdentifier() + '_' + $parent.getCode()}">
+    <legend class="legend">
+        <span class="legend-title"><span data-bind="text: getPayerInformationTitle()"></span></span>
+    </legend>
+    <div class="form-pay">
+        <div class="form-persona-information field-to-pay two-fields">
+            <!-- ko if: hasTaxIdCapture() -->
+            <div class="field payer-tax-id required">
+                <div class="control pagbank-input-group">
+                    <input type="tel" class="input-text" value=""
+                        data-bind="attr: {
+                                        autocomplete: 'taxvat',
+                                        id: $parent.getCode() + '-' + getCardIdentifier() + '-payer-tax-id',
+                                        name: 'payment[' + getCardIdentifier() + '_payer_tax_id]',
+                                        title: $t('Payer Tax id'),
+                                        placeholder: $t('Payer Tax id'),
+                                        'data-container': $parent.getCode() + '-' + getCardIdentifier() + '-payer-tax-id',
+                                        'data-validate': JSON.stringify({
+                                            'required':true,
+                                            'pagbank-validate-tax-id': '#' + $parent.getCode() + '-' + getCardIdentifier() + '-payer-tax-id'
+                                        })},
+                                    enable: true,
+                                    value: payerTaxId,
+                                    valueUpdate: 'keyup' ">
+                    </input>
+                    <label data-bind="attr: {for: $parent.getCode() + '-' + getCardIdentifier() + '-payer-tax-id'}" class="label">
+                        <span><!-- ko i18n: 'Payer Tax id'--><!-- /ko --></span>
+                    </label>
+                </div>
+            </div>
+            <!-- /ko -->
+            <!-- ko if: hasPhoneCapture() -->
+            <div class="field payer-phone required">
+                <div class="control pagbank-input-group">
+                    <input type="tel" class="input-text" value=""
+                        data-bind="attr: {
+                                        autocomplete: 'tel-national',
+                                        id: $parent.getCode() + '-' + getCardIdentifier() + '-payer-phone',
+                                        name: 'payment[' + getCardIdentifier() + '_payer_phone]',
+                                        title: $t('Payer Phone'),
+                                        placeholder: $t('Payer Phone'),
+                                        'data-container': $parent.getCode() + '-' + getCardIdentifier() + '-payer-phone',
+                                        'data-validate': JSON.stringify({'required':true})},
+                                    enable: true,
+                                    value: payerPhone,
+                                    valueUpdate: 'keyup' ">
+                    </input>
+                    <label data-bind="attr: {for: $parent.getCode() + '-' + getCardIdentifier() + '-payer-phone'}" class="label">
+                        <span><!-- ko i18n: 'Payer Phone'--><!-- /ko --></span>
+                    </label>
+                </div>
+            </div>
+            <!-- /ko -->
+        </div>
+    </div>
+</fieldset>
+<!-- /ko -->

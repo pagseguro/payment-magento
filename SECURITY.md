@@ -6,9 +6,9 @@ Version maintenance is subject to Magento [lifecycle policy](https://devdocs.mag
 
 | Version | Magento Version      | Supported            |
 | ------- | :------------------: | :------------------: |
+| 101.1.x | 2.4.x                | :white_check_mark:   |
 | 100.1.x | 2.4.x                | :white_check_mark:   |
-| 100.1.x | 2.4.x                | :white_check_mark:   |
-| 100.0.x | 2.3.x                | :white_check_mark:   |
+| 100.0.x | 2.3.x                | :x:                  |
 
 ## Reporting a Vulnerability
 

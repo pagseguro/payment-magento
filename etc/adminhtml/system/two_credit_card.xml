@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * PagBank Payment Magento Module.
+ *
+ * Copyright © 2023 PagBank. All rights reserved.
+ *
+ * @author    Bruno Elisei <brunoelisei@o2ti.com>
+ * @license   See LICENSE for license details.
+ */
+-->
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="pagbank_paymentmagento_two_cc" translate="label comment" type="text" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+        <label>Dois Cartões</label>
+        <comment>You can run charges to a credit card using national currency and to top it off with rates that fit your pocket.</comment>
+        <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Enabled</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <config_path>payment/pagbank_paymentmagento_two_cc/active</config_path>
+        </field>
+        <field id="title" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Title</label>
+            <config_path>payment/pagbank_paymentmagento_two_cc/title</config_path>
+        </field>
+        <field id="cctypes" translate="label" type="multiselect" sortOrder="40" showInDefault="1" showInWebsite="1"  showInStore="1" canRestore="1">
+            <label>Credit Card Types</label>
+            <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\CcType</source_model>
+            <config_path>payment/pagbank_paymentmagento_two_cc/cctypes</config_path>
+        </field>
+        <field id="payment_action" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Payment Action</label>
+            <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\PaymentAction</source_model>
+            <config_path>payment/pagbank_paymentmagento_two_cc/payment_action</config_path>
+        </field>
+        <group id="three_ds" translate="label comment" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>3D Secure</label>
+            <comment>3D Secure configuration.</comment>
+            <field id="active" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Enabled</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>payment/pagbank_paymentmagento_two_cc/use_three_ds</config_path>
+                <comment>Authorization is required to use this service. Please get in touch with PagBank for further assistance.</comment>
+            </field>
+            <field id="enable_debit" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Enabled Debit Card</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>payment/pagbank_paymentmagento_two_cc/enable_debit</config_path>
+                <comment>Allow payment with debit card.</comment>
+            </field>
+            <field id="reject_not_auth" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Reject payment not authenticated</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>payment/pagbank_paymentmagento_two_cc/reject_not_auth</config_path>
+            </field>
+            <field id="instruction" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Instruction before challenge</label>
+                <frontend_class>required-entry</frontend_class>
+                <comment>%1 and %2 are two variables, they will be replaced by the card's flag and the issuer bank's name, respectively.</comment>
+                <config_path>payment/pagbank_paymentmagento_two_cc/instruction_three_ds</config_path>
+            </field>
+            <group id="three_ds_rules" translate="label comment" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Activation rules</label>
+                <comment>Advanced settings for 3D Secure application. Activation will be done if the order meets at least 1 of the rules.</comment>
+                <field id="three_ds_max_try_place_order" translate="label comment tooltip" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Activate after the number of failed attempts</label>
+                    <comment><![CDATA[3D Secure authentication will be required if the <b>number of purchase attempts</b> (that fail) exceeds the value registered here.]]></comment>
+                    <tooltip><![CDATA[<p>During checkout, if the customer tries to purchase and their order is denied, the number of attempts will increase. This feature is useful to prevent automated fraud attempts.</p>]]></tooltip>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                    <config_path>payment/pagbank_paymentmagento_two_cc/three_ds_max_try_place_order</config_path>
+                </field>
+                <field id="three_ds_min_order_total" translate="label comment tooltip" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Activate after the order value exceeds</label>
+                    <comment><![CDATA[3D Secure authentication will be required if <b>the order value</b> exceeds the value registered here.]]></comment>
+                    <tooltip><![CDATA[<p>We recommend using values that exceed the normal ticket, which may indicate possible fraud.</p>]]></tooltip>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                    <config_path>payment/pagbank_paymentmagento_two_cc/three_ds_min_order_total</config_path>
+                </field>
+                <field id="three_ds_has_sku" translate="label comment tooltip" type="text" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>If the order contains the SKU</label>
+                    <comment><![CDATA[You can register multiple SKUs, use commas to separate them. 3D Secure authentication will be required if the <b>order contains the SKU</b>.]]></comment>
+                    <tooltip><![CDATA[<p>If you have products that are more sensitive to fraud, you can register these SKUs here.</p>]]></tooltip>
+                    <config_path>payment/pagbank_paymentmagento_two_cc/three_ds_has_sku</config_path>
+                </field>
+                <field id="three_ds_canceled_trans_time" translate="label comment tooltip" type="select" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>If the customer has canceled the order in the last few</label>
+                    <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\Times</source_model>
+                    <comment><![CDATA[Authentication via 3D Secure will be requested if the customer has an <b>order cancelled</b> within the chosen time period.]]></comment>
+                    <tooltip><![CDATA[<p>When verifying that the customer has an order canceled within the chosen time interval, 3ds authentication will be requested.</p>]]></tooltip>
+                    <config_path>payment/pagbank_paymentmagento_two_cc/three_ds_canceled_trans_time</config_path>
+                </field>
+            </group>
+        </group>
+        <group id="basic_configuration" translate="label comment" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Basic configuration</label>
+            <comment>Basic configuration of payment methods.</comment>
+            <field id="min_order_total" translate="label" type="text" sortOrder="1010" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Minimum Order Total</label>
+                <validate>validate-number validate-zero-or-greater</validate>
+                <config_path>payment/pagbank_paymentmagento_two_cc/min_order_total</config_path>
+            </field>
+            <field id="max_order_total" translate="label" type="text" sortOrder="1020" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Maximum Order Total</label>
+                <validate>validate-number validate-zero-or-greater</validate>
+                <config_path>payment/pagbank_paymentmagento_two_cc/max_order_total</config_path>
+            </field>
+            <field id="allowspecific" translate="label" type="allowspecific" sortOrder="1030" showInDefault="9" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Payment From Applicable Countries</label>
+                <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                <config_path>payment/pagbank_paymentmagento_two_cc/allowspecific</config_path>
+            </field>
+            <field id="specificcountry" translate="label" type="multiselect" sortOrder="1040" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Payment From Specific Countries</label>
+                <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                <config_path>payment/pagbank_paymentmagento_two_cc/specificcountry</config_path>
+            </field>
+            <field id="sort_order" translate="label" type="text" sortOrder="1050" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Sort Order</label>
+                <frontend_class>validate-number</frontend_class>
+                <config_path>payment/pagbank_paymentmagento_two_cc/sort_order</config_path>
+            </field>
+        </group>
+        <group id="payer_data" translate="label comment" type="text" sortOrder="2000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Payer Data Capture</label>
+            <comment>Define the payment form data capture.</comment>
+            <field id="get_tax_id" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Capture tax ID (CPF or CNPJ) in the payment form?</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>payment/pagbank_paymentmagento_two_cc/get_tax_id</config_path>
+            </field>
+            <field id="get_phone" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Capture phone in the payment form?</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>payment/pagbank_paymentmagento_two_cc/get_phone</config_path>
+            </field>
+        </group>
+        <group id="installment" translate="label" type="text" sortOrder="3000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Installment and interest</label>
+            <field id="max_installment" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Maximum number of installment</label>
+                <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\Installments</source_model>
+                <comment>Maximum number of installments accepted</comment>
+                <validate>required-entry validate-number</validate>
+                <config_path>payment/pagbank_paymentmagento_two_cc/max_installment</config_path>
+            </field>
+            <field id="interest_free" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Number of interest-free installments</label>
+                <source_model>PagBank\PaymentMagento\Model\Adminhtml\Source\Installments</source_model>
+                <comment>Number of installments you want to accept without applying interest</comment>
+                <validate>required-entry validate-number</validate>
+                <config_path>payment/pagbank_paymentmagento_two_cc/interest_free</config_path>
+            </field>
+            <field id="min_value_installment" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>The minimum installment price</label>
+                <comment>It is the minimum value that the installment can have</comment>
+                <validate>required-entry validate-number validate-number-range validate-date-range number-range-5-9999</validate>
+                <config_path>payment/pagbank_paymentmagento_two_cc/min_value_installment</config_path>
+            </field>
+        </group>
+    </group>
+</include>

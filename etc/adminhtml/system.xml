@@ -19,6 +19,7 @@
                 <comment><![CDATA[Technical support available <a href="https://github.com/pagseguro/payment-magento/issues/new/choose">here</a>.]]></comment>
                 <include path="PagBank_PaymentMagento::system/base_settings.xml"/>
                 <include path="PagBank_PaymentMagento::system/credit_card.xml"/>
+                <include path="PagBank_PaymentMagento::system/two_credit_card.xml"/>
                 <include path="PagBank_PaymentMagento::system/pix.xml"/>
                 <include path="PagBank_PaymentMagento::system/boleto.xml"/>
                 <include path="PagBank_PaymentMagento::system/deep_link.xml"/>
