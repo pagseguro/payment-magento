@@ -16,7 +16,9 @@ define([
     'Magento_Vault/js/view/payment/vault-enabler',
     'PagBank_PaymentMagento/js/view/payment/pagbank-place-order',
     'PagBank_PaymentMagento/js/view/payment/payer-form',
-    'PagBank_PaymentMagento/js/view/payment/base-data-for-payment-form'
+    'PagBank_PaymentMagento/js/view/payment/base-data-for-payment-form',
+    'Magento_SalesRule/js/action/set-coupon-code',
+    'Magento_SalesRule/js/action/cancel-coupon'
 ], function (
     _pagBankCardJs,
     _,
@@ -25,10 +27,20 @@ define([
     VaultEnabler,
     PagBankPlaceOrder,
     PayerFormData,
-    BaseDataForPaymentForm
+    BaseDataForPaymentForm,
+    setCouponCodeAction,
+    cancelCouponAction
 ) {
     'use strict';
 
+    setCouponCodeAction.registerSuccessCallback(function () {
+        $(document).trigger('pagbank:refresh-installments');
+    });
+
+    cancelCouponAction.registerSuccessCallback(function () {
+        $(document).trigger('pagbank:refresh-installments');
+    });
+    
     return Component.extend({
         defaults: {
             active: false,

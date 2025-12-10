@@ -18,7 +18,9 @@ define([
     'PagBank_PaymentMagento/js/view/payment/before-pagbank-place-order-two-cc',
     'PagBank_PaymentMagento/js/view/payment/payer-form-for-two-cc',
     'PagBank_PaymentMagento/js/view/payment/base-data-for-payment-form',
-    'PagBank_PaymentMagento/js/view/payment/two-cc-form'
+    'PagBank_PaymentMagento/js/view/payment/two-cc-form',
+    'Magento_SalesRule/js/action/set-coupon-code',
+    'Magento_SalesRule/js/action/cancel-coupon'
 ], function (
     _pagBankCardJs,
     _,
@@ -30,9 +32,19 @@ define([
     PagBankPlaceOrder,
     PayerFormData,
     BaseDataForPaymentForm,
-    TwoCcForm
+    TwoCcForm,
+    setCouponCodeAction,
+    cancelCouponAction
 ) {
     'use strict';
+
+    setCouponCodeAction.registerSuccessCallback(function () {
+        $(document).trigger('pagbank:refresh-installments');
+    });
+
+    cancelCouponAction.registerSuccessCallback(function () {
+        $(document).trigger('pagbank:refresh-installments');
+    });
 
     return Component.extend({
         defaults: {
@@ -220,8 +232,8 @@ define([
             // Listener para refresh quando cupom é aplicado/removido
             $(document).on('pagbank:refresh-installments', function() {
                 var newTotal = self.getTotalWithoutInterest();
-                self.grandTotal(newTotal);      // Usa () para setar observable
-                self.paymentDivisionValue(50);  // Usa () para setar observable
+                self.grandTotal(newTotal);
+                self.paymentDivisionValue(50);
                 self.goToStep1();
                 
                 if (self.firstCard()) {
@@ -241,11 +253,11 @@ define([
                 }
             });
 
-            quote.totals.subscribe(() => {
-                var newTotal = self.getTotalWithoutInterest();
-                self.grandTotal(newTotal);
-                self.paymentDivisionValue(50);
-            });
+            // quote.totals.subscribe(() => {
+            //     var newTotal = self.getTotalWithoutInterest();
+            //     self.grandTotal(newTotal);
+            //     self.paymentDivisionValue(50);
+            // });
 
             self.active.subscribe(() => {
                 self.currentStep(1);

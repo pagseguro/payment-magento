@@ -431,6 +431,27 @@ class Config extends PaymentConfig
     }
 
     /**
+     * Get Account ID.
+     *
+     * @param int|null $storeId
+     *
+     * @return string|null
+     */
+    public function getAccountId($storeId = null): ?string
+    {
+
+        $accountId = $this->getAddtionalValue('account_id_production', $storeId);
+
+        $environment = $this->getEnvironmentMode($storeId);
+
+        if ($environment === 'sandbox') {
+            $accountId = $this->getAddtionalValue('account_id_sandbox', $storeId);
+        }
+
+        return $accountId;
+    }
+
+    /**
      * Get Soft Descriptor.
      *
      * @param int|null $storeId
