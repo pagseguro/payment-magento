@@ -393,6 +393,8 @@ PagBank Interest,Juros de Parcelamento
 "three_ds_auth_status","Status da Autenticação 3DS"
 "cc_authorization_code","Código da Autorização"
 "cc_nsu","NSU"
+"cc_issuer_name","Emissor"
+"cc_issuer_product","Tipo de Cartão"
 "first_cc_installments","Parcelas 1º Cartão"
 "first_cc_type","Tipo 1º Cartão"
 "first_cc_number","Número 1º Cartão"

@@ -6,8 +6,7 @@
  * @author    Bruno Elisei <brunoelisei@o2ti.com>
  * @license   See LICENSE for license details.
  */
-
- define([
+define([
     'jquery',
     'Magento_Checkout/js/model/quote',
     'Magento_Checkout/js/model/url-builder',
@@ -27,17 +26,29 @@
     return {
         /**
          * Set interest for two credit cards
-         * 
+         *
          * @param {Number} selectInstallment
          * @param {String} creditCardNumber
          * @param {Number} customAmount
          * @param {Number} cardIndex
+         * @param {String} creditCardNumberCard1
+         * @param {Number} selectInstallmentCard1
          * @returns {Promise}
          */
-        pagbankTwoCcInterest: function (selectInstallment, creditCardNumber, customAmount, cardIndex) {
+        pagbankTwoCcInterest: function (
+            selectInstallment,
+            creditCardNumber,
+            customAmount,
+            cardIndex,
+            creditCardNumberCard1,
+            selectInstallmentCard1
+        ) {
             var serviceUrl,
                 quoteId = quote.getQuoteId(),
-                requestData;
+                requestData,
+                cardIndexInt = cardIndex !== undefined && cardIndex !== null
+                    ? parseInt(cardIndex, 10)
+                    : null;
 
             serviceUrl = urlBuilder.createUrl('/carts/mine/pagbank-interest', {});
 
@@ -56,16 +67,27 @@
                 }
             };
 
-            // Add optional parameters for two cc
             if (customAmount !== undefined && customAmount !== null) {
                 requestData.customAmount = {
                     custom_amount: customAmount
                 };
             }
 
-            if (cardIndex !== undefined && cardIndex !== null) {
+            if (cardIndexInt !== null) {
                 requestData.cardIndex = {
-                    card_index: cardIndex
+                    card_index: cardIndexInt
+                };
+            }
+
+            if (cardIndexInt === 2 && creditCardNumberCard1 !== undefined && creditCardNumberCard1 !== null) {
+                requestData.creditCardBinCard1 = {
+                    credit_card_bin: creditCardNumberCard1
+                };
+            }
+
+            if (cardIndexInt === 2 && selectInstallmentCard1 !== undefined && selectInstallmentCard1 !== null) {
+                requestData.installmentSelectedCard1 = {
+                    installment_selected: selectInstallmentCard1
                 };
             }
 
