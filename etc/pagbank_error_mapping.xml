@@ -25,7 +25,7 @@
         <message code="20001" translate="true">[20001] Por favor, entre em contato com a central do seu cartão. O número está no versão do cartão.</message>
         <message code="20003" translate="true">[20003] Transação não autorizada, por favor utilize outro forma de pagamento.</message>
         <message code="20007" translate="true">[20007] Por favor, verifique os dados do cartão.</message>
-        <message code="20008" translate="true">[20008] Desculpe mas essa transação permite parcelamento, por favor utilize outro forma de pagamento.</message>
+        <message code="20008" translate="true">[20008] O limite de parcelas do seu banco é de 12x.</message>
         <message code="20012" translate="true">[20012] O valor dessa transação não é permitido, por favor utilize outro forma de pagamento.</message>
         <message code="20016" translate="true">[20016] Senha inválida, por favor utilize outro forma de pagamento.</message>
         <message code="20017" translate="true">[20017] Transação não permitida, por favor utilize outro forma de pagamento.</message>

@@ -302,7 +302,9 @@ define([
                 selectInstallment = self.creditCardInstallment(),
                 creditCardNumber = self.creditCardNumber().replace(/\s/g, '').slice(0, 6),
                 customAmount = self.getCardAmount(),
-                cardIndex = self.isFirstCard ? 1 : 2;
+                cardIndex = self.isFirstCard ? 1 : 2,
+                creditCardNumberCard1 = null,
+                selectInstallmentCard1 = null;
 
             if (self.parentMethod && self.parentMethod.currentStep) {
                 var currentStep = self.parentMethod.currentStep();
@@ -315,11 +317,24 @@ define([
                 return;
             }
 
+            if (!self.isFirstCard && self.parentMethod && self.parentMethod.firstCard) {
+                var firstCard = self.parentMethod.firstCard();
+                if (firstCard) {
+                    var firstCardNumber = firstCard.creditCardNumber();
+                    if (firstCardNumber) {
+                        creditCardNumberCard1 = firstCardNumber.replace(/\s/g, '').slice(0, 6);
+                    }
+                    selectInstallmentCard1 = firstCard.creditCardInstallment();
+                }
+            }
+
             setInterestTwoCc.pagbankTwoCcInterest(
-                selectInstallment, 
-                creditCardNumber, 
-                customAmount, 
-                cardIndex
+                selectInstallment,
+                creditCardNumber,
+                customAmount,
+                cardIndex,
+                creditCardNumberCard1,
+                selectInstallmentCard1
             );
         },
 

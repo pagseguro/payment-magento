@@ -77,13 +77,44 @@ class InterestManagement implements InterestManagementInterface
     }
 
     /**
+     * Fetch interest from PagBank for a given bin, installment and amount.
+     *
+     * @param int    $storeId
+     * @param string $bin
+     * @param float  $amount
+     * @param int    $installment
+     *
+     * @return float
+     */
+    private function fetchInterest(int $storeId, string $bin, float $amount, int $installment): float
+    {
+        if (!$bin || $installment < 2) {
+            return 0.0;
+        }
+
+        $pagBankInterests = $this->consultInstallments->getPagBankInstallments(
+            $storeId,
+            $bin,
+            $this->configBase->formatPrice($amount)
+        );
+
+        if (isset($pagBankInterests[$installment - 1]['amount']['fees'])) {
+            return (float) $pagBankInterests[$installment - 1]['amount']['fees']['buyer']['interest']['total'] / 100;
+        }
+
+        return 0.0;
+    }
+
+    /**
      * Generate List Installments.
      *
-     * @param int                                                               $cartId
-     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface           $creditCardBin
-     * @param \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface     $installmentSelected
-     * @param \PagBank\PaymentMagento\Api\Data\CustomAmountInterface|null       $customAmount
-     * @param \PagBank\PaymentMagento\Api\Data\CardIndexInterface|null          $cardIndex
+     * @param int                                                                    $cartId
+     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface                $creditCardBin
+     * @param \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface          $installmentSelected
+     * @param \PagBank\PaymentMagento\Api\Data\CustomAmountInterface|null            $customAmount
+     * @param \PagBank\PaymentMagento\Api\Data\CardIndexInterface|null               $cardIndex
+     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface|null           $creditCardBinCard1
+     * @param \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface|null     $installmentSelectedCard1
      *
      * @throws CouldNotSaveException
      * @throws NoSuchEntityException
@@ -99,7 +130,9 @@ class InterestManagement implements InterestManagementInterface
         CreditCardBinInterface $creditCardBin,
         InstallmentSelectedInterface $installmentSelected,
         ?CustomAmountInterface $customAmount = null,
-        ?CardIndexInterface $cardIndex = null
+        ?CardIndexInterface $cardIndex = null,
+        ?CreditCardBinInterface $creditCardBinCard1 = null,
+        ?InstallmentSelectedInterface $installmentSelectedCard1 = null
     ) {
         $interest = 0;
         $cardIndexValue = null;
@@ -111,17 +144,12 @@ class InterestManagement implements InterestManagementInterface
 
         $quoteTotal = $this->quoteTotalRepository->get($cartId);
 
-        $creditCardBin = $creditCardBin->getCreditCardBin();
-
-        $installmentSelected = $installmentSelected->getInstallmentSelected();
-
+        $creditCardBinValue = $creditCardBin->getCreditCardBin();
+        $installmentSelectedValue = $installmentSelected->getInstallmentSelected();
         $storeId = $quote->getData(QuoteCartInterface::KEY_STORE_ID);
-
         $amount = $quoteTotal->getBaseGrandTotal();
-        $currentInterest = $quote->getData(InstallmentSelectedInterface::PAGBANK_INTEREST_AMOUNT);
-        
-        if ($installmentSelected === 0) {
 
+        if ($installmentSelectedValue === 0) {
             if (!$cardIndex) {
                 $quote->setData(InstallmentSelectedInterface::PAGBANK_INTEREST_AMOUNT, 0);
                 $quote->setData(InstallmentSelectedInterface::BASE_PAGBANK_INTEREST_AMOUNT, 0);
@@ -129,45 +157,50 @@ class InterestManagement implements InterestManagementInterface
                 return $this->quoteTotalRepository->get($cartId);
             }
 
-            if ($cardIndex !== null) {
-                $cardIndexValue = $cardIndex->getCardIndex();
-                if ($cardIndexValue === 1) {
-                    $quote->setData(InstallmentSelectedInterface::PAGBANK_INTEREST_AMOUNT, 0);
-                    $quote->setData(InstallmentSelectedInterface::BASE_PAGBANK_INTEREST_AMOUNT, 0);
-                    $this->quoteRepository->save($quote);
-                    return $this->quoteTotalRepository->get($cartId);
-                }
+            $cardIndexValue = $cardIndex->getCardIndex();
+            if ($cardIndexValue === 1) {
+                $quote->setData(InstallmentSelectedInterface::PAGBANK_INTEREST_AMOUNT, 0);
+                $quote->setData(InstallmentSelectedInterface::BASE_PAGBANK_INTEREST_AMOUNT, 0);
+                $this->quoteRepository->save($quote);
+                return $this->quoteTotalRepository->get($cartId);
             }
         }
 
         if ($cardIndex !== null) {
             $cardIndexValue = $cardIndex->getCardIndex();
+            $customAmountValue = $customAmount ? (float) $customAmount->getCustomAmount() : 0.0;
+
             if ($cardIndexValue === 1) {
-                $customAmountValue = $customAmount->getCustomAmount();
                 $amount = $customAmountValue;
             }
 
             if ($cardIndexValue === 2) {
-                $customAmountValue = $customAmount->getCustomAmount();
-                $amount -= $customAmountValue;
-                $amount -= $currentInterest;
-            }
-        } else {
-            $amount -= $currentInterest;
-        }
+                $card1Interest = 0.0;
+                if ($creditCardBinCard1 && $installmentSelectedCard1) {
+                    $card1Interest = $this->fetchInterest(
+                        $storeId,
+                        (string) $creditCardBinCard1->getCreditCardBin(),
+                        $customAmountValue,
+                        (int) $installmentSelectedCard1->getInstallmentSelected()
+                    );
+                }
 
+                $amount -= $customAmountValue;
+                $amount -= $card1Interest;
+            }
+        }
 
         $amount = $this->configBase->formatPrice($amount);
 
-        if ($creditCardBin) {
+        if ($creditCardBinValue) {
             $pagBankInterests = $this->consultInstallments->getPagBankInstallments(
                 $storeId,
-                $creditCardBin,
+                $creditCardBinValue,
                 $amount
             );
 
-            if (isset($pagBankInterests[$installmentSelected - 1])) {
-                $installment = $pagBankInterests[$installmentSelected - 1];
+            if (isset($pagBankInterests[$installmentSelectedValue - 1])) {
+                $installment = $pagBankInterests[$installmentSelectedValue - 1];
                 if (isset($installment['amount']['fees'])) {
                     $interest = $installment['amount']['fees']['buyer']['interest']['total'];
                 }
@@ -178,7 +211,7 @@ class InterestManagement implements InterestManagementInterface
 
         try {
             if ($cardIndexValue === 2) {
-                $interest += $currentInterest;
+                $interest += $card1Interest;
             }
 
             $quote->setData(InstallmentSelectedInterface::PAGBANK_INTEREST_AMOUNT, $interest);

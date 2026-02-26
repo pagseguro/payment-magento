@@ -22,11 +22,13 @@ interface InterestManagementInterface
     /**
      * Generate the list installments by credit card number.
      *
-     * @param int                                                               $cartId
-     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface           $creditCardBin
-     * @param \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface     $installmentSelected
-     * @param \PagBank\PaymentMagento\Api\Data\CustomAmountInterface|null       $customAmount
-     * @param \PagBank\PaymentMagento\Api\Data\CardIndexInterface|null          $cardIndex
+     * @param int                                                                    $cartId
+     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface                $creditCardBin
+     * @param \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface          $installmentSelected
+     * @param \PagBank\PaymentMagento\Api\Data\CustomAmountInterface|null            $customAmount
+     * @param \PagBank\PaymentMagento\Api\Data\CardIndexInterface|null               $cardIndex
+     * @param \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface|null           $creditCardBinCard1
+     * @param \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface|null     $installmentSelectedCard1
      *
      * @return \Magento\Quote\Api\Data\TotalsInterface Quote totals data.
      */
@@ -35,6 +37,8 @@ interface InterestManagementInterface
         \PagBank\PaymentMagento\Api\Data\CreditCardBinInterface $creditCardBin,
         \PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface $installmentSelected,
         ?\PagBank\PaymentMagento\Api\Data\CustomAmountInterface $customAmount = null,
-        ?\PagBank\PaymentMagento\Api\Data\CardIndexInterface $cardIndex = null
+        ?\PagBank\PaymentMagento\Api\Data\CardIndexInterface $cardIndex = null,
+        ?\PagBank\PaymentMagento\Api\Data\CreditCardBinInterface $creditCardBinCard1 = null,
+        ?\PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface $installmentSelectedCard1 = null
     );
 }

@@ -78,8 +78,8 @@
                 <can_accept_payment>1</can_accept_payment>
                 <can_fetch_transaction_info>1</can_fetch_transaction_info>
                 <can_fetch_transaction_information>1</can_fetch_transaction_information>
-                <paymentInfoKeys>cc_installments,cc_type,cc_number,cc_exp_month,cc_exp_year,cc_cardholder_name,payer_tax_id,payer_phone,three_ds_session,three_ds_auth,three_ds_auth_status,cc_authorization_code,cc_nsu</paymentInfoKeys>
-                <privateInfoKeys>three_ds_session,three_ds_auth,three_ds_auth_status,cc_authorization_code,cc_nsu</privateInfoKeys>
+                <paymentInfoKeys>cc_installments,cc_type,cc_number,cc_exp_month,cc_exp_year,cc_cardholder_name,payer_tax_id,payer_phone,three_ds_session,three_ds_auth,three_ds_auth_status,cc_authorization_code,cc_nsu,cc_issuer_name,cc_issuer_product</paymentInfoKeys>
+                <privateInfoKeys>three_ds_session,three_ds_auth,three_ds_auth_status,cc_authorization_code,cc_nsu,cc_issuer_name,cc_issuer_product</privateInfoKeys>
                 <cctypes_mapper><![CDATA[{"AMEX":"AE","ELO":"ELO","MASTERCARD":"MC","VISA":"VI","HIPERCARD":"HC","AURA":"AU","DINNERS":"DN"}]]></cctypes_mapper>
                 <active>1</active>
                 <title>Cartão de Crédito</title>
@@ -113,8 +113,8 @@ Este é o processo de autenticação 3DS, um processo seguro, como você pode ve
                 <can_use_internal>0</can_use_internal>
                 <can_fetch_transaction_info>1</can_fetch_transaction_info>
                 <can_fetch_transaction_information>1</can_fetch_transaction_information>
-                <paymentInfoKeys>cc_installments,cc_type,cc_number,cc_exp_month,cc_exp_year,cc_cardholder_name,payer_tax_id,payer_phone,three_ds_session,three_ds_auth,three_ds_auth_status,cc_authorization_code,cc_nsu</paymentInfoKeys>
-                <privateInfoKeys>three_ds_session,three_ds_auth,three_ds_auth_statu,cc_authorization_code,cc_nsu</privateInfoKeys>
+                <paymentInfoKeys>cc_installments,cc_type,cc_number,cc_exp_month,cc_exp_year,cc_cardholder_name,payer_tax_id,payer_phone,three_ds_session,three_ds_auth,three_ds_auth_status,cc_authorization_code,cc_nsu,cc_issuer_name,cc_issuer_product</paymentInfoKeys>
+                <privateInfoKeys>three_ds_session,three_ds_auth,three_ds_auth_statu,cc_authorization_code,cc_nsu,cc_issuer_name,cc_issuer_product</privateInfoKeys>
                 <active>1</active>
                 <title>Stored Cards (PagBank)</title>
             </pagbank_paymentmagento_cc_vault>
