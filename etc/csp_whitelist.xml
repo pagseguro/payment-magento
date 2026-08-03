@@ -15,12 +15,22 @@
             <values>
             	<value id="assets-pagbank" type="host">*.pagseguro.com.br</value>
                 <value id="assets-sdk-pagbank" type="host">*.pagseguro.com</value>
+                <value id="assets-cardinal-js" type="host">*.cardinalcommerce.com</value>
+                <value id="assets-cardinal-trusted" type="host">*.cardinaltrusted.com</value>
             </values>
         </policy>
         <policy id="connect-src">
             <values>
             	<value id="assets-pagbank" type="host">*.pagseguro.com.br</value>
                 <value id="assets-sdk-pagbank" type="host">*.pagseguro.com</value>
+                <value id="assets-cardinal-js" type="host">*.cardinalcommerce.com</value>
+                <value id="assets-cardinal-trusted" type="host">*.cardinaltrusted.com</value>
+            </values>
+        </policy>
+        <policy id="frame-src">
+            <values>
+            	<value id="assets-cardinal-js" type="host">*.cardinalcommerce.com</value>
+                <value id="assets-cardinal-trusted" type="host">*.cardinaltrusted.com</value>
             </values>
         </policy>
     </policies>

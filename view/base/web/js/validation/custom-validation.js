@@ -108,7 +108,10 @@ define(['jquery'], function ($) {
         }
 
         /**
-         * Validate CNPJ
+         * Validate CNPJ (numeric or alphanumeric - NT Conjunta DFe 2025.001)
+         *
+         * Check digits use the char value (ASCII code - 48), so digits map
+         * to 0-9 and uppercase letters A-Z map to 17-42.
          *
          * @param {String} cnpj - CNPJ number
          * @return {Boolean}
@@ -120,7 +123,7 @@ define(['jquery'], function ($) {
                 soma = 0,
                 pos = tamanho - 7;
 
-            if (cnpj.length !== 14) {
+            if (!/^[A-Z0-9]{12}[0-9]{2}$/.test(cnpj)) {
                 return false;
             }
 
@@ -133,7 +136,7 @@ define(['jquery'], function ($) {
                 resultado;
 
             for (i = tamanho; i >= 1; i--) {
-                soma += numeros.charAt(tamanho - i) * pos--;
+                soma += (numeros.charCodeAt(tamanho - i) - 48) * pos--;
                 if (pos < 2) {
                     pos = 9;
                 }
@@ -149,7 +152,7 @@ define(['jquery'], function ($) {
             soma = 0;
             pos = tamanho - 7;
             for (j = tamanho; j >= 1; j--) {
-                soma += numeros.charAt(tamanho - j) * pos--;
+                soma += (numeros.charCodeAt(tamanho - j) - 48) * pos--;
                 if (pos < 2) {
                     pos = 9;
                 }
@@ -176,13 +179,13 @@ define(['jquery'], function ($) {
                  * @return {Boolean}
                  */
                 function (value) {
-                    var documment = value.replace(/[^\d]+/g, '');
+                    var documment = value.replace(/[^0-9a-zA-Z]+/g, '').toUpperCase();
 
                     if (documment.length === 14) {
                         return validateCNPJ(documment);
                     }
 
-                    if (documment.length === 11) {
+                    if (/^[0-9]{11}$/.test(documment)) {
                         return validateCPF(documment);
                     }
 

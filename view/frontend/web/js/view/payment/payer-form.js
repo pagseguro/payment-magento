@@ -61,8 +61,13 @@ define([
                 self.payerTaxId.subscribe((value) => {
                     fieldVatId = $('input[name="payment[payer_tax_id]"]');
                     fieldVatId.unmask();
-                    typeMaskVat = value.replace(/\D/g, '').length >= 12 ? '00.000.000/0000-00' : '000.000.000-009';
-                    fieldVatId.mask(typeMaskVat, { clearIfNotMatch: true });
+                    typeMaskVat = value.replace(/[^0-9a-zA-Z]/g, '').length >= 12 || /[a-zA-Z]/.test(value)
+                        ? 'AA.AAA.AAA/AAAA-00'
+                        : 'AAA.AAA.AAA-AAZ';
+                    fieldVatId.mask(typeMaskVat, {
+                        clearIfNotMatch: true,
+                        translation: { 'Z': { pattern: /[A-Za-z0-9]/, optional: true } }
+                    });
 
                     pagbankPayerData.payerTaxId = value;
                 });
