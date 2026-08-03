@@ -14,6 +14,11 @@ var config = {
             'widgetClipboard':'PagBank_PaymentMagento/js/view/payment/lib/clipboardjs/widgetClipboard'
         }
     },
+    shim: {
+        'PagBank_PaymentMagento/js/view/payment/lib/clipboardjs/widgetClipboard': {
+            deps: ['jquery', 'jquery-ui-modules/widget']
+        }
+    },
     config: {
         mixins: {
             'mage/validation': {

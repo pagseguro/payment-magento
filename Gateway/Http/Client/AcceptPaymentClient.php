@@ -44,7 +44,7 @@ class AcceptPaymentClient implements ClientInterface
     /**
      * Lock timeout in seconds.
      */
-    private const LOCK_TIMEOUT = 360;
+    private const LOCK_TIMEOUT = 3600;
 
     /**
      * @var ApiClient

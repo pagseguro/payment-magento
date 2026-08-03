@@ -117,12 +117,14 @@ class CustomerDataRequest implements BuilderInterface
 
         $taxId = $this->getTaxId($payment, $orderAdapter);
 
+        $taxId = strtoupper((string) preg_replace('/[^0-9A-Za-z]/', '', (string) $taxId));
+
         $phones = $this->getPhone($payment, $orderAdapter);
 
         $result[self::CUSTOMER] = [
             self::CUSTOMER_NAME     => $name,
             self::CUSTOMER_EMAIL    => strtolower($billingAddress->getEmail()),
-            self::CUSTOMER_TAX_ID   => preg_replace('/[^0-9]/', '', (string) $taxId),
+            self::CUSTOMER_TAX_ID   => $taxId,
             self::CUSTOMER_PHONES   => [$phones],
         ];
 

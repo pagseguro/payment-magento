@@ -25,13 +25,15 @@ $payerTaxId = isset($specificInfo['payer_tax_id']) ? $specificInfo['payer_tax_id
     <dl class="payment-method">
         <dt class="title"><?= /* @noEscape */ $title ?></dt>
         <dd class="content">
-            <table class="data table">
+            <table class="data table" style="width: 100%;">
                 <caption class="table-caption"><?= /* @noEscape */ $title ?></caption>
                 <tbody>
                     <?php if ($expirationDate): ?>
                         <tr>
-                            <th scope="row"><?= $block->escapeHtml(__('Expiration')); ?></th>
-                            <td>
+                            <th scope="row" style="border-top: 1px solid #EFEFEF; padding: 12px 0;">
+                                <?= $block->escapeHtml(__('Expiration')); ?>
+                            </th>
+                            <td style="border-top: 1px solid #EFEFEF; padding: 12px 0; text-align: right;">
                                 <?= /* @noEscape */ $block->formatDate(
                                     $expirationDate,
                                     \IntlDateFormatter::MEDIUM,
@@ -42,44 +44,45 @@ $payerTaxId = isset($specificInfo['payer_tax_id']) ? $specificInfo['payer_tax_id
                     <?php endif; ?>
                     <?php if ($qrCodeImage): ?>
                         <tr>
-                            <th scope="row">
+                            <th scope="row" style="border-top: 1px solid #EFEFEF; padding: 12px 0;">
                                 <?= $block->escapeHtml(__('Pix Qr Code')); ?>
                             </th>
-                            <td>
+                            <td style="border-top: 1px solid #EFEFEF; padding: 12px 0; text-align: right;">
                                 <img
                                     src="<?=  $block->escapeHtml($qrCodeImage) ?>" 
                                     alt="<?= /* @noEscape */ $title ?>"
-                                    width="150">
+                                    width="100%"
+                                    style="max-width: 150px;">
                                 </img>
                             </td>
                         </tr>
                     <?php endif; ?>
                     <?php if ($qrCode): ?>
                         <tr>
-                            <th scope="row">
+                            <th scope="row" style="border-top: 1px solid #EFEFEF; padding: 12px 0;">
                                 <?= $block->escapeHtml(__('Pix Copy and Paste')); ?>
                             </th>
-                            <td>
-                                <textarea readonly="true"><?= $block->escapeHtml($qrCode) ?></textarea>
+                            <td style="border-top: 1px solid #EFEFEF; padding: 12px 0; text-align: right;">
+                                <textarea style="width: 100%; box-sizing: border-box;" readonly="true"><?= $block->escapeHtml($qrCode) ?></textarea>
                             </td>
                         </tr>
                     <?php endif; ?>
                     <?php if ($payerName): ?>
                         <tr>
-                            <th scope="row">
+                            <th scope="row" style="border-top: 1px solid #EFEFEF; padding: 12px 0;">
                                 <?= $block->escapeHtml(__('Payer Name')); ?>
                             </th>
-                            <td>
+                            <td style="border-top: 1px solid #EFEFEF; padding: 12px 0; text-align: right;">
                                 <?= $block->escapeHtml($payerName) ?>
                             </td>
                         </tr>
                     <?php endif; ?>
                     <?php if ($payerTaxId): ?>
                         <tr>
-                            <th scope="row">
+                            <th scope="row" style="border-top: 1px solid #EFEFEF; padding: 12px 0 0;">
                                 <?= $block->escapeHtml(__('Payer Tax Id')); ?>
                             </th>
-                            <td>
+                            <td style="border-top: 1px solid #EFEFEF; padding: 12px 0 0; text-align: right;">
                                 <?= $block->escapeHtml($payerTaxId) ?>
                             </td>
                         </tr>
