@@ -79,11 +79,16 @@ class All extends AbstractNotification implements CsrfAwareActionInterface
         try {
             $psData = $this->json->unserialize($response);
         } catch (Exception $exc) {
+            $this->logger->debug([
+                'message' => 'Error parsing webhook payload',
+                'exception' => $exc->getMessage(),
+            ]);
+
             return $this->createResult(
                 205,
                 [
                     'error'   => 205,
-                    'message' => $exc->getMessage(),
+                    'message' => __('Invalid payload.'),
                 ]
             );
         }
@@ -124,11 +129,17 @@ class All extends AbstractNotification implements CsrfAwareActionInterface
             /** @var TransactionRepositoryInterface $transaction */
             $transaction = $this->transaction->getList($searchCriteria)->getFirstItem();
         } catch (Exception $exc) {
+            $this->logger->debug([
+                'message' => 'Error loading transaction for webhook',
+                'exception' => $exc->getMessage(),
+                'payment_id' => $psPaymentId,
+            ]);
+
             return $this->createResult(
                 500,
                 [
                     'error'   => 500,
-                    'message' => $exc->getMessage(),
+                    'message' => __('Internal error.'),
                 ]
             );
         }
@@ -181,7 +192,7 @@ class All extends AbstractNotification implements CsrfAwareActionInterface
                 500,
                 [
                     'error'   => 500,
-                    'message' => $exc->getMessage(),
+                    'message' => __('Internal error.'),
                 ]
             );
         }

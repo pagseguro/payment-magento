@@ -23,6 +23,7 @@ use PagBank\PaymentMagento\Api\Data\CustomAmountInterface;
 use PagBank\PaymentMagento\Api\Data\InstallmentSelectedInterface;
 use PagBank\PaymentMagento\Api\InterestManagementInterface;
 use PagBank\PaymentMagento\Gateway\Config\Config as ConfigBase;
+use PagBank\PaymentMagento\Model\Interest\InterestContext;
 
 /**
  * Class List Interest Management - Generate Interest in order.
@@ -57,23 +58,31 @@ class InterestManagement implements InterestManagementInterface
     protected $consultInstallments;
 
     /**
+     * @var InterestContext
+     */
+    protected $interestContext;
+
+    /**
      * Constructor.
      *
      * @param CartRepositoryInterface      $quoteRepository
      * @param CartTotalRepositoryInterface $quoteTotalRepository
      * @param ConfigBase                   $configBase
      * @param ConsultPSInstallments        $consultInstallments
+     * @param InterestContext              $interestContext
      */
     public function __construct(
         CartRepositoryInterface $quoteRepository,
         CartTotalRepositoryInterface $quoteTotalRepository,
         ConfigBase $configBase,
-        ConsultPSInstallments $consultInstallments
+        ConsultPSInstallments $consultInstallments,
+        InterestContext $interestContext
     ) {
         $this->quoteRepository = $quoteRepository;
         $this->quoteTotalRepository = $quoteTotalRepository;
         $this->configBase = $configBase;
         $this->consultInstallments = $consultInstallments;
+        $this->interestContext = $interestContext;
     }
 
     /**
@@ -120,10 +129,6 @@ class InterestManagement implements InterestManagementInterface
      * @throws NoSuchEntityException
      *
      * @return array
-     *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     public function generatePagBankInterest(
         $cartId,
@@ -134,88 +139,132 @@ class InterestManagement implements InterestManagementInterface
         ?CreditCardBinInterface $creditCardBinCard1 = null,
         ?InstallmentSelectedInterface $installmentSelectedCard1 = null
     ) {
-        $interest = 0;
-        $cardIndexValue = null;
-
         $quote = $this->quoteRepository->getActive($cartId);
         if (!$quote->getItemsCount()) {
             throw new NoSuchEntityException(__('Cart %1 doesn\'t contain products', $cartId));
         }
 
         $quoteTotal = $this->quoteTotalRepository->get($cartId);
+        $storeId = (int) $quote->getData(QuoteCartInterface::KEY_STORE_ID);
+        $installment = (int) $installmentSelected->getInstallmentSelected();
+        $cardIndexValue = $cardIndex ? $cardIndex->getCardIndex() : null;
+        $customAmountValue = $customAmount ? (float) $customAmount->getCustomAmount() : 0.0;
 
-        $creditCardBinValue = $creditCardBin->getCreditCardBin();
-        $installmentSelectedValue = $installmentSelected->getInstallmentSelected();
-        $storeId = $quote->getData(QuoteCartInterface::KEY_STORE_ID);
-        $amount = $quoteTotal->getBaseGrandTotal();
+        // The grand total already carries the interest stored by a previous call; price on the amount without it.
+        $totalWithoutInterest = (float) $quoteTotal->getBaseGrandTotal()
+            - (float) $quote->getData(InstallmentSelectedInterface::BASE_PAGBANK_INTEREST_AMOUNT);
 
-        if ($installmentSelectedValue === 0) {
-            if (!$cardIndex) {
-                $quote->setData(InstallmentSelectedInterface::PAGBANK_INTEREST_AMOUNT, 0);
-                $quote->setData(InstallmentSelectedInterface::BASE_PAGBANK_INTEREST_AMOUNT, 0);
-                $this->quoteRepository->save($quote);
-                return $this->quoteTotalRepository->get($cartId);
-            }
-
-            $cardIndexValue = $cardIndex->getCardIndex();
-            if ($cardIndexValue === 1) {
-                $quote->setData(InstallmentSelectedInterface::PAGBANK_INTEREST_AMOUNT, 0);
-                $quote->setData(InstallmentSelectedInterface::BASE_PAGBANK_INTEREST_AMOUNT, 0);
-                $this->quoteRepository->save($quote);
-                return $this->quoteTotalRepository->get($cartId);
-            }
+        if ($installment === 0 && ($cardIndexValue === null || $cardIndexValue === 1)) {
+            return $this->saveInterest($quote, (int) $cartId, 0.0, null);
         }
 
-        if ($cardIndex !== null) {
-            $cardIndexValue = $cardIndex->getCardIndex();
-            $customAmountValue = $customAmount ? (float) $customAmount->getCustomAmount() : 0.0;
+        $bin = (string) $creditCardBin->getCreditCardBin();
 
-            if ($cardIndexValue === 1) {
-                $amount = $customAmountValue;
-            }
+        if ($cardIndexValue === 1) {
+            $interest = $this->fetchInterest($storeId, $bin, $customAmountValue, $installment);
+            $context = [
+                InterestContext::MODE     => InterestContext::MODE_TWO,
+                InterestContext::CARD_ONE => $this->interestContext->card($installment, $customAmountValue, $interest),
+            ];
 
-            if ($cardIndexValue === 2) {
-                $card1Interest = 0.0;
-                if ($creditCardBinCard1 && $installmentSelectedCard1) {
-                    $card1Interest = $this->fetchInterest(
-                        $storeId,
-                        (string) $creditCardBinCard1->getCreditCardBin(),
-                        $customAmountValue,
-                        (int) $installmentSelectedCard1->getInstallmentSelected()
-                    );
-                }
-
-                $amount -= $customAmountValue;
-                $amount -= $card1Interest;
-            }
+            return $this->saveInterest($quote, (int) $cartId, $interest, $context);
         }
 
-        $amount = $this->configBase->formatPrice($amount);
-
-        if ($creditCardBinValue) {
-            $pagBankInterests = $this->consultInstallments->getPagBankInstallments(
+        if ($cardIndexValue === 2) {
+            $cardOne = $this->resolveCardOne(
                 $storeId,
-                $creditCardBinValue,
-                $amount
+                $quote,
+                $customAmountValue,
+                $creditCardBinCard1,
+                $installmentSelectedCard1
+            );
+            $amount = $totalWithoutInterest - $customAmountValue;
+            $interest = $this->fetchInterest($storeId, $bin, $amount, $installment);
+            $context = [
+                InterestContext::MODE     => InterestContext::MODE_TWO,
+                InterestContext::CARD_ONE => $cardOne,
+                InterestContext::CARD_TWO => $this->interestContext->card($installment, $amount, $interest),
+            ];
+
+            return $this->saveInterest(
+                $quote,
+                (int) $cartId,
+                $interest + $cardOne[InterestContext::INTEREST] / 100,
+                $context
+            );
+        }
+
+        $interest = $this->fetchInterest($storeId, $bin, $totalWithoutInterest, $installment);
+        $context = [
+            InterestContext::MODE => InterestContext::MODE_SINGLE,
+            InterestContext::CARD => $this->interestContext->card($installment, $totalWithoutInterest, $interest),
+        ];
+
+        return $this->saveInterest($quote, (int) $cartId, $interest, $context);
+    }
+
+    /**
+     * Price the first card of a two-card payment.
+     *
+     * Falls back to what the first-card call already priced when the request does not resend the first card
+     * (the guest endpoint does not forward it).
+     *
+     * @param int                                   $storeId
+     * @param \Magento\Quote\Api\Data\CartInterface $quote
+     * @param float                                 $cardOneAmount
+     * @param CreditCardBinInterface|null           $creditCardBinCard1
+     * @param InstallmentSelectedInterface|null     $installmentSelectedCard1
+     *
+     * @return array
+     */
+    private function resolveCardOne(
+        int $storeId,
+        $quote,
+        float $cardOneAmount,
+        ?CreditCardBinInterface $creditCardBinCard1,
+        ?InstallmentSelectedInterface $installmentSelectedCard1
+    ): array {
+        if ($creditCardBinCard1 && $installmentSelectedCard1) {
+            $installment = (int) $installmentSelectedCard1->getInstallmentSelected();
+            $interest = $this->fetchInterest(
+                $storeId,
+                (string) $creditCardBinCard1->getCreditCardBin(),
+                $cardOneAmount,
+                $installment
             );
 
-            if (isset($pagBankInterests[$installmentSelectedValue - 1])) {
-                $installment = $pagBankInterests[$installmentSelectedValue - 1];
-                if (isset($installment['amount']['fees'])) {
-                    $interest = $installment['amount']['fees']['buyer']['interest']['total'];
-                }
-            }
+            return $this->interestContext->card($installment, $cardOneAmount, $interest);
         }
 
-        $interest = $interest / 100;
+        $previous = $this->interestContext->read($quote)[InterestContext::CARD_ONE] ?? null;
+        if (is_array($previous)
+            && abs((int) $previous[InterestContext::BASE] - $this->interestContext->toCents($cardOneAmount)) <= 1
+        ) {
+            return $previous;
+        }
 
+        // Unpriced: the checkout guard only accepts it for interest-free installments.
+        return $this->interestContext->card(0, $cardOneAmount, 0.0);
+    }
+
+    /**
+     * Persist the interest and the conditions it was priced under.
+     *
+     * @param \Magento\Quote\Api\Data\CartInterface $quote
+     * @param int                                   $cartId
+     * @param float                                 $interest
+     * @param array|null                            $context
+     *
+     * @throws CouldNotSaveException
+     *
+     * @return \Magento\Quote\Api\Data\TotalsInterface
+     */
+    private function saveInterest($quote, int $cartId, float $interest, ?array $context)
+    {
         try {
-            if ($cardIndexValue === 2) {
-                $interest += $card1Interest;
-            }
-
             $quote->setData(InstallmentSelectedInterface::PAGBANK_INTEREST_AMOUNT, $interest);
             $quote->setData(InstallmentSelectedInterface::BASE_PAGBANK_INTEREST_AMOUNT, $interest);
+            $this->interestContext->write($quote, $context);
             $this->quoteRepository->save($quote);
         } catch (\Exception $e) {
             throw new CouldNotSaveException(__('Unable to save interest.'));

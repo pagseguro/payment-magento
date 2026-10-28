@@ -105,13 +105,15 @@ class HolderDataRequest implements BuilderInterface
 
         $taxId = $this->getTaxId($payment, $orderAdapter);
 
+        $taxId = strtoupper((string) preg_replace('/[^0-9A-Za-z]/', '', (string) $taxId));
+
         $result[ChargesDataRequest::CHARGES][] = [
             PaymentMethodDataRequest::PAYMENT_METHOD => [
                 strtolower(PaymentMethodDataRequest::METHOD)    => [
                     self::HOLDER  => [
                         self::HOLDER_NAME     => $name,
                         self::HOLDER_EMAIL    => strtolower($billingAddress->getEmail()),
-                        self::HOLDER_TAX_ID   => preg_replace('/[^0-9]/', '', (string) $taxId),
+                        self::HOLDER_TAX_ID   => $taxId,
                     ],
                 ],
             ],

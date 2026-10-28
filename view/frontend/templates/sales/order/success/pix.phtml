@@ -16,26 +16,29 @@
 $qrCode = $block->getInfo('qr_code');
 $qrCodeImage = $block->getInfo('qr_code_image');
 ?>
-<div class="pagbank-payment-success-details">
-    <div class="pagbank-payment-pix-image">
-        <p><?= $block->escapeHtml(__('To pay, read the Qr Code')) ?></p>
-        <div class="qrcode-image">
-            <img src="<?= $block->escapeUrl($block->getMediaUrl($qrCodeImage)); ?>"
-                class="pix-qrcode"
-                alt="<?= $block->escapeHtml(__('Pix Qr Code')) ?>">
-            </img>
-        </div>
+<div class="pagbank-payment-success-details pix">
+
+
+    <div class="payment-header">
+        <h3 class="payment-title"><?= $block->escapeHtml(__('Payment via PIX')) ?></h3>
+        <p class="payment-subtitle"><?= $block->escapeHtml(__('Scan the QR code or copy the code below.')) ?></p>
     </div>
-    <div class="pagbank-payment-pix-copy">
-        <p><?= $block->escapeHtml(__('Or if you prefer, copy and paste the code')) ?></p>
-        <div class="field pagbank-input-group">
-            <div class="control _with-tooltip">
+
+    <div class="payment-content">
+        <div class="qr-code-section">
+            <div class="qrcode-image qr-code-container">
+                <img src="<?= $block->escapeUrl($block->getMediaUrl($qrCodeImage)); ?>"
+                    class="pix-qrcode"
+                    alt="<?= $block->escapeHtml(__('Pix Qr Code')) ?>">
+                </img>
+            </div>
+            <div class="payment-actions control _with-tooltip">
                 <input type="text"
                     id="line-code-value"
                     value="<?= $block->escapeHtml($qrCode); ?>"
-                    class="input-text"/> 
-                <div class="field-tooltip toggle">
-                    <button class="btn" id="copy-code" 
+                    class="input-text qr-input"/> 
+                <div class="toggle">
+                    <button class="btn copy-button copy-qr-button" id="copy-code" 
                         data-clipboard-action="copy" 
                         data-clipboard-target="#line-code-value">
                         <?= $block->escapeHtml(__('Copy')); ?>
@@ -48,10 +51,12 @@ $qrCodeImage = $block->getInfo('qr_code_image');
 <script type="text/x-magento-init">
     {
         "#copy-code": {
-            "widgetClipboard": {
+            "PagBank_PaymentMagento/js/clipboard-with-class": {
                 "enabled": true,
                 "copiedtext": "<?= /* @noEscape */ __('Copied'); ?>",
-                "textBtn": "<?= /* @noEscape */ __('Copy'); ?>"
+                "textBtn": "<?= /* @noEscape */ __('Copy'); ?>",
+                "copiedClass": "copied",
+                "copiedClassDuration": 2000
             }
         }
     }

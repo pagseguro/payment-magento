@@ -24,13 +24,13 @@ $payerTaxId = isset($specificInfo['payer_tax_id']) ? $specificInfo['payer_tax_id
     <dl class="payment-method">
         <dt class="title"><?= /* @noEscape */ $title ?></dt>
         <dd class="content">
-            <table class="data table">
+            <table class="data table" style="width: 100%;">
                 <caption class="table-caption"><?= /* @noEscape */ $title ?></caption>
                 <tbody>
                     <?php if ($expirationDate): ?>
                         <tr>
-                            <th scope="row"><?= $block->escapeHtml(__('Expiration')); ?></th>
-                            <td>
+                            <th scope="row" style="border-top: 1px solid #EFEFEF; padding: 12px 0;"><?= $block->escapeHtml(__('Expiration')); ?></th>
+                            <td style="border-top: 1px solid #EFEFEF; padding: 12px 0; text-align: right;">
                                 <?= /* @noEscape */ $block->formatDate(
                                     $expirationDate,
                                     \IntlDateFormatter::MEDIUM,
@@ -41,10 +41,10 @@ $payerTaxId = isset($specificInfo['payer_tax_id']) ? $specificInfo['payer_tax_id
                     <?php endif; ?>
                     <?php if ($boletoPdfHref): ?>
                         <tr>
-                            <th scope="row">
+                            <th scope="row" style="border-top: 1px solid #EFEFEF; padding: 12px 0;">
                                 <?= $block->escapeHtml(__('Link')); ?>
                             </th>
-                            <td>
+                            <td style="border-top: 1px solid #EFEFEF; padding: 12px 0; text-align: right;">
                                 <a target="_blank"
                                     href="<?=  $block->escapeHtml($boletoPdfHref) ?>" 
                                     alt="<?= /* @noEscape */ $title ?>">
@@ -55,30 +55,30 @@ $payerTaxId = isset($specificInfo['payer_tax_id']) ? $specificInfo['payer_tax_id
                     <?php endif; ?>
                     <?php if ($boletoLineCode): ?>
                         <tr>
-                            <th scope="row">
+                            <th scope="row" style="border-top: 1px solid #EFEFEF; padding: 12px 0;">
                                 <?= $block->escapeHtml(__('Line Code')); ?>
                             </th>
-                            <td>
+                            <td style="border-top: 1px solid #EFEFEF; padding: 12px 0; text-align: right;">
                                 <?= $block->escapeHtml($boletoLineCode) ?>
                             </td>
                         </tr>
                     <?php endif; ?>
                     <?php if ($payerName): ?>
                         <tr>
-                            <th scope="row">
+                            <th scope="row" style="border-top: 1px solid #EFEFEF; padding: 12px 0;">
                                 <?= $block->escapeHtml(__('Payer Name')); ?>
                             </th>
-                            <td>
+                            <td style="border-top: 1px solid #EFEFEF; padding: 12px 0; text-align: right;">
                                 <?= $block->escapeHtml($payerName) ?>
                             </td>
                         </tr>
                     <?php endif; ?>
                     <?php if ($payerTaxId): ?>
                         <tr>
-                            <th scope="row">
+                            <th scope="row" style="border-top: 1px solid #EFEFEF; padding: 12px 0 0;">
                                 <?= $block->escapeHtml(__('Payer Tax Id')); ?>
                             </th>
-                            <td>
+                            <td style="border-top: 1px solid #EFEFEF; padding: 12px 0 0; text-align: right;">
                                 <?= $block->escapeHtml($payerTaxId) ?>
                             </td>
                         </tr>

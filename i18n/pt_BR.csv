@@ -423,3 +423,4 @@ PagBank Interest,Juros de Parcelamento
 "second_cc_authorization_code","Código Autorização 2º Cartão"
 "second_cc_nsu","NSU 2º Cartão"
 "second_cc_amount","Valor 2º Cartão"
+"The installment conditions have changed. Please select the installments again.","As condições de parcelamento mudaram. Selecione as parcelas novamente."

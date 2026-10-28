@@ -57,17 +57,19 @@ class GetUpdate extends Command
      *
      * @param InputInterface  $input
      * @param OutputInterface $output
+     *
+     * @return int
      */
     protected function execute(
         InputInterface $input,
         OutputInterface $output
-    ) {
+    ): int {
         $this->state->setAreaCode(\Magento\Framework\App\Area::AREA_ADMINHTML);
         $this->update->setOutput($output);
 
         $incrementId = $input->getArgument(self::INCREMENT_ID);
 
-        return $this->update->getUpdate($incrementId);
+        return (int) $this->update->getUpdate($incrementId);
     }
 
     /**
