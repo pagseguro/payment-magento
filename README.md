@@ -82,7 +82,7 @@ Principais Recursos:
 
 ## Instalação e Configuração
 
-Visite nossa [Wiki](../../wiki) e veja como é fácil instalar e configurar o módulo.
+Visite nossa [Wiki](https://github.com/pagseguro/payment-magento/wiki) e veja como é fácil instalar e configurar o módulo.
 
 ## License
 

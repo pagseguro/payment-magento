@@ -174,11 +174,17 @@ abstract class AbstractNotification extends Action
             /** @var OrderRepository $order */
             $order = $this->orderRepository->get($orderId);
         } catch (Exception $exc) {
+            $this->logger->debug([
+                'message' => 'Error loading order for webhook',
+                'exception' => $exc->getMessage(),
+                'order_id' => $orderId,
+            ]);
+
             return $this->createResult(
                 500,
                 [
                     'error'   => 500,
-                    'message' => $exc->getMessage(),
+                    'message' => __('Internal error.'),
                 ]
             );
         }

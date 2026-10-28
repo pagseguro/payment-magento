@@ -17,6 +17,7 @@ use Magento\Payment\Model\InfoInterface;
 use PagBank\PaymentMagento\Gateway\Config\Config;
 use PagBank\PaymentMagento\Gateway\Config\ConfigTwoCc;
 use PagBank\PaymentMagento\Model\Api\ConsultPSInstallments;
+use PagBank\PaymentMagento\Observer\ValidateInstallmentInterestObserver;
 use Magento\Framework\Exception\LocalizedException;
 
 /**
@@ -181,8 +182,14 @@ class DualChargesDataRequest implements BuilderInterface
         
         $firstCardFinalAmount = $firstCardBaseAmount;
         $firstCardInterest = 0;
-        
-        if ($firstCardIns > 1 && $firstCardBin) {
+        $validatedInterest = $payment->getAdditionalInformation(
+            ValidateInstallmentInterestObserver::FIRST_CARD_INTEREST
+        );
+
+        if ($validatedInterest !== null) {
+            // Priced with the real card BIN and checked against the installments at place order.
+            $firstCardFinalAmount = $firstCardBaseAmount + (float) $validatedInterest;
+        } elseif ($firstCardIns > 1 && $firstCardBin) {
             $formattedAmount = $this->config->formatPrice($firstCardBaseAmount);
             
             $installments = $this->consultInstallments->getPagBankInstallments(

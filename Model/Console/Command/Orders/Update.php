@@ -22,6 +22,7 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use PagBank\PaymentMagento\Model\Console\Command\AbstractModel;
+use Symfony\Component\Console\Command\Command;
 
 /**
  * Class Update - Manually apply the PagBank order status.
@@ -139,7 +140,7 @@ class Update extends AbstractModel
         }
         $this->writeln(__('Finished'));
 
-        return 1;
+        return $order ? Command::SUCCESS : Command::FAILURE;
     }
 
     /**

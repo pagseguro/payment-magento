@@ -98,6 +98,7 @@ define([
             quote.totals.subscribe(() => {
                 if (self.active() === true) {
                     self.getListInstallments(self.getCardBin());
+                    self.repriceInterestIfTotalChanged();
                 }
             });
         },
@@ -141,6 +142,36 @@ define([
         },
 
         /**
+         * Grand total without the PagBank interest, as priced by the server.
+         * @returns {String}
+         */
+        getTotalWithoutInterest() {
+            var totals = quote.totals() || {},
+                interest = 0;
+
+            (totals.total_segments || []).forEach((segment) => {
+                if (segment.code === 'pagbank_interest_amount') {
+                    interest = parseFloat(segment.value || 0);
+                }
+            });
+
+            return (parseFloat(totals.base_grand_total || 0) - interest).toFixed(2);
+        },
+
+        /**
+         * Re-price the selected installment when the cart total changes (coupon, shipping),
+         * otherwise place order is refused because the stored interest no longer matches.
+         * @returns {void}
+         */
+        repriceInterestIfTotalChanged() {
+            var self = this;
+
+            if (self.creditCardInstallment() > 0 && self.pricedTotal !== self.getTotalWithoutInterest()) {
+                self.addInterest();
+            }
+        },
+
+        /**
          * Add Interest in totals
          * @returns {void}
          */
@@ -150,6 +181,7 @@ define([
                 creditCardNumber = self.getCardBin();
 
             if (selectInstallment >= 0) {
+                self.pricedTotal = self.getTotalWithoutInterest();
                 setInterest.pagbankInterest(selectInstallment, creditCardNumber);
             }
         },

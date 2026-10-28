@@ -42,7 +42,7 @@ class RefreshToken extends Command
      */
     public function __construct(
         State $state,
-        refresh $refresh
+        Refresh $refresh
     ) {
         $this->state = $state;
         $this->refresh = $refresh;
@@ -54,17 +54,19 @@ class RefreshToken extends Command
      *
      * @param InputInterface  $input
      * @param OutputInterface $output
+     *
+     * @return int
      */
     protected function execute(
         InputInterface $input,
         OutputInterface $output
-    ) {
+    ): int {
         $this->state->setAreaCode(\Magento\Framework\App\Area::AREA_ADMINHTML);
         $this->refresh->setOutput($output);
 
         $storeId = $input->getArgument(self::STORE_ID);
 
-        return $this->refresh->newToken($storeId);
+        return (int) $this->refresh->newToken($storeId);
     }
 
     /**

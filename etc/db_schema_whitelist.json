@@ -13,7 +13,8 @@
     "quote": {
         "column": {
             "pagbank_interest_amount": true,
-            "base_pagbank_interest_amount": true
+            "base_pagbank_interest_amount": true,
+            "pagbank_interest_context": true
         }
     },
     "quote_address": {

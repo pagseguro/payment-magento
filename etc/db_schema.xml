@@ -23,6 +23,7 @@
     <table name="quote" resource="default">
         <column xsi:type="decimal" name="pagbank_interest_amount" scale="4" precision="12" unsigned="false" nullable="true" comment="Pagbank Interest Amount"/>
         <column xsi:type="decimal" name="base_pagbank_interest_amount" scale="4" precision="12" unsigned="false" nullable="true" comment="Base Pagbank Interest Amount"/>
+        <column xsi:type="text" name="pagbank_interest_context" nullable="true" comment="Pagbank Interest Pricing Context"/>
     </table>
     <table name="quote_address" resource="default">
         <column xsi:type="decimal" name="discount_coupon_amount" scale="4" precision="12" unsigned="false" nullable="true" comment="Discount coupon Amount"/>

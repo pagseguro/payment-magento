@@ -122,6 +122,7 @@ define([
 
             self.creditCardInstallment.subscribe((value) => {
                 self.addInterest();
+                self.resetSecondCardInstallment();
             });
 
             self.selectedCardType.subscribe((value) => {
@@ -291,6 +292,25 @@ define([
                 });
             
             return deferred.promise();
+        },
+
+        /**
+         * Pricing the first card replaces the stored interest with the first card's only, so the second card
+         * has to be selected (and priced) again; otherwise its interest is lost and place order is refused.
+         * @returns {void}
+         */
+        resetSecondCardInstallment() {
+            var self = this,
+                secondCard;
+
+            if (!self.isFirstCard || !self.parentMethod || !self.parentMethod.secondCard) {
+                return;
+            }
+
+            secondCard = self.parentMethod.secondCard();
+            if (secondCard && secondCard.creditCardInstallment()) {
+                secondCard.creditCardInstallment(null);
+            }
         },
 
         /**

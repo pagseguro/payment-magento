@@ -23,6 +23,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use PagBank\PaymentMagento\Gateway\Config\Config as ConfigBase;
 use PagBank\PaymentMagento\Model\Api\Credential;
 use PagBank\PaymentMagento\Model\Console\Command\AbstractModel;
+use Symfony\Component\Console\Command\Command;
 
 /**
  * Class Refresh Token.
@@ -145,7 +146,7 @@ class Refresh extends AbstractModel
 
         $this->writeln(__('Finished'));
 
-        return 1;
+        return Command::SUCCESS;
     }
 
     /**
