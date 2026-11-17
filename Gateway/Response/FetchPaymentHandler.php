@@ -256,6 +256,10 @@ class FetchPaymentHandler implements HandlerInterface
      */
     public function setPaymentPay($payment, $paymentParentId, $pagbankPayId, $amount)
     {
+        if ($this->acknowledgePaidConsultation($payment, (string) $pagbankPayId)) {
+            return;
+        }
+
         $order = $payment->getOrder();
 
         if ($order->getState() !== 'new' && $order->getState() !== 'payment_review') {
@@ -291,6 +295,40 @@ class FetchPaymentHandler implements HandlerInterface
         }
 
         $order->save();
+    }
+
+    /**
+     * Keep an already paid order approved on a later consultation.
+     *
+     * Magento treats a fetch that sets neither approved nor denied as "no update"
+     * and moves the order back to payment_review.
+     *
+     * @param \Magento\Payment\Model\InfoInterface $payment
+     * @param string $pagbankPayId
+     * @return bool
+     */
+    private function acknowledgePaidConsultation($payment, $pagbankPayId)
+    {
+        $order = $payment->getOrder();
+        $state = (string) $order->getState();
+
+        if (in_array($state, [Order::STATE_CANCELED, Order::STATE_CLOSED, Order::STATE_HOLDED], true)) {
+            return false;
+        }
+
+        $alreadyPaid = $order->hasInvoices()
+            || $payment->getTransaction($pagbankPayId . '-capture')
+            || in_array($state, [Order::STATE_PROCESSING, Order::STATE_COMPLETE], true);
+
+        if (!$alreadyPaid) {
+            return false;
+        }
+
+        $payment->setIsTransactionApproved(true);
+        $payment->setIsTransactionDenied(false);
+        $payment->setIsTransactionPending(false);
+
+        return true;
     }
 
     /**
